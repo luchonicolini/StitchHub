@@ -1,0 +1,42 @@
+
+> stitch-hub@0.1.0 lint
+> eslint
+
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\components\workshop\CardDetailModal.tsx
+    5:10  warning  'X' is defined but never used                                    @typescript-eslint/no-unused-vars
+    5:19  warning  'Eye' is defined but never used                                  @typescript-eslint/no-unused-vars
+    5:24  warning  'Repeat' is defined but never used                               @typescript-eslint/no-unused-vars
+    5:32  warning  'Star' is defined but never used                                 @typescript-eslint/no-unused-vars
+  150:37  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  150:51  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\components\workshop\FilterBar.tsx
+  73:37   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  73:116  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\components\workshop\HeroSection.tsx
+  62:58  error  Comments inside children section of tag should be placed inside braces  react/jsx-no-comment-textnodes
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\components\workshop\PromptCard.tsx
+    4:8   warning  'Link' is defined but never used                                 @typescript-eslint/no-unused-vars
+  117:25  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  117:34  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\components\workshop\WorkshopFeed.tsx
+  240:33   warning  'id' is assigned a value but never used                          @typescript-eslint/no-unused-vars
+  240:37   warning  'type' is assigned a value but never used                        @typescript-eslint/no-unused-vars
+  258:113  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  258:127  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\components\workshop\WorkshopFeed_fixed.tsx
+  169:12  error  Parsing error: Expression expected
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\components\workshop\WorkshopFeed_temp.tsx
+  169:12  error  Parsing error: Expression expected
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\components\workshop\WorkshopHeader.tsx
+  3:10  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+
+Ô£û 19 problems (11 errors, 8 warnings)
+
