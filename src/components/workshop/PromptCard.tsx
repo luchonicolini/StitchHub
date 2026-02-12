@@ -6,21 +6,9 @@ import { Copy, Check } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/useToast";
+import { PromptCardProps } from "@/types/prompt";
 
-export interface PromptCardProps {
-    title: string;
-    tags: string[];
-    prompt: string;
-    author: {
-        name: string;
-        avatar: string;
-    };
-    image: string;
-    imageAlt: string;
-    pinColor?: "bg-primary" | "bg-accent-orange" | "bg-accent-green" | "bg-ink" | "bg-white";
-    rotation?: string; // e.g. "rotate-1", "-rotate-2"
-    featured?: boolean;
-}
+export type { PromptCardProps } from "@/types/prompt";
 
 export function PromptCard({
     title,
@@ -32,6 +20,7 @@ export function PromptCard({
     pinColor = "bg-accent-orange",
     rotation = "rotate-0",
     featured,
+    onClick,
 }: PromptCardProps) {
     const [copied, setCopied] = useState(false);
     const { showToast } = useToast();
@@ -68,7 +57,8 @@ export function PromptCard({
                 ease: [0.4, 0, 0.2, 1],
                 layout: { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
             }}
-            className={`break-inside-avoid mb-12 relative group transform ${rotation} hover:rotate-0 transition-all duration-400 ease-in-out pt-4`}
+            onClick={onClick}
+            className={`break-inside-avoid mb-12 relative group transform ${rotation} hover:rotate-0 transition-all duration-400 ease-in-out pt-4 cursor-pointer`}
         >
             {/* Decorative Pin - Like a real pushpin! */}
             <div className="absolute top-1 left-1/2 -translate-x-1/2 z-30">
@@ -113,9 +103,8 @@ export function PromptCard({
                             </span>
                         ))}
                     </div>
-                    <div className="bg-background-light border-2 border-dashed border-ink/40 p-4 mb-4 font-mono text-xs text-ink/80 h-24 overflow-hidden relative leading-relaxed">
-                        &quot;{prompt}&quot;
-                        <div className="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-background-light to-transparent"></div>
+                    <div className="bg-background-light border-2 border-dashed border-ink/40 p-4 mb-4 font-mono text-xs text-ink leading-relaxed">
+                        &quot;{prompt.length > 150 ? `${prompt.substring(0, 150)}...` : prompt}&quot;
                     </div>
                     <div className="flex justify-between items-center mt-2">
                         <div className="flex items-center gap-2">
