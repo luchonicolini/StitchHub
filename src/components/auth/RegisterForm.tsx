@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 import { User, Mail, Lock, Eye, EyeOff, Check } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -9,7 +11,8 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
-    const { register } = useAuth();
+    const { register, loginWithGoogle, returnUrl, closeAuthModal } = useAuth();
+    const router = useRouter();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -17,23 +20,69 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [acceptTerms, setAcceptTerms] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
+        setError(null);
 
         // Basic validation
         if (password !== confirmPassword) {
-            alert("Passwords don't match!");
+            setError("Passwords don't match!");
+            setLoading(false);
             return;
         }
 
         if (!acceptTerms) {
-            alert("Please accept the terms and conditions");
+            setError("Please accept the terms and conditions");
+            setLoading(false);
             return;
         }
 
-        // TODO: Add registration logic
-        register(username, email, password);
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    username,
+                    full_name: username
+                }
+            }
+        });
+
+        if (error) {
+            setError(error.message);
+        } else {
+            // Success
+            // Initialize profile username manually if needed, or rely on trigger
+            // For now, assume trigger or listener handles it.
+            // But we should update profile if we want to be sure about username immediately
+            if (data.user) {
+                // Wait a bit for the trigger to complete
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Update username in profile
+                await supabase
+                    .from('profiles')
+                    .update({ username })
+                    .eq('id', data.user.id);
+            }
+
+            if (returnUrl) {
+                closeAuthModal();
+                setTimeout(() => router.push(returnUrl), 50);
+            } else {
+                closeAuthModal();
+            }
+        }
+
+        setLoading(false);
+    };
+
+    const handleGoogleLogin = async () => {
+        await loginWithGoogle();
     };
 
     return (
@@ -148,13 +197,21 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                 </span>
             </label>
 
+            {/* Error Message */}
+            {error && (
+                <div className="bg-red-100 border-2 border-red-500 px-4 py-3 font-mono text-sm text-red-700">
+                    {error}
+                </div>
+            )}
+
             {/* Submit Button */}
             <button
                 type="submit"
-                className="w-full bg-accent-green hover:bg-accent-green/90 text-white border-4 border-ink px-8 py-4 font-black uppercase text-sm shadow-hard hover:shadow-hard-sm hover:translate-y-0.5 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2"
+                disabled={loading}
+                className="w-full bg-accent-green hover:bg-accent-green/90 text-white border-4 border-ink px-8 py-4 font-black uppercase text-sm shadow-hard hover:shadow-hard-sm hover:translate-y-0.5 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 <Check className="w-5 h-5" strokeWidth={3} />
-                Create Account
+                {loading ? "Creating..." : "Create Account"}
             </button>
 
             {/* Divider */}
@@ -167,13 +224,9 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                 </div>
             </div>
 
-            {/* Google Sign In Button */}
             <button
                 type="button"
-                onClick={() => {
-                    // TODO: Implement Google OAuth
-                    console.log("Google Sign In clicked");
-                }}
+                onClick={handleGoogleLogin}
                 className="w-full bg-white hover:bg-gray-50 text-ink border-3 border-ink px-6 py-3 font-mono font-bold text-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-3"
             >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">

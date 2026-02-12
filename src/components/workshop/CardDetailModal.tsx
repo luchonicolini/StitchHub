@@ -284,7 +284,7 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                                         NEW RELEASE
                                     </span>
                                 )}
-                                <h1 className="font-black text-5xl uppercase text-ink mb-6 leading-[0.9] tracking-tight">
+                                <h1 className="font-black text-5xl uppercase text-ink mb-6 leading-[0.9] tracking-tight break-words overflow-hidden">
                                     {card.title}
                                 </h1>
 
@@ -325,7 +325,7 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
 
                                     {/* Expandable Prompt */}
                                     <div className="relative">
-                                        <p className={`font-mono text-sm leading-relaxed text-ink/80 ${!isPromptExpanded && card.prompt.length > 200 ? 'line-clamp-4' : ''}`}>
+                                        <p className={`font-mono text-sm leading-relaxed text-ink/80 ${!isPromptExpanded && card.prompt.length > 200 ? 'line-clamp-4' : ''} break-words overflow-hidden`}>
                                             &quot;{card.prompt}&quot;
                                         </p>
 

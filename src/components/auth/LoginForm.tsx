@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
+import { Eye, EyeOff, LogIn, Mail, Lock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 interface LoginFormProps {
@@ -9,15 +11,46 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
-    const { login } = useAuth();
+    const { login, loginWithGoogle, returnUrl, closeAuthModal } = useAuth();
+    const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        login(email, password);
+        setLoading(true);
+        setError(null);
+        console.log('Form submitted, calling login...');
+
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+
+        if (error) {
+            console.error('Login error:', error);
+            setError(error.message);
+        } else {
+            // Success
+            if (returnUrl) {
+                // Close modal first for smoother transition
+                closeAuthModal();
+                // Then redirect
+                setTimeout(() => router.push(returnUrl), 50);
+            } else {
+                closeAuthModal();
+            }
+        }
+
+        setLoading(false);
+    };
+
+    const handleGoogleLogin = async () => {
+        await loginWithGoogle();
     };
 
     return (
@@ -86,12 +119,20 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
                 </button>
             </div>
 
+            {/* Error Message */}
+            {error && (
+                <div className="bg-red-100 border-2 border-red-500 px-4 py-3 font-mono text-sm text-red-700">
+                    {error}
+                </div>
+            )}
+
             {/* Submit Button */}
             <button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary/90 text-ink border-4 border-ink px-8 py-4 font-black uppercase text-sm shadow-hard hover:shadow-hard-sm hover:translate-y-0.5 active:translate-y-1 active:shadow-none transition-all"
+                disabled={loading}
+                className="w-full bg-primary hover:bg-primary/90 text-ink border-4 border-ink px-8 py-4 font-black uppercase text-sm shadow-hard hover:shadow-hard-sm hover:translate-y-0.5 active:translate-y-1 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                Login
+                {loading ? "Loading..." : "Login"}
             </button>
 
             {/* Divider */}
@@ -104,13 +145,9 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
                 </div>
             </div>
 
-            {/* Google Sign In Button */}
             <button
                 type="button"
-                onClick={() => {
-                    // TODO: Implement Google OAuth
-                    console.log("Google Sign In clicked");
-                }}
+                onClick={handleGoogleLogin}
                 className="w-full bg-white hover:bg-gray-50 text-ink border-3 border-ink px-6 py-3 font-mono font-bold text-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-3"
             >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">

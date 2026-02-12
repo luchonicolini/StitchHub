@@ -103,7 +103,7 @@ export function PromptCard({
                             </span>
                         ))}
                     </div>
-                    <div className="bg-background-light border-2 border-dashed border-ink/40 p-4 mb-4 font-mono text-xs text-ink leading-relaxed">
+                    <div className="bg-background-light border-2 border-dashed border-ink/40 p-4 mb-4 font-mono text-xs text-ink leading-relaxed break-words overflow-hidden">
                         &quot;{prompt.length > 150 ? `${prompt.substring(0, 150)}...` : prompt}&quot;
                     </div>
                     <div className="flex justify-between items-center mt-2">

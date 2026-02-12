@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/hooks/useToast";
+import { AuthInitializer } from "@/components/auth/AuthInitializer";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -29,6 +30,7 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${spaceMono.variable} antialiased bg-background-light dark:bg-background-dark text-ink dark:text-white font-display`}
       >
+        <AuthInitializer />
         <ToastProvider>
           {children}
         </ToastProvider>

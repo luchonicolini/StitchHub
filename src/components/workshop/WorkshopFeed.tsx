@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Prompt } from "@/types/prompt";
 import { MOCK_PROMPTS } from "@/data/mockPrompts";
 import { useFilteredPrompts } from "@/hooks/useFilteredPrompts";
+import { supabase } from "@/lib/supabase";
 
 // Motion Variants
 const containerVariants = {
@@ -29,6 +30,50 @@ interface WorkshopFeedProps {
 export function WorkshopFeed({ activeFilter, searchQuery, onResultCountChange }: WorkshopFeedProps) {
     const [prompts, setPrompts] = useState<Prompt[]>(MOCK_PROMPTS);
     const [selectedCard, setSelectedCard] = useState<Prompt | null>(null);
+
+    // Fetch real designs from Supabase
+    useEffect(() => {
+        const fetchDesigns = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('designs')
+                    .select(`
+                        *,
+                        profiles (
+                            username,
+                            avatar_url
+                        )
+                    `)
+                    .order('created_at', { ascending: false });
+
+                if (data) {
+                    const dbPrompts: Prompt[] = data.map((d: any, index: number) => ({
+                        id: `db-${d.id}`,
+                        title: d.title,
+                        tags: [d.category || 'Design'],
+                        prompt: d.prompt_content,
+                        author: {
+                            name: d.profiles?.username || 'Unknown',
+                            avatar: d.profiles?.avatar_url || 'https://github.com/shadcn.png'
+                        },
+                        image: d.image_url || '',
+                        imageAlt: d.title,
+                        codeSnippet: d.code_snippet,
+                        pinColor: "bg-white",
+                        rotation: index % 2 === 0 ? "rotate-1" : "-rotate-1",
+                        type: "card"
+                    }));
+
+                    // Merge DB prompts with Mock prompts
+                    setPrompts([...dbPrompts, ...MOCK_PROMPTS]);
+                }
+            } catch (err) {
+                console.error("Error fetching designs:", err);
+            }
+        };
+
+        fetchDesigns();
+    }, []);
 
     // Use custom hook for filtering
     const filteredPrompts = useFilteredPrompts(prompts, activeFilter, searchQuery || "");
