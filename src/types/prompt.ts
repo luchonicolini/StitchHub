@@ -34,4 +34,6 @@ export interface PromptCardProps {
     rotation?: string;
     featured?: boolean;
     onClick?: () => void;
+    showActions?: boolean;
+    onDelete?: () => void;
 }

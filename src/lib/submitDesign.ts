@@ -1,5 +1,6 @@
-import { supabase } from './supabase';
+import { supabase as defaultSupabase } from './supabase';
 import { uploadDesignImage } from './uploadImage';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export interface DesignSubmission {
     title: string;
@@ -11,11 +12,14 @@ export interface DesignSubmission {
 
 export async function submitDesign(
     submission: DesignSubmission,
-    userId: string
+    userId: string,
+    supabaseClient?: SupabaseClient
 ) {
+    const supabase = supabaseClient || defaultSupabase;
+
     try {
         // 1. Upload image first
-        const imageUrl = await uploadDesignImage(submission.imageFile, userId);
+        const imageUrl = await uploadDesignImage(submission.imageFile, userId, supabase);
 
         // 2. Create design record
         const { data, error } = await supabase

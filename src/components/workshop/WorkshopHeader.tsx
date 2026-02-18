@@ -19,7 +19,7 @@ export function WorkshopHeader({ searchQuery = "", onSearchChange }: WorkshopHea
             <header className="sticky top-0 z-50 w-full border-b-4 border-ink bg-background-light py-4 shadow-[0_4px_0_0_#000000]">
                 <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
                     {/* Logo Area */}
-                    <Link className="flex items-center gap-3 group" href="#">
+                    <Link className="flex items-center gap-3 group" href="/">
                         <div className="w-12 h-12 bg-ink text-white flex items-center justify-center border-2 border-transparent transform -rotate-3 group-hover:rotate-0 transition-transform duration-300 ease-in-out shadow-hard-sm">
                             <Construction className="w-7 h-7" />
                         </div>
@@ -78,10 +78,10 @@ export function WorkshopHeader({ searchQuery = "", onSearchChange }: WorkshopHea
                         {/* User Actions */}
                         {isAuthenticated && user ? (
                             <div className="flex items-center gap-3">
-                                <div className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-ink">
+                                <Link href="/profile" className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-ink hover:bg-gray-50 transition-colors">
                                     <User className="w-4 h-4 text-ink" />
                                     <span className="font-mono font-bold text-sm text-ink">{user.username}</span>
-                                </div>
+                                </Link>
                                 <button
                                     onClick={logout}
                                     className="p-2 bg-red-500 border-2 border-ink hover:bg-red-600 transition-colors"

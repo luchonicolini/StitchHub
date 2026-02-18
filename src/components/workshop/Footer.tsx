@@ -9,12 +9,14 @@ export function Footer() {
             <div className="max-w-7xl mx-auto px-4 relative z-10 flex flex-col md:flex-row justify-between items-start gap-12">
                 <div className="max-w-sm">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 bg-primary text-ink flex items-center justify-center border-2 border-white transform rotate-3">
-                            <Construction className="w-6 h-6" />
-                        </div>
-                        <h2 className="text-2xl font-black tracking-tight uppercase">
-                            StitchHub
-                        </h2>
+                        <Link href="/" className="flex items-center gap-3 group">
+                            <div className="w-10 h-10 bg-primary text-ink flex items-center justify-center border-2 border-white transform rotate-3 group-hover:rotate-0 transition-transform">
+                                <Construction className="w-6 h-6" />
+                            </div>
+                            <h2 className="text-2xl font-black tracking-tight uppercase group-hover:underline decoration-4 decoration-white underline-offset-4 transition-all">
+                                StitchHub
+                            </h2>
+                        </Link>
                     </div>
                     <p className="font-mono text-sm text-gray-300 mb-6">
                         Hand-crafted prompts for the digital artisan. Built with sweat,

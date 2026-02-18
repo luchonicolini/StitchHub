@@ -1,9 +1,9 @@
-"use client";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, X, Image as ImageIcon, Sparkles } from "lucide-react";
+import { Upload, X, Sparkles } from "lucide-react";
+import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
+import { createBrowserClient } from "@supabase/ssr";
 import { submitDesign, type DesignSubmission } from "@/lib/submitDesign";
 import { useToast } from "@/hooks/useToast";
 
@@ -22,6 +22,10 @@ export function DesignUploadForm() {
     const router = useRouter();
     const { user } = useAuth();
     const { showToast } = useToast();
+    const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
 
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -125,7 +129,7 @@ export function DesignUploadForm() {
                 imageFile
             };
 
-            await submitDesign(submission, user.id);
+            await submitDesign(submission, user.id, supabase);
 
             showToast({ message: 'Design published successfully! 🎉', type: 'success' });
             router.push('/');
@@ -180,9 +184,11 @@ export function DesignUploadForm() {
                         >
                             <X className="w-5 h-5" />
                         </button>
-                        <img
+                        <Image
                             src={imagePreview}
                             alt="Preview"
+                            width={800}
+                            height={600}
                             className="w-full h-auto border-2 border-ink"
                         />
                     </div>

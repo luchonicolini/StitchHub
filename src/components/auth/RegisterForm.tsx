@@ -11,7 +11,7 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
-    const { register, loginWithGoogle, returnUrl, closeAuthModal } = useAuth();
+    const { loginWithGoogle, returnUrl, closeAuthModal } = useAuth();
     const router = useRouter();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");

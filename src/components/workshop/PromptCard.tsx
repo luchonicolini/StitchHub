@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/useToast";
@@ -21,6 +21,8 @@ export function PromptCard({
     rotation = "rotate-0",
     featured,
     onClick,
+    showActions,
+    onDelete,
 }: PromptCardProps) {
     const [copied, setCopied] = useState(false);
     const { showToast } = useToast();
@@ -130,7 +132,23 @@ export function PromptCard({
                         </button>
                     </div>
                 </div>
+                {/* Delete Action */}
+                {showActions && onDelete && (
+                    <div className="absolute top-2 right-2 z-50">
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onDelete();
+                            }}
+                            className="p-2 bg-white text-red-500 border-2 border-ink hover:bg-red-500 hover:text-white transition-colors shadow-sm rounded-sm"
+                            title="Delete Design"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                        </button>
+                    </div>
+                )}
+
             </article>
-        </motion.div>
+        </motion.div >
     );
 }

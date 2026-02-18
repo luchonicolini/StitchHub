@@ -1,0 +1,19 @@
+
+> stitch-hub@0.1.0 lint
+> eslint
+
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\app\profile\page.tsx
+  11:10  warning  'motion' is defined but never used        @typescript-eslint/no-unused-vars
+  12:19  warning  'Trash2' is defined but never used        @typescript-eslint/no-unused-vars
+  46:64  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\components\profile\EditProfileModal.tsx
+  4:13  warning  'Save' is defined but never used     @typescript-eslint/no-unused-vars
+  6:10  warning  'useAuth' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\hooks\useAuth.tsx
+  5:10  warning  'User' is defined but never used  @typescript-eslint/no-unused-vars
+
+Ô£û 6 problems (1 error, 5 warnings)
+

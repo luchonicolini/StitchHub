@@ -1,0 +1,35 @@
+
+> stitch-hub@0.1.0 lint
+> eslint
+
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\components\auth\LoginForm.tsx
+    6:23  warning  'LogIn' is defined but never used                                @typescript-eslint/no-unused-vars
+   14:13  warning  'login' is assigned a value but never used                       @typescript-eslint/no-unused-vars
+  176:20  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\components\auth\RegisterForm.tsx
+  14:13  warning  'register' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\components\submit\DesignUploadForm.tsx
+    5:30  warning  'ImageIcon' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+  183:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\components\workshop\CardDetailModal.tsx
+  103:8   warning  React Hook useEffect has missing dependencies: 'nextImage' and 'prevImage'. Either include them or remove the dependency array                                                                                                                                                           react-hooks/exhaustive-deps
+  418:37  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\components\workshop\WorkshopFeed.tsx
+   2:20  warning  'useMemo' is defined but never used         @typescript-eslint/no-unused-vars
+  38:31  warning  'error' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  50:62  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\hooks\useAuth.tsx
+   5:10  warning  'User' is defined but never used  @typescript-eslint/no-unused-vars
+  23:48  warning  'get' is defined but never used   @typescript-eslint/no-unused-vars
+
+C:\Users\luciano\Downloads\StitchHub\stitch-hub\src\lib\uploadImage.ts
+  21:13  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+Ô£û 14 problems (2 errors, 12 warnings)
+

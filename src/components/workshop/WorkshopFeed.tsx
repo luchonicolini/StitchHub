@@ -1,5 +1,5 @@
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { MasonryGrid } from "@/components/workshop/MasonryGrid";
 import { PromptCard } from "@/components/workshop/PromptCard";
 import { CardDetailModal } from "@/components/workshop/CardDetailModal";
@@ -35,7 +35,7 @@ export function WorkshopFeed({ activeFilter, searchQuery, onResultCountChange }:
     useEffect(() => {
         const fetchDesigns = async () => {
             try {
-                const { data, error } = await supabase
+                const { data } = await supabase
                     .from('designs')
                     .select(`
                         *,
@@ -47,7 +47,17 @@ export function WorkshopFeed({ activeFilter, searchQuery, onResultCountChange }:
                     .order('created_at', { ascending: false });
 
                 if (data) {
-                    const dbPrompts: Prompt[] = data.map((d: any, index: number) => ({
+                    interface DesignDB {
+                        id: string;
+                        title: string;
+                        category: string;
+                        prompt_content: string;
+                        profiles?: { username: string; avatar_url: string };
+                        image_url: string;
+                        code_snippet: string;
+                    }
+
+                    const dbPrompts: Prompt[] = (data as unknown as DesignDB[]).map((d, index) => ({
                         id: `db-${d.id}`,
                         title: d.title,
                         tags: [d.category || 'Design'],

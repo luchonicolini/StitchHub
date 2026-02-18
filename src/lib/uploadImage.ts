@@ -1,6 +1,8 @@
-import { supabase } from './supabase';
+import { supabase as defaultSupabase } from './supabase';
+import { SupabaseClient } from '@supabase/supabase-js';
 
-export async function uploadDesignImage(file: File, userId: string): Promise<string> {
+export async function uploadDesignImage(file: File, userId: string, supabaseClient?: SupabaseClient): Promise<string> {
+    const supabase = supabaseClient || defaultSupabase;
     // Validate file size (max 5MB)
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
@@ -18,7 +20,7 @@ export async function uploadDesignImage(file: File, userId: string): Promise<str
     const fileName = `${userId}/${Date.now()}.${fileExt}`;
 
     // Upload to Supabase Storage
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
         .from('design-images')
         .upload(fileName, file, {
             cacheControl: '3600',

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Copy, Sparkles, Check, ChevronLeft, ChevronRight, ZoomIn, X } from "lucide-react";
 import Image from "next/image";
@@ -74,15 +74,15 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
         }
     };
 
-    const nextImage = (e?: React.MouseEvent) => {
+    const nextImage = useCallback((e?: React.MouseEvent) => {
         e?.stopPropagation();
         setCurrentImageIndex((prev) => (prev + 1) % images.length);
-    };
+    }, [images.length]);
 
-    const prevImage = (e?: React.MouseEvent) => {
+    const prevImage = useCallback((e?: React.MouseEvent) => {
         e?.stopPropagation();
         setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
-    };
+    }, [images.length]);
 
     // Keyboard navigation for carousel
     useEffect(() => {
@@ -100,7 +100,7 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
         };
         window.addEventListener('keydown', handleKeyboard);
         return () => window.removeEventListener('keydown', handleKeyboard);
-    }, [images.length, isLightboxOpen]);
+    }, [images.length, isLightboxOpen, nextImage, prevImage]);
 
     // Mock stats
     const stats = {
@@ -121,7 +121,7 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                     className="fixed inset-0 w-full h-full bg-[#f0f0f0] overflow-y-auto z-[110] bg-paper-texture"
                 >
                     {/* Detail View Header */}
-                    <DetailViewHeader onClose={onClose} />
+                    <DetailViewHeader />
 
                     {/* Back Navigation - Subtle & Left-aligned */}
                     <div className="bg-white">
@@ -415,10 +415,13 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                                     <X className="w-8 h-8" />
                                 </button>
                                 <div className="relative w-full h-full max-w-7xl max-h-[90vh] overflow-auto flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
-                                    <img
+                                    <Image
                                         src={currentImage}
                                         alt="Full screen view"
+                                        width={1920}
+                                        height={1080}
                                         className="max-w-full max-h-full object-contain shadow-2xl rounded-sm"
+                                        quality={100}
                                     />
                                 </div>
                             </motion.div>

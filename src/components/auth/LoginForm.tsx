@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Eye, EyeOff, LogIn, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 interface LoginFormProps {
@@ -11,7 +11,7 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
-    const { login, loginWithGoogle, returnUrl, closeAuthModal } = useAuth();
+    const { loginWithGoogle, returnUrl, closeAuthModal } = useAuth();
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -173,7 +173,7 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
 
             {/* Switch to Register */}
             <p className="text-center font-mono text-xs text-ink/60">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <button
                     type="button"
                     onClick={onSwitchToRegister}
