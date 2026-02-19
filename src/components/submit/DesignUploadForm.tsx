@@ -18,6 +18,9 @@ const CATEGORIES = [
     "Other"
 ];
 
+const MAX_IMAGES = 4;
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
 export function DesignUploadForm() {
     const router = useRouter();
     const { user } = useAuth();
@@ -27,8 +30,8 @@ export function DesignUploadForm() {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
-    const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [imageFiles, setImageFiles] = useState<File[]>([]);
+    const [imagePreviews, setImagePreviews] = useState<string[]>([]);
     const [title, setTitle] = useState("");
     const [promptContent, setPromptContent] = useState("");
     const [category, setCategory] = useState("");
@@ -51,43 +54,58 @@ export function DesignUploadForm() {
         e.stopPropagation();
         setDragActive(false);
 
-        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            handleFile(e.dataTransfer.files[0]);
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            handleFiles(Array.from(e.dataTransfer.files));
         }
     };
 
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            handleFile(e.target.files[0]);
+        if (e.target.files && e.target.files.length > 0) {
+            handleFiles(Array.from(e.target.files));
         }
     };
 
-    const handleFile = (file: File) => {
-        // Validate file type
-        if (!file.type.startsWith('image/')) {
-            showToast({ message: 'Please upload an image file', type: 'error' });
+    const handleFiles = (files: File[]) => {
+        const currentCount = imageFiles.length;
+        const availableSlots = MAX_IMAGES - currentCount;
+
+        if (availableSlots <= 0) {
+            showToast({ message: `Max ${MAX_IMAGES} images allowed`, type: 'error' });
             return;
         }
 
-        // Validate file size (5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            showToast({ message: 'Image must be less than 5MB', type: 'error' });
-            return;
+        const filesToAdd = files.slice(0, availableSlots);
+        const validFiles: File[] = [];
+
+        for (const file of filesToAdd) {
+            if (!file.type.startsWith('image/')) {
+                showToast({ message: `${file.name} is not an image`, type: 'error' });
+                continue;
+            }
+            if (file.size > MAX_FILE_SIZE) {
+                showToast({ message: `${file.name} size exceeds 5MB`, type: 'error' });
+                continue;
+            }
+            validFiles.push(file);
         }
 
-        setImageFile(file);
+        if (validFiles.length > 0) {
+            setImageFiles(prev => [...prev, ...validFiles]);
 
-        // Create preview
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setImagePreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
+            // Create previews
+            validFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImagePreviews(prev => [...prev, reader.result as string]);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
     };
 
-    const removeImage = () => {
-        setImageFile(null);
-        setImagePreview(null);
+    const removeImage = (indexToRemove: number) => {
+        setImageFiles(prev => prev.filter((_, idx) => idx !== indexToRemove));
+        setImagePreviews(prev => prev.filter((_, idx) => idx !== indexToRemove));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -98,8 +116,8 @@ export function DesignUploadForm() {
             return;
         }
 
-        if (!imageFile) {
-            showToast({ message: 'Please upload an image', type: 'error' });
+        if (imageFiles.length === 0) {
+            showToast({ message: 'Please upload at least one image', type: 'error' });
             return;
         }
 
@@ -126,7 +144,7 @@ export function DesignUploadForm() {
                 promptContent,
                 category,
                 codeSnippet: codeSnippet || undefined,
-                imageFile
+                imageFiles
             };
 
             await submitDesign(submission, user.id, supabase);
@@ -145,14 +163,43 @@ export function DesignUploadForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-10 relative z-20">
             {/* Image Upload */}
             <div>
-                <label className="block font-mono font-bold text-sm uppercase text-ink mb-3">
-                    Design Image *
+                <label className="block font-mono font-bold text-sm uppercase text-ink mb-3 flex items-center justify-between">
+                    <span>Design Images *</span>
+                    <span className="text-xs text-ink/40">({imageFiles.length}/{MAX_IMAGES})</span>
                 </label>
 
-                {!imagePreview ? (
+                {/* Previews Grid */}
+                {imagePreviews.length > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        {imagePreviews.map((preview, idx) => (
+                            <div key={`preview-${idx}`} className="relative border-4 border-ink bg-white aspect-video p-4">
+                                {idx === 0 && (
+                                    <span className="absolute top-2 left-2 bg-primary text-ink text-xs font-bold px-2 py-1 border-2 border-ink z-10">
+                                        COVER
+                                    </span>
+                                )}
+                                <button
+                                    type="button"
+                                    onClick={() => removeImage(idx)}
+                                    className="absolute top-2 right-2 bg-red-500 text-white p-2 border-2 border-ink shadow-hard hover:shadow-hard-sm transition-all z-10"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                                <Image
+                                    src={preview}
+                                    alt={`Preview ${idx + 1}`}
+                                    fill
+                                    className="object-cover"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {imageFiles.length < MAX_IMAGES && (
                     <div
                         onDragEnter={handleDrag}
                         onDragLeave={handleDrag}
@@ -164,33 +211,17 @@ export function DesignUploadForm() {
                         <input
                             type="file"
                             accept="image/*"
+                            multiple
                             onChange={handleFileInput}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                         />
                         <Upload className="w-16 h-16 mx-auto mb-4 text-ink/40" strokeWidth={2} />
                         <p className="font-mono text-ink font-bold mb-2">
-                            Drop your image here or click to browse
+                            Drop files here or click to browse
                         </p>
                         <p className="font-mono text-xs text-ink/50">
                             JPG, PNG, or WebP • Max 5MB
                         </p>
-                    </div>
-                ) : (
-                    <div className="relative border-4 border-ink bg-white p-4">
-                        <button
-                            type="button"
-                            onClick={removeImage}
-                            className="absolute top-6 right-6 bg-red-500 text-white p-2 border-2 border-ink shadow-hard hover:shadow-hard-sm transition-all z-10"
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
-                        <Image
-                            src={imagePreview}
-                            alt="Preview"
-                            width={800}
-                            height={600}
-                            className="w-full h-auto border-2 border-ink"
-                        />
                     </div>
                 )}
             </div>
@@ -204,7 +235,7 @@ export function DesignUploadForm() {
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value.slice(0, 100))}
-                    placeholder="E-commerce Dashboard UI"
+                    placeholder="E.g. E-commerce Dashboard UI"
                     required
                     className="w-full bg-white border-4 border-ink px-6 py-4 font-mono text-lg text-ink placeholder:text-ink/40 focus:ring-0 focus:border-primary focus:shadow-hard-sm transition-all outline-none"
                 />
@@ -245,15 +276,31 @@ export function DesignUploadForm() {
                     rows={8}
                     className="w-full bg-white border-4 border-ink px-6 py-4 font-mono text-sm text-ink placeholder:text-ink/40 focus:ring-0 focus:border-primary focus:shadow-hard-sm transition-all outline-none resize-none"
                 />
-                {promptContent.length < 50 && promptContent.length > 0 && (
-                    <p className="mt-2 font-mono text-xs text-red-600">
-                        Minimum 50 characters required
-                    </p>
-                )}
+                <div className="flex justify-between items-center mt-2">
+                    {promptContent.length < 50 && promptContent.length > 0 ? (
+                        <p className="font-mono text-xs text-red-600">
+                            Minimum 50 characters required
+                        </p>
+                    ) : (
+                        <div></div>
+                    )}
+                    <button
+                        type="button"
+                        className="font-mono text-xs font-bold flex items-center gap-1 text-ink/60 hover:text-ink transition-colors"
+                        title="Optional code snippet included for technical users"
+                        onClick={() => {
+                            if (!codeSnippet && !document.getElementById('codeSnippetContainer')) {
+                                document.getElementById('codeSnippetContainer')?.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        }}
+                    >
+                        + Add Code Snippet
+                    </button>
+                </div>
             </div>
 
             {/* Code Snippet (Optional) */}
-            <div>
+            <div id="codeSnippetContainer">
                 <label className="block font-mono font-bold text-sm uppercase text-ink mb-3">
                     Code Snippet <span className="text-ink/40 text-xs">(Optional)</span>
                 </label>
@@ -266,8 +313,8 @@ export function DesignUploadForm() {
                 />
             </div>
 
-            {/* Submit Button */}
-            <div className="flex gap-4">
+            {/* Submit Button Area */}
+            <div className="flex gap-4 pt-4">
                 <button
                     type="button"
                     onClick={() => router.push('/')}
