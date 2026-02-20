@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { Copy, Check, Trash2 } from "lucide-react";
+import { Copy, Check, Trash2, Layers } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/useToast";
@@ -23,6 +23,7 @@ export function PromptCard({
     onClick,
     showActions,
     onDelete,
+    gallery,
 }: PromptCardProps) {
     const [copied, setCopied] = useState(false);
     const { showToast } = useToast();
@@ -80,11 +81,19 @@ export function PromptCard({
                         alt={imageAlt}
                         width={800}
                         height={600}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        priority={featured}
                         className="w-full h-full object-cover filter contrast-125 hover:scale-110 transition-transform duration-500 ease-out"
                     />
                     {featured && (
                         <div className="absolute top-2 left-2 bg-accent-green text-white px-3 py-1 text-xs font-mono font-bold border-2 border-ink shadow-hard-sm transform -rotate-2">
                             ⭐ FEATURED
+                        </div>
+                    )}
+                    {gallery && gallery.length > 1 && (
+                        <div className="absolute top-2 right-2 bg-black/80 backdrop-blur-sm text-white px-2 py-1 text-[10px] font-mono font-bold border border-white/20 flex items-center gap-1 z-10">
+                            <Layers className="w-3 h-3" />
+                            {gallery.length}
                         </div>
                     )}
                     {!featured && (
@@ -115,7 +124,8 @@ export function PromptCard({
                             </div>
                             <span className="font-mono text-xs font-bold text-ink">{author.name}</span>
                         </div>
-                        <button
+                        <motion.button
+                            whileTap={{ scale: 0.9 }}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 handleCopy();
@@ -129,13 +139,14 @@ export function PromptCard({
                             ) : (
                                 <Copy className="w-5 h-5" strokeWidth={2.5} />
                             )}
-                        </button>
+                        </motion.button>
                     </div>
                 </div>
                 {/* Delete Action */}
                 {showActions && onDelete && (
                     <div className="absolute top-2 right-2 z-50">
-                        <button
+                        <motion.button
+                            whileTap={{ scale: 0.9 }}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 onDelete();
@@ -144,7 +155,7 @@ export function PromptCard({
                             title="Delete Design"
                         >
                             <Trash2 className="w-4 h-4" />
-                        </button>
+                        </motion.button>
                     </div>
                 )}
 

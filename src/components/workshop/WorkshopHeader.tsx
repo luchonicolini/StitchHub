@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { Search, Construction, Plus, X, User, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { AuthModal } from "@/components/auth/AuthModal";
+import { motion } from "framer-motion";
 
 interface WorkshopHeaderProps {
     searchQuery?: string;
@@ -12,7 +12,7 @@ interface WorkshopHeaderProps {
 }
 
 export function WorkshopHeader({ searchQuery = "", onSearchChange }: WorkshopHeaderProps) {
-    const { isAuthModalOpen, isAuthenticated, user, openAuthModal, closeAuthModal, logout } = useAuth();
+    const { isAuthenticated, user, logout } = useAuth();
 
     return (
         <>
@@ -91,17 +91,20 @@ export function WorkshopHeader({ searchQuery = "", onSearchChange }: WorkshopHea
                                 </button>
                             </div>
                         ) : (
-                            <button
-                                onClick={() => openAuthModal()}
+                            <Link
+                                href="/auth"
                                 className="font-mono font-bold text-lg hover:underline decoration-4 decoration-primary underline-offset-4 text-ink transition-all duration-300 ease-in-out hover:scale-105 flex items-center gap-2"
                             >
                                 <User className="w-5 h-5" />
                                 Login
-                            </button>
+                            </Link>
                         )}
 
                         {/* Enhanced Submit Button */}
-                        <div className="relative group">
+                        <motion.div
+                            whileTap={{ scale: 0.95 }}
+                            className="relative group"
+                        >
                             <div className="absolute inset-0 bg-accent-green border-2 border-ink translate-x-2 translate-y-2 transition-transform duration-300 ease-in-out group-hover:translate-x-1 group-hover:translate-y-1" />
                             {isAuthenticated ? (
                                 <Link
@@ -112,21 +115,18 @@ export function WorkshopHeader({ searchQuery = "", onSearchChange }: WorkshopHea
                                     SUBMIT
                                 </Link>
                             ) : (
-                                <button
-                                    onClick={() => openAuthModal("/submit")}
+                                <Link
+                                    href="/auth?returnUrl=/submit"
                                     className="relative bg-primary hover:bg-[#ffe564] text-ink font-black uppercase tracking-widest px-6 py-2.5 border-4 border-ink flex items-center gap-2 cursor-pointer transform rotate-2 hover:rotate-0 transition-all duration-300 ease-in-out"
                                 >
                                     <Plus className="w-5 h-5" strokeWidth={3} />
                                     SUBMIT
-                                </button>
+                                </Link>
                             )}
-                        </div>
+                        </motion.div>
                     </nav>
                 </div>
             </header>
-
-            {/* Auth Modal */}
-            <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
         </>
     );
 }

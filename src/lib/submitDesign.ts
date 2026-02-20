@@ -1,5 +1,5 @@
 import { supabase as defaultSupabase } from './supabase';
-import { uploadDesignImage } from './uploadImage';
+import { uploadDesignImages } from './uploadImage';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export interface DesignSubmission {
@@ -7,7 +7,7 @@ export interface DesignSubmission {
     promptContent: string;
     category: string;
     codeSnippet?: string;
-    imageFile: File;
+    imageFiles: File[];
 }
 
 export async function submitDesign(
@@ -18,10 +18,11 @@ export async function submitDesign(
     const supabase = supabaseClient || defaultSupabase;
 
     try {
-        // 1. Upload image first
-        const imageUrl = await uploadDesignImage(submission.imageFile, userId, supabase);
+        // 1. Upload array of images with timeouts
+        const imageUrls = await uploadDesignImages(submission.imageFiles, userId, supabase);
 
         // 2. Create design record
+        // Fallback or explicit mapping: imageUrls[0] is the cover image
         const { data, error } = await supabase
             .from('designs')
             .insert({
@@ -29,7 +30,8 @@ export async function submitDesign(
                 prompt_content: submission.promptContent,
                 category: submission.category,
                 code_snippet: submission.codeSnippet || null,
-                image_url: imageUrl,
+                image_url: imageUrls[0], // Keep for backwards compatibility
+                image_urls: imageUrls,   // New multi-image column
                 user_id: userId
             })
             .select()

@@ -1,38 +1,41 @@
-"use client";
+import { WorkshopPageClient } from "@/components/workshop/WorkshopPageClient";
+import { createClient } from "@supabase/supabase-js";
+import { Prompt } from "@/types/prompt";
+import { DesignDB, mapDesignToPrompt } from "@/types/design";
+import { MOCK_PROMPTS } from "@/data/mockPrompts";
 
-import { useState } from "react";
-import { WorkshopHeader } from "@/components/workshop/WorkshopHeader";
-import { HeroSection } from "@/components/workshop/HeroSection";
-import { FilterBar } from "@/components/workshop/FilterBar";
-import { WorkshopFeed } from "@/components/workshop/WorkshopFeed";
-import { Footer } from "@/components/workshop/Footer";
+export const revalidate = 60; // Revalidate the page every 60 seconds (ISR)
 
-export default function Home() {
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const [resultCount, setResultCount] = useState<number>(0);
-  const [searchQuery, setSearchQuery] = useState<string>("");
+export default async function Home() {
+  // 1. Fetch initial designs from Supabase (server-side)
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  return (
-    <div className="bg-paper-texture min-h-screen flex flex-col overflow-x-hidden selection:bg-primary selection:text-black">
-      <WorkshopHeader
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
-      <main className="flex-grow">
-        <HeroSection />
-        <FilterBar
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
-          resultCount={resultCount}
-          searchQuery={searchQuery}
-        />
-        <WorkshopFeed
-          activeFilter={activeFilter}
-          searchQuery={searchQuery}
-          onResultCountChange={setResultCount}
-        />
-      </main>
-      <Footer />
-    </div>
-  );
+  let initialPrompts: Prompt[] = [];
+
+  if (supabaseUrl && supabaseAnonKey) {
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const ITEMS_PER_PAGE = 12;
+
+    const { data } = await supabase
+      .from('designs')
+      .select(`
+                *,
+                profiles (
+                    username,
+                    avatar_url
+                )
+            `)
+      .order('created_at', { ascending: false })
+      .limit(ITEMS_PER_PAGE);
+
+    if (data) {
+      const dbPrompts: Prompt[] = (data as unknown as DesignDB[]).map(mapDesignToPrompt);
+
+      const promoCard = MOCK_PROMPTS.find(p => p.type === 'promo');
+      initialPrompts = promoCard ? [promoCard, ...dbPrompts] : dbPrompts;
+    }
+  }
+
+  return <WorkshopPageClient initialPrompts={initialPrompts} />;
 }

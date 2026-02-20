@@ -39,24 +39,24 @@ export function Toast({ message, description, type = "success", onClose }: Toast
             }}
             className="pointer-events-auto relative transform -rotate-1"
         >
-            {/* Shadow */}
-            <div className="absolute inset-0 bg-ink translate-x-1 translate-y-1 rounded-sm" />
+            {/* Physical Shadow */}
+            <div className="absolute inset-0 bg-ink translate-x-2 translate-y-2 rounded-sm" />
 
             {/* Toast Content */}
-            <div className={`relative ${colorMap[type]} border-4 border-ink p-4 min-w-[280px] max-w-[400px]`}>
+            <div className={`relative ${colorMap[type]} border-4 border-ink p-4 min-w-[280px] max-w-[400px] shadow-[inset_0_4px_0_0_rgba(255,255,255,0.3)]`}>
                 <div className="flex items-start gap-3">
                     {/* Icon */}
-                    <div className="flex-shrink-0 w-6 h-6 bg-white border-2 border-ink rounded-full flex items-center justify-center">
-                        <Icon className="w-4 h-4 text-ink" strokeWidth={3} />
+                    <div className="flex-shrink-0 w-8 h-8 bg-white border-2 border-ink rounded-full flex items-center justify-center shadow-[2px_2px_0_0_#000]">
+                        <Icon className="w-5 h-5 text-ink" strokeWidth={3} />
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 min-w-0">
-                        <p className="font-mono font-bold text-sm text-white leading-tight">
+                    <div className="flex-1 min-w-0 pt-0.5">
+                        <p className="font-mono font-black text-base text-ink leading-tight uppercase tracking-tight">
                             {message}
                         </p>
                         {description && (
-                            <p className="font-mono text-xs text-white/90 mt-1 leading-tight">
+                            <p className="font-mono font-bold text-sm text-ink/80 mt-1 leading-snug">
                                 {description}
                             </p>
                         )}
@@ -66,10 +66,10 @@ export function Toast({ message, description, type = "success", onClose }: Toast
                     {onClose && (
                         <button
                             onClick={onClose}
-                            className="flex-shrink-0 w-5 h-5 flex items-center justify-center hover:bg-white/20 transition-colors rounded-sm"
+                            className="flex-shrink-0 w-6 h-6 flex items-center justify-center border-2 border-transparent hover:border-ink hover:bg-white transition-all rounded-sm group active:translate-y-px"
                             aria-label="Close"
                         >
-                            <X className="w-4 h-4 text-white" strokeWidth={3} />
+                            <X className="w-5 h-5 text-ink group-hover:scale-110 transition-transform" strokeWidth={3} />
                         </button>
                     )}
                 </div>

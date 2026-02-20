@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(request: NextRequest) {
     const requestUrl = new URL(request.url)
     const code = requestUrl.searchParams.get('code')
+    const type = requestUrl.searchParams.get('type')
 
     if (code) {
         const cookieStore = await cookies()
@@ -34,9 +35,13 @@ export async function GET(request: NextRequest) {
             }
         )
         await supabase.auth.exchangeCodeForSession(code)
+
+        // If this is a password recovery, redirect to reset-password page
+        if (type === 'recovery') {
+            return NextResponse.redirect(new URL('/auth/reset-password', requestUrl.origin))
+        }
     }
 
-    // URL to redirect to after sign in process completes
+    // Default: redirect to home after sign in
     return NextResponse.redirect(new URL('/', requestUrl.origin))
 }
-

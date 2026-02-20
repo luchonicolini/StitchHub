@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { Construction, Plus } from "lucide-react";
+import { motion } from "framer-motion";
 
-interface DetailViewHeaderProps {
-    // onClose prop removed as logo now links to home
-}
 
-export function DetailViewHeader({ }: DetailViewHeaderProps) {
+
+export function DetailViewHeader() {
     return (
         <header className="sticky top-0 z-50 w-full border-b-4 border-ink bg-background-light py-4 shadow-[0_4px_0_0_#000000]">
             <div className="max-w-7xl mx-auto px-4 md:px-8 flex items-center justify-between gap-4">
@@ -25,10 +24,13 @@ export function DetailViewHeader({ }: DetailViewHeaderProps) {
                 </Link>
 
                 {/* Right Side - Submit Button */}
-                <button className="bg-primary hover:bg-primary/90 text-ink border-3 border-ink px-6 py-3 font-black uppercase text-sm shadow-hard hover:shadow-hard-sm hover:translate-y-0.5 active:translate-y-1 active:shadow-none transition-all duration-200 flex items-center gap-2 group">
+                <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-primary hover:bg-primary/90 text-ink border-3 border-ink px-6 py-3 font-black uppercase text-sm shadow-hard hover:shadow-hard-sm hover:translate-y-0.5 active:translate-y-1 active:shadow-none transition-all duration-200 flex items-center gap-2 group"
+                >
                     <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
                     Submit Prompt
-                </button>
+                </motion.button>
             </div>
         </header>
     );

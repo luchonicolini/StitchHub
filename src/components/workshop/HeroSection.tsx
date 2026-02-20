@@ -1,5 +1,7 @@
 "use client";
 
+import { Compass, HelpCircle } from "lucide-react";
+
 export function HeroSection() {
     return (
         <section className="relative py-24 md:py-32 px-4 overflow-hidden bg-background-light">
@@ -70,13 +72,13 @@ export function HeroSection() {
                     <button className="group relative px-10 py-4 bg-ink text-white font-black text-xl border-4 border-ink hover:bg-white hover:text-ink transition-all duration-400 ease-in-out overflow-hidden">
                         <span className="absolute top-0 left-0 w-full h-full bg-accent-green transform translate-x-2 translate-y-2 -z-10 border-4 border-ink transition-all duration-400 ease-in-out group-hover:translate-x-0 group-hover:translate-y-0 group-hover:bg-primary" />
                         <span className="relative flex items-center gap-2">
-                            <span className="material-icons">explore</span>
+                            <Compass className="w-6 h-6" />
                             Start Browsing
                         </span>
                     </button>
                     <button className="group px-10 py-4 bg-white text-ink font-black text-xl border-4 border-ink hover:bg-primary hover:text-ink transition-all duration-400 ease-in-out shadow-hard hover:shadow-none hover:translate-x-1 hover:translate-y-1">
                         <span className="flex items-center gap-2">
-                            <span className="material-icons">help_outline</span>
+                            <HelpCircle className="w-6 h-6" />
                             How it works ?
                         </span>
                     </button>

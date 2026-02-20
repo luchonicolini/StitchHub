@@ -1,5 +1,7 @@
 "use client";
 
+import { BarChart3, Smartphone, ShoppingCart, Code, TrendingUp, Palette, type LucideIcon } from "lucide-react";
+
 interface FilterBarProps {
     activeFilter: string | null;
     onFilterChange: (filter: string | null) => void;
@@ -9,13 +11,13 @@ interface FilterBarProps {
 
 export function FilterBar({ activeFilter, onFilterChange, resultCount, searchQuery }: FilterBarProps) {
     // Updated filters to match actual card tags
-    const filters = [
-        { name: "#Analytics", icon: "analytics", rotation: "rotate-1", color: "hover:bg-accent-orange" },
-        { name: "#Mobile", icon: "smartphone", rotation: "-rotate-2", color: "hover:bg-accent-green" },
-        { name: "#Shop", icon: "shopping_cart", rotation: "rotate-2", color: "hover:bg-ink hover:text-white" },
-        { name: "#Developer", icon: "code", rotation: "-rotate-1", color: "hover:bg-accent-orange" },
-        { name: "#Trend", icon: "trending_up", rotation: "rotate-1", color: "hover:bg-accent-green" },
-        { name: "#UI", icon: "palette", rotation: "-rotate-2", color: "hover:bg-ink hover:text-white" },
+    const filters: { name: string; icon: LucideIcon; rotation: string; color: string }[] = [
+        { name: "#Analytics", icon: BarChart3, rotation: "rotate-1", color: "hover:bg-accent-orange" },
+        { name: "#Mobile", icon: Smartphone, rotation: "-rotate-2", color: "hover:bg-accent-green" },
+        { name: "#Shop", icon: ShoppingCart, rotation: "rotate-2", color: "hover:bg-ink hover:text-white" },
+        { name: "#Developer", icon: Code, rotation: "-rotate-1", color: "hover:bg-accent-orange" },
+        { name: "#Trend", icon: TrendingUp, rotation: "rotate-1", color: "hover:bg-accent-green" },
+        { name: "#UI", icon: Palette, rotation: "-rotate-2", color: "hover:bg-ink hover:text-white" },
     ];
 
     return (
@@ -46,7 +48,7 @@ export function FilterBar({ activeFilter, onFilterChange, resultCount, searchQue
                             >
                                 {/* Icon + Text */}
                                 <span className={isActive ? "flex items-center gap-2 !text-white" : "flex items-center gap-2"}>
-                                    <span className="material-icons text-base">{filter.icon}</span>
+                                    <filter.icon className="w-4 h-4" />
                                     <span>{filter.name}</span>
                                 </span>
 

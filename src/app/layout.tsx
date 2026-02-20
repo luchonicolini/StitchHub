@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Space_Mono } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
 import { ToastProvider } from "@/hooks/useToast";
 import { AuthInitializer } from "@/components/auth/AuthInitializer";
 
@@ -26,11 +27,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${spaceGrotesk.variable} ${spaceMono.variable} antialiased bg-background-light dark:bg-background-dark text-ink dark:text-white font-display`}
       >
         <AuthInitializer />
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            style: {
+              fontFamily: 'var(--font-space-mono)',
+              border: '2px solid #1a1a1a',
+              borderRadius: '4px',
+              boxShadow: '3px 3px 0 0 #1a1a1a',
+            },
+          }}
+        />
         <ToastProvider>
           {children}
         </ToastProvider>

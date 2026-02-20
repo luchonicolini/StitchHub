@@ -30,6 +30,7 @@ export interface PromptCardProps {
     author: Author;
     image: string;
     imageAlt: string;
+    gallery?: string[];
     pinColor?: PinColor;
     rotation?: string;
     featured?: boolean;

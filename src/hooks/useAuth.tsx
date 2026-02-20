@@ -17,6 +17,8 @@ interface AuthState {
     loginWithGoogle: () => Promise<void>;
     logout: () => Promise<void>;
     updateProfile: (username: string) => Promise<{ error: string | null }>;
+    resetPassword: (email: string) => Promise<{ error: string | null }>;
+    updatePassword: (newPassword: string) => Promise<{ error: string | null }>;
     initialize: () => Promise<{ unsubscribe: () => void }>;
 }
 
@@ -218,6 +220,20 @@ export const useAuth = create<AuthState>((set, get) => ({
             isAuthenticated: false,
             user: null
         });
+    },
+
+    resetPassword: async (email: string) => {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: `${window.location.origin}/auth/callback?type=recovery`
+        });
+        if (error) return { error: error.message };
+        return { error: null };
+    },
+
+    updatePassword: async (newPassword: string) => {
+        const { error } = await supabase.auth.updateUser({ password: newPassword });
+        if (error) return { error: error.message };
+        return { error: null };
     }
 }));
 
