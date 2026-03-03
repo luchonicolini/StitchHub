@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Eye, EyeOff, Mail, Lock, LogIn, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, LogIn, AlertCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -63,24 +63,34 @@ export function LoginForm({ onSwitchToRegister, onForgotPassword }: LoginFormPro
         setLoading(true);
         setError(null);
 
-        const { error } = await supabase.auth.signInWithPassword({
-            email,
-            password
-        });
+        try {
+            const { error: signInError } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
 
-        if (error) {
-            console.error('Login error:', error);
-            setError(error.message);
+            if (signInError) {
+                console.error('Login error:', signInError);
+                setError(signInError.message);
+                setShake(true);
+                toast.error("Login failed", {
+                    description: signInError.message,
+                });
+                setTimeout(() => setShake(false), 500);
+            } else {
+                toast.success("Welcome back! 👋", {
+                    description: "Redirecting you now...",
+                });
+                setTimeout(() => router.push(returnUrl || "/"), 600);
+            }
+        } catch (err: any) {
+            console.error('Unexpected login exception:', err);
+            setError(err.message || 'An unexpected error occurred during login.');
             setShake(true);
             toast.error("Login failed", {
-                description: error.message,
+                description: err.message || 'An unexpected error occurred.',
             });
             setTimeout(() => setShake(false), 500);
-        } else {
-            toast.success("Welcome back! 👋", {
-                description: "Redirecting you now...",
-            });
-            setTimeout(() => router.push(returnUrl || "/"), 600);
         }
 
         setLoading(false);
@@ -124,27 +134,21 @@ export function LoginForm({ onSwitchToRegister, onForgotPassword }: LoginFormPro
                         onBlur={() => setEmailTouched(true)}
                         placeholder="your@email.com"
                         required
-                        className={`w-full bg-white border pl-11 pr-10 py-3 font-mono text-sm text-ink placeholder:text-ink/30 focus:ring-0 focus:border-primary focus:shadow-[0_0_0_3px_rgba(255,215,0,0.2)] transition-all outline-none rounded-sm ${showEmailFeedback
-                                ? emailValid
-                                    ? "border-green-400"
-                                    : "border-red-400"
-                                : "border-ink/20"
+                        className={`w-full bg-white border pl-11 pr-10 py-3 font-mono text-sm text-ink placeholder:text-ink/30 focus:ring-0 focus:border-primary focus:shadow-[0_0_0_3px_rgba(255,215,0,0.2)] transition-all outline-none rounded-sm ${(showEmailFeedback && !emailValid) || error
+                            ? "border-red-400"
+                            : "border-ink/20"
                             }`}
                     />
                     {/* Validation icon */}
                     <AnimatePresence>
-                        {showEmailFeedback && (
+                        {((showEmailFeedback && !emailValid) || error) && (
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.5 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.5 }}
                                 className="absolute right-3 top-1/2 -translate-y-1/2"
                             >
-                                {emailValid ? (
-                                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                ) : (
-                                    <AlertCircle className="w-4 h-4 text-red-400" />
-                                )}
+                                <AlertCircle className="w-4 h-4 text-red-400" />
                             </motion.div>
                         )}
                     </AnimatePresence>
@@ -186,7 +190,8 @@ export function LoginForm({ onSwitchToRegister, onForgotPassword }: LoginFormPro
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
                         required
-                        className="w-full bg-white border border-ink/20 pl-11 pr-12 py-3 font-mono text-sm text-ink placeholder:text-ink/30 focus:ring-0 focus:border-primary focus:shadow-[0_0_0_3px_rgba(255,215,0,0.2)] transition-all outline-none rounded-sm"
+                        className={`w-full bg-white border pl-11 pr-12 py-3 font-mono text-sm text-ink placeholder:text-ink/30 focus:ring-0 focus:border-primary focus:shadow-[0_0_0_3px_rgba(255,215,0,0.2)] transition-all outline-none rounded-sm ${error ? "border-red-400" : "border-ink/20"
+                            }`}
                     />
                     <button
                         type="button"

@@ -7,6 +7,8 @@
   --color-background-dark: #0F172A;
   --color-accent-orange: #FF6B6B;
   --color-accent-green: #4ECDC4;
+  --color-accent-cyan: #0CECD9;
+  --color-accent-magenta: #FF70A6;
   --color-ink: #000000;
 
   --font-display: var(--font-space-grotesk);

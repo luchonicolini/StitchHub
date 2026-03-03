@@ -7,7 +7,7 @@ import Image from "next/image";
 import { PromptCardProps } from "./PromptCard";
 import { useToast } from "@/hooks/useToast";
 import { Footer } from "./Footer";
-import { DetailViewHeader } from "./DetailViewHeader";
+import { WorkshopHeader } from "./WorkshopHeader";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
@@ -121,10 +121,10 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                     className="fixed inset-0 w-full h-full bg-[#f0f0f0] overflow-y-auto z-[110] bg-paper-texture"
                 >
                     {/* Detail View Header */}
-                    <DetailViewHeader />
+                    <WorkshopHeader showSearch={false} />
 
                     {/* Back Navigation - Subtle & Left-aligned */}
-                    <div className="bg-white">
+                    <div className="bg-transparent">
                         <div className="max-w-7xl mx-auto px-4 md:px-8 py-3 flex justify-start">
                             <button
                                 onClick={onClose}
@@ -231,46 +231,82 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                                 </div>
                             </div>
 
-                            {/* Terminal Code Snippet */}
-                            <div className="relative mt-8 group">
-                                <div className="bg-[#1a1b26] rounded-lg border-4 border-ink shadow-hard overflow-hidden">
-                                    {/* Terminal Header */}
-                                    <div className="bg-[#1a1b26] border-b border-white/10 px-4 py-3 flex items-center gap-4">
-                                        <div className="flex gap-2">
-                                            <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
-                                            <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
-                                            <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
-                                        </div>
-                                        <div className="flex-1 text-center font-mono text-xs text-white/40">
-                                            ~/stitch/generated-output/index.html
-                                        </div>
-                                        <div className="w-12"></div>
+                            {/* Spiral Notebook Prompt (Moved to Left Column for Width) */}
+                            <div className="relative mt-12 mb-8">
+                                {/* Spiral Binding Visuals */}
+                                <div className="absolute -top-6 left-0 right-0 flex justify-between px-8 md:px-16 z-20">
+                                    {[...Array(8)].map((_, i) => (
+                                        <div key={i} className="w-4 h-12 bg-[#d1d5db] border-2 border-ink rounded-full shadow-sm"></div>
+                                    ))}
+                                </div>
+
+                                <div className="bg-white border-4 border-ink p-8 md:p-12 pt-16 shadow-hard relative">
+                                    <div className="flex items-center gap-2 mb-6 text-ink/50 font-mono text-sm uppercase font-bold">
+                                        <Sparkles className="w-5 h-5" />
+                                        Stitch Recipe
                                     </div>
-                                    {/* Terminal Tabs */}
-                                    <div className="flex border-b border-white/10 bg-[#1a1b26]">
-                                        <div className="px-6 py-2 bg-[#4d79ff] text-white font-mono text-xs font-bold border-r border-white/10">HTML</div>
-                                        <div className="px-6 py-2 text-white/40 font-mono text-xs font-bold border-r border-white/10 hover:bg-white/5 cursor-pointer">CSS</div>
-                                        <div className="px-6 py-2 text-white/40 font-mono text-xs font-bold hover:bg-white/5 cursor-pointer">React</div>
-                                    </div>
-                                    {/* Code Content with Syntax Highlighting */}
-                                    <div className="overflow-x-auto">
-                                        <SyntaxHighlighter
-                                            language="jsx"
-                                            style={vscDarkPlus}
-                                            customStyle={{
-                                                margin: 0,
-                                                padding: '1.5rem',
-                                                background: '#1a1b26',
-                                                fontSize: '13px',
-                                                lineHeight: '1.6',
-                                            }}
-                                            showLineNumbers={false}
-                                        >
-                                            {card.codeSnippet || "<!-- No code snippet available -->"}
-                                        </SyntaxHighlighter>
+
+                                    {/* Expandable Prompt */}
+                                    <div className="relative">
+                                        <p className={`font-mono text-base md:text-lg leading-relaxed text-ink/90 break-words ${!isPromptExpanded && card.prompt.length > 500 ? 'line-clamp-6' : ''}`}>
+                                            &quot;{card.prompt}&quot;
+                                        </p>
+
+                                        {/* Read More / Show Less Button */}
+                                        {card.prompt.length > 500 && (
+                                            <button
+                                                onClick={() => setIsPromptExpanded(!isPromptExpanded)}
+                                                className="mt-6 font-mono font-bold text-ink/60 hover:text-ink underline decoration-2 underline-offset-4 hover:decoration-primary transition-all duration-200 uppercase bg-ink/5 px-4 py-2"
+                                            >
+                                                {isPromptExpanded ? '← Collapse Recipe' : 'Read Full Recipe →'}
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Terminal Code Snippet */}
+                            {card.codeSnippet && (
+                                <div className="relative mt-8 group">
+                                    <div className="bg-[#1a1b26] rounded-lg border-4 border-ink shadow-hard overflow-hidden">
+                                        {/* Terminal Header */}
+                                        <div className="bg-[#1a1b26] border-b border-white/10 px-4 py-3 flex items-center gap-4">
+                                            <div className="flex gap-2">
+                                                <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+                                                <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+                                                <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+                                            </div>
+                                            <div className="flex-1 text-center font-mono text-xs text-white/40">
+                                                ~/stitch/generated-output/index.html
+                                            </div>
+                                            <div className="w-12"></div>
+                                        </div>
+                                        {/* Terminal Tabs */}
+                                        <div className="flex border-b border-white/10 bg-[#1a1b26]">
+                                            <div className="px-6 py-2 bg-[#4d79ff] text-white font-mono text-xs font-bold border-r border-white/10">HTML</div>
+                                            <div className="px-6 py-2 text-white/40 font-mono text-xs font-bold border-r border-white/10 hover:bg-white/5 cursor-pointer">CSS</div>
+                                            <div className="px-6 py-2 text-white/40 font-mono text-xs font-bold hover:bg-white/5 cursor-pointer">React</div>
+                                        </div>
+                                        {/* Code Content with Syntax Highlighting */}
+                                        <div className="overflow-x-auto">
+                                            <SyntaxHighlighter
+                                                language="jsx"
+                                                style={vscDarkPlus}
+                                                customStyle={{
+                                                    margin: 0,
+                                                    padding: '1.5rem',
+                                                    background: '#1a1b26',
+                                                    fontSize: '13px',
+                                                    lineHeight: '1.6',
+                                                }}
+                                                showLineNumbers={false}
+                                            >
+                                                {card.codeSnippet || "<!-- No code snippet available -->"}
+                                            </SyntaxHighlighter>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                         </div>
 
@@ -308,60 +344,24 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
 
                             <hr className="border-t-4 border-ink border-dashed my-2 opacity-20" />
 
-                            {/* Spiral Notebook Prompt */}
-                            <div className="relative mt-4">
-                                {/* Spiral Binding Visuals */}
-                                <div className="absolute -top-6 left-0 right-0 flex justify-between px-8 z-20">
-                                    {[...Array(6)].map((_, i) => (
-                                        <div key={i} className="w-4 h-12 bg-[#d1d5db] border-2 border-ink rounded-full shadow-sm"></div>
-                                    ))}
-                                </div>
-
-                                <div className="bg-white border-4 border-ink p-8 pt-12 shadow-hard relative">
-                                    <div className="flex items-center gap-2 mb-4 text-ink/50 font-mono text-sm uppercase font-bold">
-                                        <Sparkles className="w-4 h-4" />
-                                        Stitch Recipe
-                                    </div>
-
-                                    {/* Expandable Prompt */}
-                                    <div className="relative">
-                                        <p className={`font-mono text-sm leading-relaxed text-ink/80 ${!isPromptExpanded && card.prompt.length > 200 ? 'line-clamp-4' : ''} break-words overflow-hidden`}>
-                                            &quot;{card.prompt}&quot;
-                                        </p>
-
-                                        {/* Read More / Show Less Button */}
-                                        {card.prompt.length > 200 && (
-                                            <button
-                                                onClick={() => setIsPromptExpanded(!isPromptExpanded)}
-                                                className="mt-3 text-xs font-mono font-bold text-ink/60 hover:text-ink underline decoration-2 underline-offset-2 hover:decoration-primary transition-all duration-200 uppercase"
-                                            >
-                                                {isPromptExpanded ? '← Show Less' : 'Read More →'}
-                                            </button>
-                                        )}
-                                    </div>
-
-                                    {/* Copy Button styled as attached clickable element */}
-                                    <div className="absolute -bottom-6 -right-2">
-                                        <button
-                                            onClick={handleCopy}
-                                            className={`font-bold px-6 py-3 border-4 border-ink shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-none transition-all flex items-center gap-2 uppercase active:scale-95 ${copied ? 'bg-[#27c93f] text-white' : 'bg-[#4d79ff] text-white'
-                                                }`}
-                                        >
-                                            {copied ? (
-                                                <>
-                                                    <Check className="w-4 h-4" />
-                                                    Copied!
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Copy className="w-4 h-4" />
-                                                    Clone Recipe
-                                                </>
-                                            )}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            {/* Primary Action: Sticky Copy Button */}
+                            <button
+                                onClick={handleCopy}
+                                className={`w-full font-black text-lg px-6 py-5 border-4 border-ink shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all flex justify-center items-center gap-3 uppercase mt-4 ${copied ? 'bg-[#27c93f] text-white' : 'bg-primary text-ink'
+                                    }`}
+                            >
+                                {copied ? (
+                                    <>
+                                        <Check className="w-6 h-6" />
+                                        Recipe Copied!
+                                    </>
+                                ) : (
+                                    <>
+                                        <Copy className="w-6 h-6" />
+                                        Clone Recipe
+                                    </>
+                                )}
+                            </button>
 
                             {/* Stats */}
                             <div className="grid grid-cols-3 gap-4 mt-8">

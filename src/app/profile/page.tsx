@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/useToast";
 import { CardDetailModal } from "@/components/workshop/CardDetailModal";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
 import { Footer } from "@/components/workshop/Footer";
+import { WorkshopHeader } from "@/components/workshop/WorkshopHeader";
 
 
 
@@ -132,7 +133,7 @@ export default function ProfilePage() {
 
     if (loading || !user) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center bg-background-light">
                 <Loader2 className="w-8 h-8 animate-spin text-ink" />
             </div>
         );
@@ -140,23 +141,24 @@ export default function ProfilePage() {
 
     return (
         <div className="min-h-screen flex flex-col bg-background-light">
+            <WorkshopHeader showSearch={false} />
             <main className="flex-grow">
                 <ProfileHeader
                     totalDesigns={myDesigns.length}
                 />
 
                 <div className="max-w-7xl mx-auto px-4">
-                    <div className="mb-12 flex items-end gap-6">
-                        <div className="relative">
-                            <h2 className="font-black text-5xl uppercase text-ink leading-none">
+                    <div className="mb-12 md:mb-16 flex flex-col md:flex-row md:items-end gap-6 md:gap-8 overflow-visible px-4">
+                        <div className="flex flex-row items-center gap-4 shrink-0">
+                            <h2 className="font-black text-5xl md:text-7xl uppercase text-ink leading-none transform -skew-x-[3deg]">
                                 My Collection
                             </h2>
-                            <span className="absolute -top-4 -right-8 bg-accent-yellow text-ink text-xs font-black px-2 py-1 border-2 border-ink shadow-sm transform rotate-6">
+                            <div className="bg-accent-yellow text-ink text-sm md:text-base font-black px-4 py-2 border-4 border-ink shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-[12deg] z-10 hover:rotate-6 transition-transform cursor-default translate-y-[-0.5rem] md:translate-y-[-1rem]">
                                 {myDesigns.length} ITEMS
-                            </span>
+                            </div>
                         </div>
                         {/* Thick Line Separator */}
-                        <div className="h-2 flex-1 bg-ink shadow-sm mb-2"></div>
+                        <div className="h-4 flex-1 bg-ink shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] w-full block mt-2 md:mt-0 md:translate-y-[-0.5rem] rounded-r-full"></div>
                     </div>
 
                     {loadingDesigns ? (

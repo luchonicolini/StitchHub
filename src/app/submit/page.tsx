@@ -30,7 +30,7 @@ export default function SubmitPage() {
 
     return (
         <div className="min-h-screen bg-background-light">
-            <WorkshopHeader />
+            <WorkshopHeader showSearch={false} />
             <main className="container mx-auto px-4 py-12">
                 <div className="max-w-4xl mx-auto">
                     <div className="mb-8">

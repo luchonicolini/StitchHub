@@ -9,9 +9,10 @@ import { motion } from "framer-motion";
 interface WorkshopHeaderProps {
     searchQuery?: string;
     onSearchChange?: (query: string) => void;
+    showSearch?: boolean;
 }
 
-export function WorkshopHeader({ searchQuery = "", onSearchChange }: WorkshopHeaderProps) {
+export function WorkshopHeader({ searchQuery = "", onSearchChange, showSearch = true }: WorkshopHeaderProps) {
     const { isAuthenticated, user, logout } = useAuth();
 
     return (
@@ -29,36 +30,38 @@ export function WorkshopHeader({ searchQuery = "", onSearchChange }: WorkshopHea
                     </Link>
 
                     {/* Enhanced Search Bar */}
-                    <div className="relative w-full md:w-auto flex-1 max-w-md mx-4">
-                        {/* Decorative Pin */}
-                        <div className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-6 h-6 rounded-full bg-accent-orange border-2 border-ink" />
+                    {showSearch && (
+                        <div className="relative w-full md:w-auto flex-1 max-w-md mx-4">
+                            {/* Decorative Pin */}
+                            <div className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-6 h-6 rounded-full bg-accent-orange border-2 border-ink" />
 
-                        <div className="relative flex items-center">
-                            <input
-                                className="w-full bg-[#e8e4d9] border-3 border-ink pl-10 pr-16 py-3 font-mono text-sm font-bold text-ink 
+                            <div className="relative flex items-center">
+                                <input
+                                    className="w-full bg-[#e8e4d9] border-3 border-ink pl-10 pr-16 py-3 font-mono text-sm font-bold text-ink 
                                 focus:ring-0 focus:border-primary focus:bg-white focus:shadow-hard-sm
                                 transition-all placeholder-ink/50 outline-none rounded-none shadow-hard-sm"
-                                placeholder="Search prompts..."
-                                type="text"
-                                value={searchQuery}
-                                onChange={(e) => onSearchChange?.(e.target.value)}
-                            />
-                            {/* Clear button when there's text */}
-                            {searchQuery && (
-                                <button
-                                    onClick={() => onSearchChange?.("")}
-                                    className="absolute right-12 w-6 h-6 rounded-full bg-ink text-white hover:bg-accent-orange transition-colors duration-200 flex items-center justify-center"
-                                    aria-label="Clear search"
-                                >
-                                    <X className="w-4 h-4 stroke-[3]" />
+                                    placeholder="Search prompts..."
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => onSearchChange?.(e.target.value)}
+                                />
+                                {/* Clear button when there's text */}
+                                {searchQuery && (
+                                    <button
+                                        onClick={() => onSearchChange?.("")}
+                                        className="absolute right-12 w-6 h-6 rounded-full bg-ink text-white hover:bg-accent-orange transition-colors duration-200 flex items-center justify-center"
+                                        aria-label="Clear search"
+                                    >
+                                        <X className="w-4 h-4 stroke-[3]" />
+                                    </button>
+                                )}
+                                {/* Search icon button */}
+                                <button className="absolute right-2 w-9 h-9 rounded-full bg-accent-orange border-2 border-ink text-white hover:bg-primary hover:scale-110 transition-all duration-300 ease-in-out flex items-center justify-center">
+                                    <Search className="w-4 h-4 stroke-[3]" />
                                 </button>
-                            )}
-                            {/* Search icon button */}
-                            <button className="absolute right-2 w-9 h-9 rounded-full bg-accent-orange border-2 border-ink text-white hover:bg-primary hover:scale-110 transition-all duration-300 ease-in-out flex items-center justify-center">
-                                <Search className="w-4 h-4 stroke-[3]" />
-                            </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Nav Actions */}
                     <nav className="flex items-center gap-6">

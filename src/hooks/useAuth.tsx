@@ -4,10 +4,16 @@ import { create } from "zustand";
 import { supabase } from "@/lib/supabase";
 import { useEffect } from "react";
 
+interface ProfileUpdate {
+    username?: string;
+    avatar_url?: string;
+    cover_image_url?: string;
+}
+
 interface AuthState {
     isAuthModalOpen: boolean;
     isAuthenticated: boolean;
-    user: { username: string; email: string; id: string; avatar_url: string | null } | null;
+    user: { username: string; email: string; id: string; avatar_url: string | null; cover_image_url: string | null } | null;
     loading: boolean;
     returnUrl: string | null;
     openAuthModal: (returnUrl?: string) => void;
@@ -16,7 +22,7 @@ interface AuthState {
     register: (username: string, email: string, password: string) => Promise<{ error: string | null }>;
     loginWithGoogle: () => Promise<void>;
     logout: () => Promise<void>;
-    updateProfile: (username: string) => Promise<{ error: string | null }>;
+    updateProfile: (updates: ProfileUpdate) => Promise<{ error: string | null }>;
     resetPassword: (email: string) => Promise<{ error: string | null }>;
     updatePassword: (newPassword: string) => Promise<{ error: string | null }>;
     initialize: () => Promise<{ unsubscribe: () => void }>;
@@ -41,7 +47,7 @@ export const useAuth = create<AuthState>((set, get) => ({
             if (session?.user) {
                 const { data: profile } = await supabase
                     .from('profiles')
-                    .select('username, avatar_url')
+                    .select('username, avatar_url, cover_image_url')
                     .eq('id', session.user.id)
                     .single();
 
@@ -51,7 +57,8 @@ export const useAuth = create<AuthState>((set, get) => ({
                         id: session.user.id,
                         email: session.user.email!,
                         username: profile?.username || session.user.email!.split('@')[0],
-                        avatar_url: profile?.avatar_url || null
+                        avatar_url: profile?.avatar_url || null,
+                        cover_image_url: profile?.cover_image_url || null
                     },
                     loading: false
                 });
@@ -68,7 +75,7 @@ export const useAuth = create<AuthState>((set, get) => ({
             if (session?.user) {
                 const { data: profile } = await supabase
                     .from('profiles')
-                    .select('username, avatar_url')
+                    .select('username, avatar_url, cover_image_url')
                     .eq('id', session.user.id)
                     .single();
 
@@ -78,7 +85,8 @@ export const useAuth = create<AuthState>((set, get) => ({
                         id: session.user.id,
                         email: session.user.email!,
                         username: profile?.username || session.user.email!.split('@')[0],
-                        avatar_url: profile?.avatar_url || null
+                        avatar_url: profile?.avatar_url || null,
+                        cover_image_url: profile?.cover_image_url || null
                     }
                 });
             } else {
@@ -108,7 +116,7 @@ export const useAuth = create<AuthState>((set, get) => ({
         if (data.user) {
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('username, avatar_url')
+                .select('username, avatar_url, cover_image_url')
                 .eq('id', data.user.id)
                 .single();
 
@@ -118,7 +126,8 @@ export const useAuth = create<AuthState>((set, get) => ({
                     id: data.user.id,
                     email: data.user.email!,
                     username: profile?.username || data.user.email!.split('@')[0],
-                    avatar_url: profile?.avatar_url || null
+                    avatar_url: profile?.avatar_url || null,
+                    cover_image_url: profile?.cover_image_url || null
                 }
             });
         }
@@ -160,7 +169,8 @@ export const useAuth = create<AuthState>((set, get) => ({
                     id: data.user.id,
                     email: data.user.email!,
                     username,
-                    avatar_url: null
+                    avatar_url: null,
+                    cover_image_url: null
                 }
             });
         }
@@ -181,18 +191,25 @@ export const useAuth = create<AuthState>((set, get) => ({
         }
     },
 
-    updateProfile: async (username: string) => {
+    updateProfile: async (updates: ProfileUpdate) => {
         try {
             const user = get().user;
             if (!user) return { error: "No user logged in" };
 
+            // Only send non-undefined fields to DB
+            const dbUpdates: Record<string, string> = {};
+            if (updates.username !== undefined) dbUpdates.username = updates.username;
+            if (updates.avatar_url !== undefined) dbUpdates.avatar_url = updates.avatar_url;
+            if (updates.cover_image_url !== undefined) dbUpdates.cover_image_url = updates.cover_image_url;
+
+            if (Object.keys(dbUpdates).length === 0) return { error: null };
+
             const { error } = await supabase
                 .from('profiles')
-                .update({ username })
+                .update(dbUpdates)
                 .eq('id', user.id);
 
             if (error) {
-                // Check for unique violation (Postgres code 23505)
                 if (error.code === '23505') {
                     return { error: "Username is already taken" };
                 }
@@ -203,7 +220,7 @@ export const useAuth = create<AuthState>((set, get) => ({
             set({
                 user: {
                     ...user,
-                    username
+                    ...updates
                 }
             });
 

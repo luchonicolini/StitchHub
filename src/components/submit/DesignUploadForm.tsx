@@ -266,11 +266,11 @@ export function DesignUploadForm() {
             {/* Prompt Content */}
             <div>
                 <label className="block font-mono font-bold text-sm uppercase text-ink mb-3">
-                    Stitch Prompt * <span className="text-ink/40 text-xs">({promptContent.length}/2000)</span>
+                    Stitch Prompt * <span className="text-ink/40 text-xs">({promptContent.length}/10000)</span>
                 </label>
                 <textarea
                     value={promptContent}
-                    onChange={(e) => setPromptContent(e.target.value.slice(0, 2000))}
+                    onChange={(e) => setPromptContent(e.target.value.slice(0, 10000))}
                     placeholder="Create a modern e-commerce dashboard with product analytics, sales charts, and inventory management. Use a clean, professional design with card-based layout..."
                     required
                     rows={8}
