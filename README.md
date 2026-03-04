@@ -39,25 +39,14 @@ cd stitch-hub
 npm install
 ```
 
-### 2. Environment Variables
-Create a `.env.local` file in the root of the project and add your Supabase credentials:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
+### 2. Environment Setup
+To run the full backend functionality, ensure you have set up a Supabase project and configured your environment variables according to the designated auth and database requirements.
 
 ### 3. Run the Development Server
 ```bash
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## 🗄️ Database Schema Reference (Supabase)
-StitchHub relies on three main tables:
-- `profiles`: Stores user data, avatars, and bios. Links to Supabase Auth.
-- `designs`: Stores the uploaded designs (title, category, prompt, code snippet, image URLs).
-- `likes`: A join table tracking which user liked which design.
 
 ## 🤝 Contributing
 Contributions, issues, and feature requests are welcome! Feel free to check the issues page if you want to contribute.
