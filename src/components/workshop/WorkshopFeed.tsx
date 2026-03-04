@@ -30,9 +30,10 @@ interface WorkshopFeedProps {
     activeFilter: string | null;
     searchQuery?: string;
     onResultCountChange?: (count: number) => void;
+    onTagClick?: (tag: string) => void;
 }
 
-export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResultCountChange }: WorkshopFeedProps) {
+export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResultCountChange, onTagClick }: WorkshopFeedProps) {
     const ITEMS_PER_PAGE = 12;
     const { user } = useAuth();
 
@@ -306,6 +307,7 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
                                         onClick={() => setSelectedCard(item)}
                                         isLikedByUser={userLikes.has(item.id.toString())}
                                         onToggleLike={() => handleToggleLike(item.id)}
+                                        onTagClick={onTagClick}
                                     />
                                 );
                             })

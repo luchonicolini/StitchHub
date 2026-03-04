@@ -36,6 +36,10 @@ export function WorkshopPageClient({ initialPrompts }: WorkshopPageClientProps) 
                     activeFilter={activeFilter}
                     searchQuery={searchQuery}
                     onResultCountChange={setResultCount}
+                    onTagClick={(tag) => {
+                        setSearchQuery(tag);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
                 />
             </main>
             <Footer />

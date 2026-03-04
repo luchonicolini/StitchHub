@@ -33,7 +33,7 @@ export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
     return (
         <div className="bg-background-light border-b-8 border-ink mb-12 relative w-full overflow-x-hidden">
             {/* Cover Image */}
-            <div className="h-48 md:h-64 w-full bg-accent-yellow relative overflow-hidden flex items-center justify-center">
+            <div className="h-48 md:h-64 w-full bg-accent-yellow relative overflow-hidden flex items-center justify-center border-b-2 border-ink/20">
                 {user.cover_image_url ? (
                     <>
                         {/* eslint-disable-next-line @next/next/no-img-element */}

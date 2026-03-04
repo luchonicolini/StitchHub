@@ -43,4 +43,5 @@ export interface PromptCardProps {
     likesCount?: number;
     isLikedByUser?: boolean;
     onToggleLike?: () => void;
+    onTagClick?: (tag: string) => void;
 }

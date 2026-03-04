@@ -26,7 +26,8 @@ export function PromptCard({
     gallery,
     likesCount = 0,
     isLikedByUser = false,
-    onToggleLike
+    onToggleLike,
+    onTagClick
 }: PromptCardProps) {
     const [copied, setCopied] = useState(false);
     const { showToast } = useToast();
@@ -133,7 +134,13 @@ export function PromptCard({
                         {tags.map((tag) => (
                             <span
                                 key={tag}
-                                className="text-xs font-bold font-mono bg-[#FFF8D6] px-2 py-1 border-2 border-ink text-ink hover:bg-primary transition-colors duration-300 ease-in-out"
+                                onClick={(e) => {
+                                    if (onTagClick) {
+                                        e.stopPropagation();
+                                        onTagClick(tag);
+                                    }
+                                }}
+                                className={`text-xs font-bold font-mono bg-[#FFF8D6] px-2 py-1 border-2 border-ink text-ink transition-colors duration-300 ease-in-out ${onTagClick ? 'hover:bg-primary cursor-pointer active:scale-95' : 'hover:bg-primary'}`}
                             >
                                 {tag}
                             </span>
