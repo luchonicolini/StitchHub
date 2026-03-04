@@ -214,7 +214,9 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
                                     </>
                                 ) : (
                                     <div className="flex items-center justify-center h-full text-ink/40 group-hover:text-ink transition-colors">
-                                        <Camera className="w-6 h-6" />
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src="/images/default-avatar.png" alt="Default Avatar" className="w-full h-full object-cover opacity-50" />
+                                        <Camera className="w-6 h-6 absolute" />
                                     </div>
                                 )}
                                 {avatarUploading && (

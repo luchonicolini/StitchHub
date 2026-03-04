@@ -11,6 +11,8 @@ import { DesignDB, mapDesignToPrompt } from "@/types/design";
 import { MOCK_PROMPTS } from "@/data/mockPrompts";
 import { useFilteredPrompts } from "@/hooks/useFilteredPrompts";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/useToast";
 
 // Motion Variants
 const containerVariants = {
@@ -32,6 +34,7 @@ interface WorkshopFeedProps {
 
 export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResultCountChange }: WorkshopFeedProps) {
     const ITEMS_PER_PAGE = 12;
+    const { user } = useAuth();
 
     const [prompts, setPrompts] = useState<Prompt[]>(initialPrompts);
     const [selectedCard, setSelectedCard] = useState<Prompt | null>(null);
@@ -41,9 +44,62 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
     const initialDesignCount = initialPrompts.filter(p => p.type !== 'promo').length;
     const [hasMore, setHasMore] = useState(initialDesignCount >= ITEMS_PER_PAGE);
 
-    // No longer loading initially since we have SSR data
     const [isLoading, setIsLoading] = useState(false);
     const [isFetchingMore, setIsFetchingMore] = useState(false);
+
+    // Initialize likes as empty for SSR hydration compatibility, will populate via useEffect
+    const [userLikes, setUserLikes] = useState<Set<string>>(new Set());
+
+    const { showToast } = useToast();
+
+    // Fetch user likes once they are authenticated
+    useEffect(() => {
+        if (!user) {
+            // Restore from localStorage when logging out or not logged in yet
+            if (typeof window !== 'undefined') {
+                try {
+                    const saved = localStorage.getItem('stitch_local_likes');
+                    if (saved) {
+                        setUserLikes(new Set(JSON.parse(saved)));
+                        return;
+                    }
+                } catch (e) { }
+            }
+            setUserLikes(new Set());
+            return;
+        }
+
+        const fetchUserLikes = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('likes')
+                    .select('design_id')
+                    .eq('user_id', user.id);
+
+                if (error) throw error;
+                if (data) {
+                    // Prepend db- so it matches the IDs in our state
+                    const dbLikes = data.map(l => `db-${l.design_id}`);
+
+                    setUserLikes(prev => {
+                        // Fallback to re-read local just in case prev was wiped during hydration
+                        let localLikes: string[] = [];
+                        if (typeof window !== 'undefined') {
+                            try {
+                                const saved = localStorage.getItem('stitch_local_likes');
+                                if (saved) localLikes = JSON.parse(saved);
+                            } catch (e) { }
+                        }
+                        return new Set([...localLikes, ...dbLikes]);
+                    });
+                }
+            } catch (err) {
+                console.error("Error fetching user likes:", err);
+            }
+        };
+
+        fetchUserLikes();
+    }, [user]);
 
     const fetchDesigns = async (currentPage: number) => {
         try {
@@ -95,6 +151,88 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
         const nextPage = page + 1;
         setPage(nextPage);
         fetchDesigns(nextPage);
+    };
+
+    const handleToggleLike = async (promptId: string) => {
+        if (!user) {
+            showToast({
+                message: "Login Required",
+                description: "You must be logged in to save designs.",
+                type: "warning",
+            });
+            return;
+        }
+
+        // Clean ID based on how we mapped it from database
+        const isDbDesign = promptId.startsWith('db-');
+        const numericId = isDbDesign ? parseInt(promptId.replace('db-', ''), 10) : NaN;
+        const isCurrentlyLiked = userLikes.has(promptId);
+
+        // Optimistic Update
+        setUserLikes(prev => {
+            const next = new Set(prev);
+            if (isCurrentlyLiked) next.delete(promptId);
+            else next.add(promptId);
+
+            // Save to localStorage so mocks persist across refreshes
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('stitch_local_likes', JSON.stringify(Array.from(next)));
+            }
+
+            return next;
+        });
+
+        setPrompts(prev => prev.map(p => {
+            if (p.id === promptId) {
+                return {
+                    ...p,
+                    likesCount: Math.max(0, (p.likesCount || 0) + (isCurrentlyLiked ? -1 : 1))
+                };
+            }
+            return p;
+        }));
+
+        // Si no es un ID numérico (es decir, es un card de prueba), no intentes guardar en DB
+        if (isNaN(numericId)) return;
+
+        try {
+            if (isCurrentlyLiked) {
+                const { error } = await supabase
+                    .from('likes')
+                    .delete()
+                    .eq('user_id', user.id)
+                    .eq('design_id', numericId);
+                if (error) throw error;
+            } else {
+                const { error } = await supabase
+                    .from('likes')
+                    .insert({ user_id: user.id, design_id: numericId });
+                if (error) throw error;
+            }
+        } catch (err) {
+            console.error("Error toggling like:", err);
+            // Revert on failure
+            setUserLikes(prev => {
+                const next = new Set(prev);
+                if (isCurrentlyLiked) next.add(promptId);
+                else next.delete(promptId);
+
+                if (typeof window !== 'undefined') {
+                    localStorage.setItem('stitch_local_likes', JSON.stringify(Array.from(next)));
+                }
+
+                return next;
+            });
+            setPrompts(prev => prev.map(p => {
+                if (p.id === promptId) {
+                    return {
+                        ...p,
+                        likesCount: Math.max(0, (p.likesCount || 0) + (isCurrentlyLiked ? 1 : -1))
+                    };
+                }
+                return p;
+            }));
+        }
     };
 
     const resultCount = filteredPrompts.filter(item => item.type !== "promo").length;
@@ -166,6 +304,8 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
                                         key={`${item.id}-${index}`}
                                         {...cardProps}
                                         onClick={() => setSelectedCard(item)}
+                                        isLikedByUser={userLikes.has(item.id.toString())}
+                                        onToggleLike={() => handleToggleLike(item.id)}
                                     />
                                 );
                             })

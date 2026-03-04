@@ -34,6 +34,8 @@ export interface Database {
                     code_snippet: string | null
                     category: string | null
                     user_id: string
+                    is_pinned: boolean | null
+                    likes_count: number | null
                 }
                 Insert: {
                     id?: number
@@ -44,6 +46,8 @@ export interface Database {
                     code_snippet?: string | null
                     category?: string | null
                     user_id: string
+                    is_pinned?: boolean | null
+                    likes_count?: number | null
                 }
                 Update: {
                     id?: number
@@ -54,6 +58,28 @@ export interface Database {
                     code_snippet?: string | null
                     category?: string | null
                     user_id?: string
+                    is_pinned?: boolean | null
+                    likes_count?: number | null
+                }
+            }
+            likes: {
+                Row: {
+                    id: string
+                    user_id: string
+                    design_id: number
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    user_id: string
+                    design_id: number
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    user_id?: string
+                    design_id?: number
+                    created_at?: string
                 }
             }
         }

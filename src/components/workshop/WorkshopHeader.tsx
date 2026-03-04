@@ -4,7 +4,9 @@
 import Link from "next/link";
 import { Search, Construction, Plus, X, User, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { LogoutConfirmationModal } from "@/components/auth/LogoutConfirmationModal";
 
 interface WorkshopHeaderProps {
     searchQuery?: string;
@@ -14,6 +16,7 @@ interface WorkshopHeaderProps {
 
 export function WorkshopHeader({ searchQuery = "", onSearchChange, showSearch = true }: WorkshopHeaderProps) {
     const { isAuthenticated, user, logout } = useAuth();
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
     return (
         <>
@@ -86,11 +89,11 @@ export function WorkshopHeader({ searchQuery = "", onSearchChange, showSearch = 
                                     <span className="font-mono font-bold text-sm text-ink">{user.username}</span>
                                 </Link>
                                 <button
-                                    onClick={logout}
-                                    className="p-2 bg-red-500 border-2 border-ink hover:bg-red-600 transition-colors"
+                                    onClick={() => setIsLogoutModalOpen(true)}
+                                    className="p-2 bg-red-500 border-2 border-ink hover:bg-red-600 transition-all hover:-translate-y-1 hover:translate-x-1 hover:shadow-[-4px_4px_0px_0px_rgba(0,0,0,1)] group"
                                     title="Logout"
                                 >
-                                    <LogOut className="w-5 h-5 text-white" />
+                                    <LogOut className="w-5 h-5 text-white group-hover:-translate-x-0.5 transition-transform" />
                                 </button>
                             </div>
                         ) : (
@@ -130,6 +133,15 @@ export function WorkshopHeader({ searchQuery = "", onSearchChange, showSearch = 
                     </nav>
                 </div>
             </header>
+
+            <LogoutConfirmationModal
+                isOpen={isLogoutModalOpen}
+                onClose={() => setIsLogoutModalOpen(false)}
+                onConfirm={() => {
+                    setIsLogoutModalOpen(false);
+                    logout();
+                }}
+            />
         </>
     );
 }

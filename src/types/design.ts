@@ -13,6 +13,7 @@ export interface DesignDB {
     image_url: string;
     image_urls?: string[];
     code_snippet: string;
+    likes_count?: number;
 }
 
 /**
@@ -26,7 +27,7 @@ export function mapDesignToPrompt(d: DesignDB, index: number): Prompt {
         prompt: d.prompt_content,
         author: {
             name: d.profiles?.username || "Unknown",
-            avatar: d.profiles?.avatar_url || "https://github.com/shadcn.png",
+            avatar: d.profiles?.avatar_url || "/images/default-avatar.png",
         },
         image: d.image_url || "",
         gallery:
@@ -38,5 +39,6 @@ export function mapDesignToPrompt(d: DesignDB, index: number): Prompt {
         pinColor: "bg-white",
         rotation: index % 2 === 0 ? "rotate-1" : "-rotate-1",
         type: "card",
+        likesCount: d.likes_count || 0,
     };
 }

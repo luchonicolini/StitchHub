@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { Copy, Check, Trash2, Layers } from "lucide-react";
+import { Copy, Check, Trash2, Layers, Heart } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/useToast";
@@ -24,6 +24,9 @@ export function PromptCard({
     showActions,
     onDelete,
     gallery,
+    likesCount = 0,
+    isLikedByUser = false,
+    onToggleLike
 }: PromptCardProps) {
     const [copied, setCopied] = useState(false);
     const { showToast } = useToast();
@@ -103,7 +106,29 @@ export function PromptCard({
                     )}
                 </div>
                 <div className="px-2">
-                    <h3 className="font-bold text-xl mb-3 text-ink leading-tight">{title}</h3>
+                    <div className="flex justify-between items-start mb-3 gap-2">
+                        <h3 className="font-bold text-xl text-ink leading-tight pr-2 line-clamp-2 break-all">{title}</h3>
+
+                        {/* Likes */}
+                        <div className="flex items-center gap-1.5 shrink-0 bg-gray-50 border-2 border-ink px-2 py-1 shadow-[2px_2px_0_0_#000]">
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (onToggleLike) onToggleLike();
+                                }}
+                                className={`group/like flex items-center justify-center transition-transform active:scale-95`}
+                                title={isLikedByUser ? "Unlike" : "Like"}
+                            >
+                                <Heart
+                                    className={`w-4 h-4 transition-all duration-300 ${isLikedByUser ? 'fill-red-500 text-red-500 scale-110' : 'text-ink/60 group-hover/like:text-red-500 group-hover/like:scale-110'}`}
+                                />
+                            </button>
+                            <span className="font-mono text-xs font-bold text-ink/80 tabular-nums">
+                                {likesCount}
+                            </span>
+                        </div>
+                    </div>
+
                     <div className="flex gap-2 mb-4 flex-wrap">
                         {tags.map((tag) => (
                             <span

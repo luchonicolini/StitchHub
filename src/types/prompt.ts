@@ -19,8 +19,11 @@ export interface Prompt {
     codeSnippet?: string;
     pinColor?: PinColor;
     rotation?: string;
-    featured?: boolean;
     type?: "promo" | "card";
+    isPinned?: boolean;
+    likesCount?: number;
+    isLikedByUser?: boolean;
+    featured?: boolean;
 }
 
 export interface PromptCardProps {
@@ -37,4 +40,7 @@ export interface PromptCardProps {
     onClick?: () => void;
     showActions?: boolean;
     onDelete?: () => void;
+    likesCount?: number;
+    isLikedByUser?: boolean;
+    onToggleLike?: () => void;
 }

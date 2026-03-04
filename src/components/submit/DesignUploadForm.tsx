@@ -111,28 +111,29 @@ export function DesignUploadForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!user) {
-            showToast({ message: 'You must be logged in', type: 'error' });
-            return;
-        }
-
+        // Custom Validations with Toasts
         if (imageFiles.length === 0) {
-            showToast({ message: 'Please upload at least one image', type: 'error' });
+            showToast({ message: '⚠️ Missing Images', description: 'Please upload at least one image of your design.', type: 'error' });
             return;
         }
 
-        if (title.length < 3) {
-            showToast({ message: 'Title must be at least 3 characters', type: 'error' });
-            return;
-        }
-
-        if (promptContent.length < 50) {
-            showToast({ message: 'Prompt must be at least 50 characters', type: 'error' });
+        if (!title.trim() || title.trim().length < 3) {
+            showToast({ message: '⚠️ Title Required', description: 'Please enter a title with at least 3 characters.', type: 'error' });
             return;
         }
 
         if (!category) {
-            showToast({ message: 'Please select a category', type: 'error' });
+            showToast({ message: '⚠️ Category Required', description: 'Please select a category for your design.', type: 'error' });
+            return;
+        }
+
+        if (!promptContent.trim() || promptContent.trim().length < 50) {
+            showToast({ message: '⚠️ Prompt Too Short', description: 'The prompt must be at least 50 characters to be useful.', type: 'error' });
+            return;
+        }
+
+        if (!user) {
+            showToast({ message: '⚠️ Login Required', description: 'You must be logged in to publish designs.', type: 'error' });
             return;
         }
 
@@ -163,7 +164,7 @@ export function DesignUploadForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-10 relative z-20">
+        <form onSubmit={handleSubmit} className="space-y-10 relative z-20" noValidate>
             {/* Image Upload */}
             <div>
                 <label className="block font-mono font-bold text-sm uppercase text-ink mb-3 flex items-center justify-between">
@@ -289,7 +290,7 @@ export function DesignUploadForm() {
                         className="font-mono text-xs font-bold flex items-center gap-1 text-ink/60 hover:text-ink transition-colors"
                         title="Optional code snippet included for technical users"
                         onClick={() => {
-                            if (!codeSnippet && !document.getElementById('codeSnippetContainer')) {
+                            if (!codeSnippet && document.getElementById('codeSnippetContainer')) {
                                 document.getElementById('codeSnippetContainer')?.scrollIntoView({ behavior: 'smooth' });
                             }
                         }}

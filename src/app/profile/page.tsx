@@ -12,6 +12,7 @@ import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/useToast";
 import { CardDetailModal } from "@/components/workshop/CardDetailModal";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
+import { EditDesignModal } from "@/components/profile/EditDesignModal";
 import { Footer } from "@/components/workshop/Footer";
 import { WorkshopHeader } from "@/components/workshop/WorkshopHeader";
 
@@ -22,6 +23,7 @@ export default function ProfilePage() {
     const router = useRouter();
     const { showToast } = useToast();
     const [myDesigns, setMyDesigns] = useState<Prompt[]>([]);
+    const [userLikes, setUserLikes] = useState<Set<number>>(new Set());
 
     // Create Supabase client locally to ensure fresh session, wrapped in useState for stability
     const [supabase] = useState(() => createBrowserClient(
@@ -36,12 +38,41 @@ export default function ProfilePage() {
     const [designToDelete, setDesignToDelete] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    // Redirect if not logged in
+    // Edit Modal State
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [designToEdit, setDesignToEdit] = useState<Prompt | null>(null);
+
     useEffect(() => {
         if (!loading && !user) {
             router.push("/");
         }
     }, [user, loading, router]);
+
+    // Fetch user likes
+    useEffect(() => {
+        if (!user) {
+            setUserLikes(new Set());
+            return;
+        }
+
+        const fetchUserLikes = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('likes')
+                    .select('design_id')
+                    .eq('user_id', user.id);
+
+                if (error) throw error;
+                if (data) {
+                    setUserLikes(new Set(data.map(l => l.design_id)));
+                } // Remove empty blocks
+            } catch (err) {
+                console.error("Error fetching user likes:", err);
+            }
+        };
+
+        fetchUserLikes();
+    }, [user, supabase]);
 
     // Fetch user designs
     useEffect(() => {
@@ -66,6 +97,8 @@ export default function ProfilePage() {
                     code_snippet: string;
                     created_at: string;
                     user_id: string;
+                    is_pinned: boolean;
+                    likes_count: number;
                 }
 
                 // Transform to Prompt type
@@ -76,15 +109,24 @@ export default function ProfilePage() {
                     prompt: d.prompt_content,
                     author: {
                         name: user.username,
-                        avatar: user.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`
+                        avatar: user.avatar_url || "/images/default-avatar.png"
                     },
                     image: d.image_url || '',
                     imageAlt: d.title,
                     codeSnippet: d.code_snippet,
                     pinColor: "bg-white",
                     rotation: index % 2 === 0 ? "rotate-1" : "-rotate-1",
-                    type: "card"
+                    type: "card",
+                    isPinned: d.is_pinned || false,
+                    likesCount: d.likes_count || 0
                 }));
+
+                // Sort: pinned designs first, then by created_at (which is already done by the query)
+                designs.sort((a, b) => {
+                    if (a.isPinned && !b.isPinned) return -1;
+                    if (!a.isPinned && b.isPinned) return 1;
+                    return 0;
+                });
 
                 setMyDesigns(designs);
             } catch (err) {
@@ -94,10 +136,136 @@ export default function ProfilePage() {
             }
         }
 
-        if (user) {
+        if (user?.id) {
             fetchUserDesigns();
         }
-    }, [user, supabase]); // dependencies updated
+    }, [user?.id, user?.username, user?.avatar_url]); // dependencies updated to avoid loops
+
+    const handleEditClick = (design: Prompt) => {
+        setDesignToEdit(design);
+        setEditModalOpen(true);
+    };
+
+    const handleEditSave = (updatedDesign: Partial<Prompt>) => {
+        setMyDesigns(prev => prev.map(d => {
+            if (d.id === designToEdit?.id) {
+                return { ...d, ...updatedDesign };
+            }
+            return d;
+        }));
+    };
+
+    const handleTogglePin = async (design: Prompt) => {
+        // Optimistic update
+        const newPinnedState = !design.isPinned;
+
+        setMyDesigns(prev => {
+            const updated = prev.map(d =>
+                d.id === design.id ? { ...d, isPinned: newPinnedState } : d
+            );
+            // Re-sort so pinned items jump to top immediately
+            return updated.sort((a, b) => {
+                if (a.isPinned && !b.isPinned) return -1;
+                if (!a.isPinned && b.isPinned) return 1;
+                return 0;
+            });
+        });
+
+        // Clean ID
+        const cleanId = design.id.replace('db-', '');
+        const idAsNumber = parseInt(cleanId, 10);
+
+        if (isNaN(idAsNumber)) {
+            showToast({ message: newPinnedState ? "Design pinned!" : "Design unpinned", type: "success" });
+            return;
+        }
+
+        try {
+            const { error } = await supabase
+                .from('designs')
+                .update({ is_pinned: newPinnedState })
+                .eq('id', idAsNumber);
+
+            if (error) throw error;
+
+            showToast({ message: newPinnedState ? "Design pinned!" : "Design unpinned", type: "success" });
+        } catch (err) {
+            console.error("Error toggling pin:", err);
+            showToast({ message: "Failed to pin design", type: "error" });
+            // Revert optimistic update on failure
+            setMyDesigns(prev => {
+                const reverted = prev.map(d =>
+                    d.id === design.id ? { ...d, isPinned: !newPinnedState } : d
+                );
+                return reverted.sort((a, b) => {
+                    if (a.isPinned && !b.isPinned) return -1;
+                    if (!a.isPinned && b.isPinned) return 1;
+                    return 0;
+                });
+            });
+        }
+    };
+
+    const handleToggleLike = async (design: Prompt) => {
+        if (!user) return;
+
+        const numericId = parseInt(design.id.replace('db-', ''), 10);
+        if (isNaN(numericId)) return;
+
+        const isCurrentlyLiked = userLikes.has(numericId);
+
+        // Optimistic update
+        setUserLikes(prev => {
+            const next = new Set(prev);
+            if (isCurrentlyLiked) next.delete(numericId);
+            else next.add(numericId);
+            return next;
+        });
+
+        setMyDesigns(prev => prev.map(d => {
+            if (d.id === design.id) {
+                return {
+                    ...d,
+                    likesCount: Math.max(0, (d.likesCount || 0) + (isCurrentlyLiked ? -1 : 1))
+                };
+            }
+            return d;
+        }));
+
+        try {
+            if (isCurrentlyLiked) {
+                const { error } = await supabase
+                    .from('likes')
+                    .delete()
+                    .eq('user_id', user.id)
+                    .eq('design_id', numericId);
+                if (error) throw error;
+            } else {
+                const { error } = await supabase
+                    .from('likes')
+                    .insert({ user_id: user.id, design_id: numericId });
+                if (error) throw error;
+            }
+        } catch (err) {
+            console.error("Error toggling like:", err);
+            // Revert
+            setUserLikes(prev => {
+                const next = new Set(prev);
+                if (isCurrentlyLiked) next.add(numericId);
+                else next.delete(numericId);
+                return next;
+            });
+            setMyDesigns(prev => prev.map(d => {
+                if (d.id === design.id) {
+                    return {
+                        ...d,
+                        likesCount: Math.max(0, (d.likesCount || 0) + (isCurrentlyLiked ? 1 : -1))
+                    };
+                }
+                return d;
+            }));
+        }
+    };
 
     const handleDeleteClick = (id: string) => {
         setDesignToDelete(id);
@@ -174,7 +342,10 @@ export default function ProfilePage() {
                                     {...item}
                                     onClick={() => setSelectedCard(item)}
                                     onDelete={() => handleDeleteClick(item.id)}
-                                    onEdit={() => showToast({ message: "Edit feature coming soon!", type: "info" })}
+                                    onEdit={() => handleEditClick(item)}
+                                    onTogglePin={() => handleTogglePin(item)}
+                                    isLikedByUser={userLikes.has(parseInt(item.id.replace('db-', ''), 10))}
+                                    onToggleLike={() => handleToggleLike(item)}
                                 />
                             ))}
                             <NewDesignCard />
@@ -197,6 +368,19 @@ export default function ProfilePage() {
                     onConfirm={confirmDelete}
                     loading={isDeleting}
                 />
+
+                {/* Edit Design Modal */}
+                {designToEdit && (
+                    <EditDesignModal
+                        isOpen={editModalOpen}
+                        onClose={() => {
+                            setEditModalOpen(false);
+                            setTimeout(() => setDesignToEdit(null), 200); // fade out
+                        }}
+                        design={designToEdit}
+                        onSave={handleEditSave}
+                    />
+                )}
             </main>
             <Footer />
         </div>

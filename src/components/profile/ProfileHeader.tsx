@@ -82,7 +82,7 @@ export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
                         >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                                src={user.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`}
+                                src={user.avatar_url || "/images/default-avatar.png"}
                                 alt={user.username}
                                 className="w-full h-full object-cover"
                             />

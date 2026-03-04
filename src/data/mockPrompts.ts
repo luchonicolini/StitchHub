@@ -11,6 +11,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     image: "",
     imageAlt: "",
     rotation: "rotate-2",
+    likesCount: 0,
   },
   {
     id: "card-1",
@@ -19,7 +20,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     prompt: "A retro-futuristic dashboard interface with glowing green text on a dark CRT monitor background, scanlines visible, chunky 8-bit icons, high contrast, neo-brutalist layout with thick borders, data visualization charts in wireframe style, cyberpunk aesthetic.",
     author: {
       name: "@pixel_artisan",
-      avatar: "https://i.pravatar.cc/150?u=pixel_artisan",
+      avatar: "/images/default-avatar.png",
     },
     image: "https://picsum.photos/seed/retro/800/600",
     gallery: [
@@ -30,6 +31,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     imageAlt: "Retro dashboard UI design",
     pinColor: "bg-accent-orange",
     rotation: "-rotate-2",
+    likesCount: 0,
     featured: true,
     codeSnippet: `<div class="dashboard-container">
   <!-- Sidebar Navigation -->
@@ -58,7 +60,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     prompt: "High-fidelity mobile app design for a music streaming service, dark mode with vibrant neon pink and blue accents, glassmorphism effects on cards, large bold typography, minimal navigation bar, album art with glowing drop shadows.",
     author: {
       name: "@neon_dreams",
-      avatar: "https://i.pravatar.cc/150?u=neon_dreams",
+      avatar: "/images/default-avatar.png",
     },
     image: "https://picsum.photos/seed/neon/800/600",
     gallery: [
@@ -69,6 +71,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     imageAlt: "Neon mobile app interface",
     pinColor: "bg-primary",
     rotation: "rotate-1",
+    likesCount: 0,
     codeSnippet: `.glass-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
@@ -94,7 +97,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     prompt: "Clean and minimalist e-commerce website hero section for a luxury sneaker brand, large high-quality product image on the right, bold serif typography on the left, plenty of whitespace, 'Shop Now' button with a subtle hover animation, soft pastel background.",
     author: {
       name: "@minimal_store",
-      avatar: "https://i.pravatar.cc/150?u=minimal_store",
+      avatar: "/images/default-avatar.png",
     },
     image: "https://picsum.photos/seed/shop/800/600",
     gallery: [
@@ -104,6 +107,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     imageAlt: "E-commerce hero section",
     pinColor: "bg-accent-green",
     rotation: "-rotate-1",
+    likesCount: 0,
     codeSnippet: `const HeroSection = () => {
   return (
     <section className="flex h-screen items-center justify-between px-20 bg-cream-50">
@@ -133,12 +137,13 @@ export const MOCK_PROMPTS: Prompt[] = [
     prompt: "Personal portfolio website for a full-stack developer, dark theme with code snippet background textures, monospaced typography, timeline component for work experience, skill badges with glow effects, contact form with floating labels.",
     author: {
       name: "@dev_guru",
-      avatar: "https://i.pravatar.cc/150?u=dev_guru",
+      avatar: "/images/default-avatar.png",
     },
     image: "https://picsum.photos/seed/developer/800/600",
     imageAlt: "Developer portfolio website",
     pinColor: "bg-ink",
     rotation: "rotate-2",
+    likesCount: 0,
     codeSnippet: `// Experience Data
 const experiences = [
   {
@@ -167,7 +172,7 @@ const experiences = [
     prompt: "Modern cryptocurrency wallet mobile app interface, clean white background with bold black borders (neo-brutalism light), colorful pill-shaped buttons for 'Send' and 'Receive', real-time graph with gradient fill, large balance display.",
     author: {
       name: "@crypto_king",
-      avatar: "https://i.pravatar.cc/150?u=crypto_king",
+      avatar: "/images/default-avatar.png",
     },
     image: "https://picsum.photos/seed/crypto/800/600",
     imageAlt: "Crypto wallet app design",
