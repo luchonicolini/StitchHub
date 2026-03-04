@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="public/images/favicon.ico" alt="StitchHub Logo" width="100"/>
   <h1>🧵 StitchHub</h1>
   <p><strong>The Neo-Brutalist Prompt & UI Design Gallery</strong></p>
 </div>
