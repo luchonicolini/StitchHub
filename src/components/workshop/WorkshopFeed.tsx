@@ -8,7 +8,6 @@ import { Sparkles, SearchX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Prompt } from "@/types/prompt";
 import { DesignDB, mapDesignToPrompt } from "@/types/design";
-import { MOCK_PROMPTS } from "@/data/mockPrompts";
 import { useFilteredPrompts } from "@/hooks/useFilteredPrompts";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
@@ -45,7 +44,7 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
     const initialDesignCount = initialPrompts.filter(p => p.type !== 'promo').length;
     const [hasMore, setHasMore] = useState(initialDesignCount >= ITEMS_PER_PAGE);
 
-    const [isLoading, setIsLoading] = useState(false);
+    // Removed unused isLoading state
     const [isFetchingMore, setIsFetchingMore] = useState(false);
 
     // Initialize likes as empty for SSR hydration compatibility, will populate via useEffect
@@ -64,7 +63,7 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
                         setUserLikes(new Set(JSON.parse(saved)));
                         return;
                     }
-                } catch (e) { }
+                } catch (_e) { }
             }
             setUserLikes(new Set());
             return;
@@ -82,14 +81,14 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
                     // Prepend db- so it matches the IDs in our state
                     const dbLikes = data.map(l => `db-${l.design_id}`);
 
-                    setUserLikes(prev => {
+                    setUserLikes(_prev => {
                         // Fallback to re-read local just in case prev was wiped during hydration
                         let localLikes: string[] = [];
                         if (typeof window !== 'undefined') {
                             try {
                                 const saved = localStorage.getItem('stitch_local_likes');
                                 if (saved) localLikes = JSON.parse(saved);
-                            } catch (e) { }
+                            } catch (_e) { }
                         }
                         return new Set([...localLikes, ...dbLikes]);
                     });
@@ -255,7 +254,7 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
                     className="contents"
                 >
                     <AnimatePresence mode="popLayout">
-                        {isLoading && page === 0 ? (
+                        {isFetchingMore && page === 0 ? (
                             Array.from({ length: 6 }).map((_, i) => (
                                 <PromptCardSkeleton key={`skeleton-${i}`} />
                             ))

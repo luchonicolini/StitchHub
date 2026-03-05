@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { Copy, Check, Trash2, Layers, Heart } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/useToast";
 import { PromptCardProps } from "@/types/prompt";
@@ -149,13 +150,17 @@ export function PromptCard({
                     <div className="bg-background-light border-2 border-dashed border-ink/40 p-4 mb-4 font-mono text-xs text-ink leading-relaxed break-words overflow-hidden">
                         &quot;{prompt.length > 150 ? `${prompt.substring(0, 150)}...` : prompt}&quot;
                     </div>
-                    <div className="flex justify-between items-center mt-2">
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full border-2 border-ink overflow-hidden relative grayscale-0">
+                    <div className="flex justify-between items-center mt-2 w-full">
+                        <Link
+                            href={`/profile/${encodeURIComponent(author.name)}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center gap-2 group/author cursor-pointer hover:bg-black/5 p-1 rounded-sm transition-colors"
+                        >
+                            <div className="w-8 h-8 rounded-full border-2 border-ink overflow-hidden relative grayscale-0 group-hover/author:scale-110 transition-transform">
                                 <Image src={author.avatar} alt={author.name} fill className="object-cover" />
                             </div>
-                            <span className="font-mono text-xs font-bold text-ink">{author.name}</span>
-                        </div>
+                            <span className="font-mono text-xs font-bold text-ink group-hover/author:underline decoration-2 underline-offset-2">{author.name}</span>
+                        </Link>
                         <motion.button
                             whileTap={{ scale: 0.9 }}
                             onClick={(e) => {

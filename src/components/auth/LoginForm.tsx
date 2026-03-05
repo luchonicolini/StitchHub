@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 
 interface LoginFormProps {
-    onSwitchToRegister: () => void;
+    onSwitchToRegister?: () => void;
     onForgotPassword?: () => void;
 }
 
@@ -41,7 +41,7 @@ function isValidEmail(email: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-export function LoginForm({ onSwitchToRegister, onForgotPassword }: LoginFormProps) {
+export function LoginForm({ onForgotPassword }: LoginFormProps) {
     const { loginWithGoogle } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -83,12 +83,13 @@ export function LoginForm({ onSwitchToRegister, onForgotPassword }: LoginFormPro
                 });
                 setTimeout(() => router.push(returnUrl || "/"), 600);
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Unexpected login exception:', err);
-            setError(err.message || 'An unexpected error occurred during login.');
+            const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred during login.';
+            setError(errorMessage);
             setShake(true);
             toast.error("Login failed", {
-                description: err.message || 'An unexpected error occurred.',
+                description: errorMessage,
             });
             setTimeout(() => setShake(false), 500);
         }

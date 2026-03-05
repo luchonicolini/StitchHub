@@ -2,8 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Copy, Sparkles, Check, ChevronLeft, ChevronRight, ZoomIn, X } from "lucide-react";
+import { Copy, Sparkles, Check, ChevronLeft, ChevronRight, ZoomIn, X, Link as LinkIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { PromptCardProps } from "./PromptCard";
 import { useToast } from "@/hooks/useToast";
 import { Footer } from "./Footer";
@@ -13,6 +14,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 // Extend the props to include the codeSnippet which might be passed in the card object
 interface ExtendedCardProps extends PromptCardProps {
+    id: string | number;
     codeSnippet?: string;
     gallery?: string[];
 }
@@ -27,6 +29,7 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [copiedLink, setCopiedLink] = useState(false);
     const [isPromptExpanded, setIsPromptExpanded] = useState(false);
 
     // Initial check for gallery
@@ -66,6 +69,28 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
             setTimeout(() => setCopied(false), 2000);
         } catch (err) {
             console.error("Failed to copy:", err);
+            showToast({
+                message: "Copy failed",
+                description: "Please try again",
+                type: "error",
+            });
+        }
+    };
+
+    const handleCopyLink = async () => {
+        try {
+            const host = window.location.origin;
+            const link = `${host}/design/${card.id}`;
+            await navigator.clipboard.writeText(link);
+            setCopiedLink(true);
+            showToast({
+                message: "Link copied to clipboard!",
+                description: "Share it with anyone.",
+                type: "success",
+            });
+            setTimeout(() => setCopiedLink(false), 2000);
+        } catch (err) {
+            console.error("Failed to copy link:", err);
             showToast({
                 message: "Copy failed",
                 description: "Please try again",
@@ -324,8 +349,11 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                                     {card.title}
                                 </h1>
 
-                                <div className="flex items-center gap-4 p-4 border-4 border-ink bg-white shadow-hard-sm transform -rotate-1 max-w-fit">
-                                    <div className="w-10 h-10 rounded-full border-2 border-ink overflow-hidden relative">
+                                <Link
+                                    href={`/profile/${encodeURIComponent(card.author.name)}`}
+                                    className="flex items-center gap-4 p-4 border-4 border-ink bg-white shadow-hard-sm transform -rotate-1 max-w-fit hover:rotate-0 hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer group/profile"
+                                >
+                                    <div className="w-10 h-10 rounded-full border-2 border-ink overflow-hidden relative group-hover/profile:scale-110 transition-transform">
                                         <Image
                                             src={card.author.avatar}
                                             alt={card.author.name}
@@ -334,12 +362,12 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                                         />
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <div className="font-bold text-lg text-ink font-mono">{card.author.name}</div>
+                                        <div className="font-bold text-lg text-ink font-mono group-hover/profile:underline decoration-2 underline-offset-2">{card.author.name}</div>
                                         <div className="bg-primary/20 p-0.5 rounded-full border border-ink/20">
                                             <Check className="w-3 h-3 text-primary" strokeWidth={4} />
                                         </div>
                                     </div>
-                                </div>
+                                </Link>
                             </div>
 
                             <hr className="border-t-4 border-ink border-dashed my-2 opacity-20" />
@@ -359,6 +387,24 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                                     <>
                                         <Copy className="w-6 h-6" />
                                         Clone Recipe
+                                    </>
+                                )}
+                            </button>
+
+                            {/* Share Link Button */}
+                            <button
+                                onClick={handleCopyLink}
+                                className={`w-full font-black text-sm px-4 py-3 border-2 border-ink transition-all flex justify-center items-center gap-2 uppercase mt-2 ${copiedLink ? 'bg-ink text-white' : 'bg-white hover:bg-gray-50 text-ink shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-1 hover:translate-x-1'}`}
+                            >
+                                {copiedLink ? (
+                                    <>
+                                        <Check className="w-5 h-5" />
+                                        Copied!
+                                    </>
+                                ) : (
+                                    <>
+                                        <LinkIcon className="w-5 h-5" />
+                                        Share Link
                                     </>
                                 )}
                             </button>

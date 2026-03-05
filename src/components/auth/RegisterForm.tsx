@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { PasswordStrength } from "@/components/auth/PasswordStrength";
 
 interface RegisterFormProps {
-    onSwitchToLogin: () => void;
+    onSwitchToLogin?: () => void;
 }
 
 const stagger = {
@@ -41,7 +41,7 @@ function isValidEmail(email: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
+export function RegisterForm({ }: RegisterFormProps) {
     const { loginWithGoogle } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -186,10 +186,10 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                         placeholder="your@email.com"
                         required
                         className={`w-full bg-white border pl-11 pr-10 py-3 font-mono text-sm text-ink placeholder:text-ink/30 focus:ring-0 focus:border-primary focus:shadow-[0_0_0_3px_rgba(255,215,0,0.2)] transition-all outline-none rounded-sm ${showEmailFeedback
-                                ? emailValid
-                                    ? "border-green-400"
-                                    : "border-red-400"
-                                : "border-ink/20"
+                            ? emailValid
+                                ? "border-green-400"
+                                : "border-red-400"
+                            : "border-ink/20"
                             }`}
                     />
                     {/* Validation icon */}
@@ -266,10 +266,10 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                         placeholder="••••••••"
                         required
                         className={`w-full bg-white border pl-11 pr-12 py-3 font-mono text-sm text-ink placeholder:text-ink/30 focus:ring-0 focus:border-primary focus:shadow-[0_0_0_3px_rgba(255,215,0,0.2)] transition-all outline-none rounded-sm ${passwordsMatch
-                                ? "border-green-400"
-                                : passwordsMismatch
-                                    ? "border-red-400"
-                                    : "border-ink/20"
+                            ? "border-green-400"
+                            : passwordsMismatch
+                                ? "border-red-400"
+                                : "border-ink/20"
                             }`}
                     />
                     <button

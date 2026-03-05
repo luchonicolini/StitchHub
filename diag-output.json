@@ -1,0 +1,75 @@
+{
+  "profiles": [
+    {
+      "id": "f40f588a-e369-40c6-92b9-885e50702216",
+      "username": "jetski_bot"
+    },
+    {
+      "id": "77666428-9468-45ad-af68-41f2dde8c2f5",
+      "username": "luciano"
+    },
+    {
+      "id": "a8c671ce-f9f7-4dae-ad1f-137135186ba5",
+      "username": "luchonic1"
+    }
+  ],
+  "profilesError": null,
+  "designs": [
+    {
+      "id": 11,
+      "user_id": "a8c671ce-f9f7-4dae-ad1f-137135186ba5",
+      "title": "COREA COREA"
+    },
+    {
+      "id": 10,
+      "user_id": "77666428-9468-45ad-af68-41f2dde8c2f5",
+      "title": "ANIME WEB 100 ORIGINAL"
+    },
+    {
+      "id": 13,
+      "user_id": "a8c671ce-f9f7-4dae-ad1f-137135186ba5",
+      "title": "TESTESTESTESTESTESTESTESTES1234"
+    },
+    {
+      "id": 12,
+      "user_id": "a8c671ce-f9f7-4dae-ad1f-137135186ba5",
+      "title": "Hand-Picasdasd"
+    }
+  ],
+  "designsError": null,
+  "joined": [
+    {
+      "id": 11,
+      "user_id": "a8c671ce-f9f7-4dae-ad1f-137135186ba5",
+      "title": "COREA COREA",
+      "profiles": {
+        "username": "luchonic1"
+      }
+    },
+    {
+      "id": 10,
+      "user_id": "77666428-9468-45ad-af68-41f2dde8c2f5",
+      "title": "ANIME WEB 100 ORIGINAL",
+      "profiles": {
+        "username": "luciano"
+      }
+    },
+    {
+      "id": 13,
+      "user_id": "a8c671ce-f9f7-4dae-ad1f-137135186ba5",
+      "title": "TESTESTESTESTESTESTESTESTES1234",
+      "profiles": {
+        "username": "luchonic1"
+      }
+    },
+    {
+      "id": 12,
+      "user_id": "a8c671ce-f9f7-4dae-ad1f-137135186ba5",
+      "title": "Hand-Picasdasd",
+      "profiles": {
+        "username": "luchonic1"
+      }
+    }
+  ],
+  "joinedError": null
+}

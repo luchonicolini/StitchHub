@@ -139,7 +139,7 @@ export default function ProfilePage() {
         if (user?.id) {
             fetchUserDesigns();
         }
-    }, [user?.id, user?.username, user?.avatar_url]); // dependencies updated to avoid loops
+    }, [user, supabase]); // dependencies updated to avoid loops
 
     const handleEditClick = (design: Prompt) => {
         setDesignToEdit(design);
