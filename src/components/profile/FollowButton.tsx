@@ -34,7 +34,14 @@ export function FollowButton({ targetUserId, targetUsername }: FollowButtonProps
                     .eq('following_id', targetUserId)
                     .maybeSingle();
 
-                if (error && error.code !== 'PGRST116') throw error; // PGRST116 is no rows
+                if (error) {
+                    if (error.code === '42P01') {
+                        console.warn("Followers table not found. Please run create_followers.sql");
+                        setIsFollowing(false);
+                        return;
+                    }
+                    if (error.code !== 'PGRST116') throw error; // PGRST116 is no rows
+                }
                 setIsFollowing(!!data);
             } catch (err) {
                 console.error("Error checking follow status:", err);
@@ -89,9 +96,21 @@ export function FollowButton({ targetUserId, targetUsername }: FollowButtonProps
             }
         } catch (err: any) {
             console.error("Error toggling follow:", err);
+            
+            // Check if table missing directly inside toggle flow too
+            if (err.code === '42P01') {
+                showToast({
+                    message: "Data Missing",
+                    description: "Please run create_followers.sql in Supabase to enable following.",
+                    type: "error",
+                });
+                return;
+            }
+
+            const errorMessage = err instanceof Error ? err.message : "Failed to update follow status";
             showToast({
                 message: "Error",
-                description: err.message || "Failed to update follow status",
+                description: errorMessage,
                 type: "error",
             });
         } finally {

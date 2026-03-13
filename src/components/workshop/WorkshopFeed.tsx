@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { MasonryGrid } from "@/components/workshop/MasonryGrid";
 import { PromptCard } from "@/components/workshop/PromptCard";
 import { PromptCardSkeleton } from "@/components/workshop/PromptCardSkeleton";
@@ -30,9 +31,10 @@ interface WorkshopFeedProps {
     searchQuery?: string;
     onResultCountChange?: (count: number) => void;
     onTagClick?: (tag: string) => void;
+    onClearFilters?: () => void;
 }
 
-export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResultCountChange, onTagClick }: WorkshopFeedProps) {
+export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResultCountChange, onTagClick, onClearFilters }: WorkshopFeedProps) {
     const ITEMS_PER_PAGE = 12;
     const { user } = useAuth();
 
@@ -81,14 +83,14 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
                     // Prepend db- so it matches the IDs in our state
                     const dbLikes = data.map(l => `db-${l.design_id}`);
 
-                    setUserLikes(_prev => {
+                    setUserLikes(() => {
                         // Fallback to re-read local just in case prev was wiped during hydration
                         let localLikes: string[] = [];
                         if (typeof window !== 'undefined') {
                             try {
                                 const saved = localStorage.getItem('stitch_local_likes');
                                 if (saved) localLikes = JSON.parse(saved);
-                            } catch (_e) { }
+                            } catch { }
                         }
                         return new Set([...localLikes, ...dbLikes]);
                     });
@@ -289,9 +291,12 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
                                                             Pin it to the board.
                                                         </p>
                                                     </div>
-                                                    <button className="bg-ink text-white font-bold px-8 py-3 border-2 border-ink hover:bg-white hover:text-ink transition-colors duration-300 ease-in-out shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-none translate-y-0 hover:translate-y-1 cursor-pointer">
+                                                    <Link
+                                                        href={user ? "/submit" : "/auth?returnUrl=/submit"}
+                                                        className="bg-ink text-white font-bold px-8 py-3 border-2 border-ink hover:bg-white hover:text-ink transition-colors duration-300 ease-in-out shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-none translate-y-0 hover:translate-y-1 cursor-pointer inline-block"
+                                                    >
                                                         Submit Now
-                                                    </button>
+                                                    </Link>
                                                 </div>
                                             </article>
                                         </motion.div>
@@ -328,6 +333,15 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
                                     {activeFilter && searchQuery && <span> and </span>}
                                     {searchQuery && <span>the search <span className="font-bold text-accent-orange">&quot;{searchQuery}&quot;</span></span>}
                                 </p>
+                                
+                                {onClearFilters && (
+                                    <button
+                                        onClick={onClearFilters}
+                                        className="mt-6 px-6 py-3 bg-accent-yellow border-4 border-ink shadow-hard hover:shadow-hard-hover hover:-translate-y-1 active:shadow-none active:translate-y-1 transition-all duration-200 font-mono font-bold uppercase text-ink flex items-center gap-2 mx-auto"
+                                    >
+                                        Limpiar búsqueda
+                                    </button>
+                                )}
                             </div>
                         </motion.div>
                     )}

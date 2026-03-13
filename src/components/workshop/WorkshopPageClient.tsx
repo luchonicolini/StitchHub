@@ -10,9 +10,14 @@ import { Prompt } from "@/types/prompt";
 
 interface WorkshopPageClientProps {
     initialPrompts: Prompt[];
+    stats?: {
+        totalPrompts: number;
+        totalContributors: number;
+        totalLikes: number;
+    };
 }
 
-export function WorkshopPageClient({ initialPrompts }: WorkshopPageClientProps) {
+export function WorkshopPageClient({ initialPrompts, stats }: WorkshopPageClientProps) {
     const [activeFilter, setActiveFilter] = useState<string | null>(null);
     const [resultCount, setResultCount] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>("");
@@ -24,23 +29,29 @@ export function WorkshopPageClient({ initialPrompts }: WorkshopPageClientProps) 
                 onSearchChange={setSearchQuery}
             />
             <main className="flex-grow">
-                <HeroSection />
-                <FilterBar
-                    activeFilter={activeFilter}
-                    onFilterChange={setActiveFilter}
-                    resultCount={resultCount}
-                    searchQuery={searchQuery}
-                />
-                <WorkshopFeed
-                    initialPrompts={initialPrompts}
-                    activeFilter={activeFilter}
-                    searchQuery={searchQuery}
-                    onResultCountChange={setResultCount}
-                    onTagClick={(tag) => {
-                        setSearchQuery(tag);
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                />
+                <HeroSection stats={stats} />
+                <div id="explore-section" className="scroll-mt-24">
+                    <FilterBar
+                        activeFilter={activeFilter}
+                        onFilterChange={setActiveFilter}
+                        resultCount={resultCount}
+                        searchQuery={searchQuery}
+                    />
+                    <WorkshopFeed
+                        initialPrompts={initialPrompts}
+                        activeFilter={activeFilter}
+                        searchQuery={searchQuery}
+                        onResultCountChange={setResultCount}
+                        onTagClick={(tag) => {
+                            setSearchQuery(tag);
+                            document.getElementById('explore-section')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        onClearFilters={() => {
+                            setActiveFilter(null);
+                            setSearchQuery("");
+                        }}
+                    />
+                </div>
             </main>
             <Footer />
         </div>

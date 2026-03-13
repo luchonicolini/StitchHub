@@ -1,8 +1,30 @@
 "use client";
 
-import { Compass, HelpCircle } from "lucide-react";
+import { useState } from "react";
+import { Compass, HelpCircle, X, Search, Code, Share2 } from "lucide-react";
 
-export function HeroSection() {
+interface HeroSectionProps {
+    stats?: {
+        totalPrompts: number;
+        totalContributors: number;
+        totalLikes: number;
+    };
+}
+
+export function HeroSection({ stats }: HeroSectionProps) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const formatNumber = (num: number) => {
+        if (num >= 1000) {
+            return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+        }
+        return num.toString();
+    };
+
+    const handleStartBrowsing = () => {
+        document.getElementById('explore-section')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
     return (
         <section className="relative py-24 md:py-32 px-4 overflow-hidden bg-background-light">
             {/* Background Grid Pattern */}
@@ -61,7 +83,7 @@ export function HeroSection() {
 
                 {/* Description with Better Styling */}
                 <p className="font-mono text-base md:text-xl max-w-2xl mx-auto text-ink/80 bg-white/70 p-6 border-l-8 border-ink backdrop-blur-sm mb-10 shadow-hard-sm">
-                    <span className="text-ink font-bold">{'//'} A collaborative repository</span> for crafting the perfect
+                    <span className="text-ink font-bold">{'// '} A collaborative repository</span> for crafting the perfect
                     UI generation strings.
                     <br />
                     <span className="text-accent-orange font-bold text-lg">&gt; No robots allowed (mostly).</span>
@@ -69,14 +91,20 @@ export function HeroSection() {
 
                 {/* Enhanced CTA Buttons */}
                 <div className="mt-12 flex flex-wrap justify-center gap-6 mb-16">
-                    <button className="group relative px-10 py-4 bg-ink text-white font-black text-xl border-4 border-ink hover:bg-white hover:text-ink transition-all duration-400 ease-in-out overflow-hidden">
+                    <button 
+                        onClick={handleStartBrowsing}
+                        className="group relative px-10 py-4 bg-ink text-white font-black text-xl border-4 border-ink hover:bg-white hover:text-ink transition-all duration-400 ease-in-out overflow-hidden"
+                    >
                         <span className="absolute top-0 left-0 w-full h-full bg-accent-green transform translate-x-2 translate-y-2 -z-10 border-4 border-ink transition-all duration-400 ease-in-out group-hover:translate-x-0 group-hover:translate-y-0 group-hover:bg-primary" />
                         <span className="relative flex items-center gap-2">
                             <Compass className="w-6 h-6" />
                             Start Browsing
                         </span>
                     </button>
-                    <button className="group px-10 py-4 bg-white text-ink font-black text-xl border-4 border-ink hover:bg-primary hover:text-ink transition-all duration-400 ease-in-out shadow-hard hover:shadow-none hover:translate-x-1 hover:translate-y-1">
+                    <button 
+                        onClick={() => setIsModalOpen(true)}
+                        className="group px-10 py-4 bg-white text-ink font-black text-xl border-4 border-ink hover:bg-primary hover:text-ink transition-all duration-400 ease-in-out shadow-hard hover:shadow-none hover:translate-x-1 hover:translate-y-1"
+                    >
                         <span className="flex items-center gap-2">
                             <HelpCircle className="w-6 h-6" />
                             How it works ?
@@ -89,26 +117,87 @@ export function HeroSection() {
                     <div className="relative group">
                         <div className="absolute inset-0 bg-primary transform rotate-3 group-hover:rotate-6 transition-transform duration-300 ease-in-out" />
                         <div className="relative bg-white border-4 border-ink px-8 py-4 transform -rotate-2 group-hover:rotate-0 transition-transform duration-300 ease-in-out">
-                            <div className="font-black text-4xl text-accent-orange">1,247</div>
+                            <div className="font-black text-4xl text-accent-orange">{stats ? stats.totalPrompts : '1,247'}</div>
                             <div className="font-mono text-xs uppercase tracking-wider text-ink/60">Prompts</div>
                         </div>
                     </div>
                     <div className="relative group">
                         <div className="absolute inset-0 bg-accent-green transform -rotate-2 group-hover:-rotate-6 transition-transform duration-300 ease-in-out" />
                         <div className="relative bg-white border-4 border-ink px-8 py-4 transform rotate-1 group-hover:rotate-0 transition-transform duration-300 ease-in-out">
-                            <div className="font-black text-4xl text-accent-green">342</div>
+                            <div className="font-black text-4xl text-accent-green">{stats ? stats.totalContributors : '342'}</div>
                             <div className="font-mono text-xs uppercase tracking-wider text-ink/60">Contributors</div>
                         </div>
                     </div>
                     <div className="relative group">
                         <div className="absolute inset-0 bg-accent-orange transform rotate-2 group-hover:rotate-6 transition-transform duration-300 ease-in-out" />
                         <div className="relative bg-white border-4 border-ink px-8 py-4 transform -rotate-1 group-hover:rotate-0 transition-transform duration-300 ease-in-out">
-                            <div className="font-black text-4xl text-ink">89K</div>
-                            <div className="font-mono text-xs uppercase tracking-wider text-ink/60">Copies</div>
+                            <div className="font-black text-4xl text-ink">{stats ? formatNumber(stats.totalLikes) : '89K'}</div>
+                            <div className="font-mono text-xs uppercase tracking-wider text-ink/60">Likes</div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* How It Works Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div className="bg-white border-4 border-ink shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-lg relative animate-in fade-in zoom-in duration-200">
+                        {/* Header */}
+                        <div className="flex items-center justify-between p-4 border-b-4 border-ink bg-accent-yellow">
+                            <h2 className="font-black text-xl uppercase text-ink flex items-center gap-2">
+                                <HelpCircle className="w-5 h-5 fill-ink" />
+                                How StitchHub Works
+                            </h2>
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="p-1 hover:bg-black hover:text-white transition-colors border-2 border-ink text-ink rounded-sm"
+                            >
+                                <X className="w-5 h-5" strokeWidth={3} />
+                            </button>
+                        </div>
+                        
+                        {/* Content */}
+                        <div className="p-6 md:p-8 flex flex-col gap-6">
+                            <div className="flex items-start gap-4">
+                                <div className="w-10 h-10 shrink-0 bg-primary border-2 border-ink shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center -rotate-2">
+                                    <Search className="w-5 h-5 text-ink" />
+                                </div>
+                                <div>
+                                    <h3 className="font-black text-lg text-ink uppercase">1. Explore Designs</h3>
+                                    <p className="text-ink/80 font-mono text-sm mt-1">Browse through our curated collection of UI components, pages, and web apps.</p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-start gap-4">
+                                <div className="w-10 h-10 shrink-0 bg-accent-green border-2 border-ink shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center rotate-3">
+                                    <Code className="w-5 h-5 text-ink" />
+                                </div>
+                                <div>
+                                    <h3 className="font-black text-lg text-ink uppercase">2. Copy The Prompt</h3>
+                                    <p className="text-ink/80 font-mono text-sm mt-1">Find a design you like and copy its exact generation string to feed it to your favorite AI (Gemini, Claude, GPT).</p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-start gap-4">
+                                <div className="w-10 h-10 shrink-0 bg-accent-orange border-2 border-ink shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center -rotate-1">
+                                    <Share2 className="w-5 h-5 text-ink" />
+                                </div>
+                                <div>
+                                    <h3 className="font-black text-lg text-ink uppercase">3. Share Your Work</h3>
+                                    <p className="text-ink/80 font-mono text-sm mt-1">Create an account to submit your own successful prompts and build your public creative portfolio.</p>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="mt-4 w-full px-6 py-3 bg-ink text-white font-black uppercase tracking-wider hover:bg-primary hover:text-ink border-4 border-transparent hover:border-ink transition-all duration-300"
+                            >
+                                Got it!
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </section>
     );
 }

@@ -5,8 +5,6 @@ import { notFound } from 'next/navigation';
 import { DesignDB, mapDesignToPrompt } from '@/types/design';
 import { WorkshopHeader } from '@/components/workshop/WorkshopHeader';
 import { Footer } from '@/components/workshop/Footer';
-import { PromptCard } from '@/components/workshop/PromptCard';
-import { CardDetailModal } from '@/components/workshop/CardDetailModal';
 import DesignClientView from './DesignClientView';
 import { MOCK_PROMPTS } from '@/data/mockPrompts';
 

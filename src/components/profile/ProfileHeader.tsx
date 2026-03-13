@@ -109,7 +109,7 @@ export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
                                 {user.username}
                             </h1>
                             <p className="text-sm md:text-base text-ink/70 font-mono max-w-md mb-3 leading-relaxed">
-                                Crafting prompts & designs for the digital age ✦
+                                {user.bio || "No bio yet."}
                             </p>
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-ink text-white font-mono text-xs md:text-sm font-bold uppercase shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] border-2 border-transparent transform rotate-1 hover:-rotate-1 transition-transform">
                                 <span className="w-2.5 h-2.5 rounded-full bg-accent-green animate-pulse border border-white"></span>
@@ -123,10 +123,19 @@ export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
                                 <MapPin className="w-4 h-4" />
                                 <span>Digital Nomad</span>
                             </div>
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-cyan border-2 border-ink shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform rotate-1 hover:-translate-y-0.5 transition-all cursor-pointer hover:bg-white active:shadow-none active:translate-y-1">
-                                <LinkIcon className="w-4 h-4" />
-                                <span>stitchhub.dev/{user.username}</span>
-                            </div>
+                            {user.website && (
+                                <a 
+                                    href={user.website.startsWith('http') ? user.website : `https://${user.website}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-cyan border-2 border-ink shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform rotate-1 hover:-translate-y-0.5 transition-all cursor-pointer hover:bg-white active:shadow-none active:translate-y-1 text-ink no-underline"
+                                >
+                                    <LinkIcon className="w-4 h-4" />
+                                    <span>
+                                        {user.website.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                                    </span>
+                                </a>
+                            )}
                             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border-2 border-ink shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform -rotate-1 hover:rotate-0 transition-transform cursor-default">
                                 <Calendar className="w-4 h-4" />
                                 <span>Joined 2026</span>

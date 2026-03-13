@@ -156,8 +156,18 @@ export default function ProfilePage() {
     };
 
     const handleTogglePin = async (design: Prompt) => {
-        // Optimistic update
         const newPinnedState = !design.isPinned;
+
+        // Check pin limit if we're trying to pin a new design
+        if (newPinnedState) {
+            const currentPinnedCount = myDesigns.filter(d => d.isPinned).length;
+            if (currentPinnedCount >= 3) {
+                showToast({ message: "You can only pin up to 3 designs. Unpin one first.", type: "error" });
+                return;
+            }
+        }
+
+        // Optimistic update
 
         setMyDesigns(prev => {
             const updated = prev.map(d =>

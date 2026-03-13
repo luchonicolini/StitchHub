@@ -15,6 +15,8 @@ interface EditProfileModalProps {
         id: string;
         avatar_url?: string | null;
         cover_image_url?: string | null;
+        bio?: string | null;
+        website?: string | null;
     };
 }
 
@@ -22,6 +24,8 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
     const { showToast } = useToast();
     const { updateProfile } = useAuth();
     const [username, setUsername] = useState(currentUser.username);
+    const [bio, setBio] = useState(currentUser.bio || "");
+    const [website, setWebsite] = useState(currentUser.website || "");
     const [loading, setLoading] = useState(false);
 
     // Avatar state
@@ -99,8 +103,10 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
             }
 
             // Build profile update
-            const updates: { username?: string; avatar_url?: string; cover_image_url?: string } = {};
+            const updates: { username?: string; avatar_url?: string; cover_image_url?: string; bio?: string; website?: string } = {};
             if (username !== currentUser.username) updates.username = username;
+            if (bio !== (currentUser.bio || "")) updates.bio = bio;
+            if (website !== (currentUser.website || "")) updates.website = website;
             if (newAvatarUrl) updates.avatar_url = newAvatarUrl;
             if (newCoverUrl) updates.cover_image_url = newCoverUrl;
 
@@ -258,6 +264,38 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
                             onChange={(e) => setUsername(e.target.value)}
                             className="w-full bg-white border-3 border-ink px-4 py-3 font-mono text-sm text-ink focus:ring-0 focus:border-primary focus:shadow-hard-sm transition-all outline-none"
                             placeholder="username"
+                        />
+                    </div>
+
+                    {/* Bio */}
+                    <div>
+                        <label className="block font-mono font-bold text-xs uppercase text-ink/70 mb-2">
+                            Bio
+                        </label>
+                        <textarea
+                            value={bio}
+                            onChange={(e) => setBio(e.target.value)}
+                            maxLength={160}
+                            rows={3}
+                            className="w-full bg-white border-3 border-ink px-4 py-3 font-mono text-sm text-ink focus:ring-0 focus:border-primary focus:shadow-hard-sm transition-all outline-none resize-none"
+                            placeholder="Crafting prompts & designs for the digital age ✦"
+                        />
+                        <p className="text-[10px] font-mono text-ink/40 mt-1.5 text-right">
+                            {bio.length}/160
+                        </p>
+                    </div>
+
+                    {/* Website */}
+                    <div>
+                        <label className="block font-mono font-bold text-xs uppercase text-ink/70 mb-2">
+                            Website / Social Link
+                        </label>
+                        <input
+                            type="url"
+                            value={website}
+                            onChange={(e) => setWebsite(e.target.value)}
+                            className="w-full bg-white border-3 border-ink px-4 py-3 font-mono text-sm text-ink focus:ring-0 focus:border-primary focus:shadow-hard-sm transition-all outline-none"
+                            placeholder="https://yourwebsite.com"
                         />
                     </div>
 

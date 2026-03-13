@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Construction, ArrowLeft } from "lucide-react";
+import { Construction, X } from "lucide-react";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
@@ -96,7 +96,15 @@ export default function AuthPage() {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ type: "spring", stiffness: 150, damping: 18, delay: 0.35 }}
             >
-                <div className="bg-white border border-ink/15 p-7 shadow-sm rounded-md">
+                <div className="relative bg-white border border-ink/15 p-7 shadow-sm rounded-md">
+                    {/* Close button */}
+                    <button
+                        onClick={() => router.back()}
+                        className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-ink/5 text-ink/40 hover:bg-ink hover:text-white transition-all duration-200 z-10"
+                        aria-label="Go back"
+                    >
+                        <X className="w-4 h-4" strokeWidth={2.5} />
+                    </button>
                     <AnimatePresence mode="wait">
                         {activeTab === "login" && (
                             <motion.div
@@ -170,20 +178,7 @@ export default function AuthPage() {
                 )}
             </motion.div>
 
-            {/* Back to Home */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-            >
-                <Link
-                    href="/"
-                    className="relative z-10 mt-6 flex items-center gap-2 font-mono text-sm text-ink/40 hover:text-ink/70 transition-colors group"
-                >
-                    <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-                    Back to home
-                </Link>
-            </motion.div>
+
 
             {/* Footer links */}
             <motion.div

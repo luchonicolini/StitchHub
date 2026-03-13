@@ -65,7 +65,7 @@ export default async function PublicProfilePage({ params }: Props) {
     // Fetch the user's profile
     const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('*')
+        .select('*, bio, website')
         .eq('username', decodedUsername)
         .single();
 
@@ -74,7 +74,7 @@ export default async function PublicProfilePage({ params }: Props) {
     }
 
     // Fetch their public designs
-    const { data: designsData, error: designsError } = await supabase
+    const { data: designsData } = await supabase
         .from('designs')
         .select(`
             *,
@@ -88,17 +88,37 @@ export default async function PublicProfilePage({ params }: Props) {
 
     const totalDesigns = designsData?.length || 0;
 
-    // Fetch Follower count (people following this user)
-    const { count: followerCount } = await supabase
-        .from('followers')
-        .select('*', { count: 'exact', head: true })
-        .eq('following_id', profile.id);
+    // Default counts
+    let followerCount = 0;
+    let followingCount = 0;
 
-    // Fetch Following count (people this user is following)
-    const { count: followingCount } = await supabase
-        .from('followers')
-        .select('*', { count: 'exact', head: true })
-        .eq('follower_id', profile.id);
+    try {
+        // Fetch Follower count (people following this user)
+        const { count: fCount, error: fError } = await supabase
+            .from('followers')
+            .select('*', { count: 'exact', head: true })
+            .eq('following_id', profile.id);
+        
+        if (fError) {
+             console.warn("Could not fetch followers (table might be missing).");
+        } else {
+             followerCount = fCount || 0;
+        }
+
+        // Fetch Following count (people this user is following)
+        const { count: flCount, error: flError } = await supabase
+            .from('followers')
+            .select('*', { count: 'exact', head: true })
+            .eq('follower_id', profile.id);
+            
+        if (flError) {
+             console.warn("Could not fetch following count (table might be missing).");
+        } else {
+             followingCount = flCount || 0;
+        }
+    } catch (err) {
+        console.error("Error fetching follower stats:", err);
+    }
 
     // Process designs into Prompts
     const processedDesigns = designsData

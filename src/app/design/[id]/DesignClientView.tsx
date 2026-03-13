@@ -31,7 +31,7 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
                 type: "success",
             });
             setTimeout(() => setCopiedPrompt(false), 2000);
-        } catch (err) {
+        } catch {
             showToast({ message: "Copy failed", type: "error" });
         }
     };
@@ -46,7 +46,7 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
                 type: "success",
             });
             setTimeout(() => setCopiedLink(false), 2000);
-        } catch (err) {
+        } catch {
             showToast({ message: "Copy failed", type: "error" });
         }
     };
@@ -62,7 +62,6 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
         return () => window.removeEventListener("keydown", handleEscape);
     }, [isLightboxOpen]);
 
-    const stats = { views: "0", remixes: "0", rating: "0" };
 
     return (
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row p-4 md:p-8 gap-8">

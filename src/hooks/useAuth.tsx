@@ -8,12 +8,14 @@ interface ProfileUpdate {
     username?: string;
     avatar_url?: string;
     cover_image_url?: string;
+    bio?: string;
+    website?: string;
 }
 
 interface AuthState {
     isAuthModalOpen: boolean;
     isAuthenticated: boolean;
-    user: { username: string; email: string; id: string; avatar_url: string | null; cover_image_url: string | null } | null;
+    user: { username: string; email: string; id: string; avatar_url: string | null; cover_image_url: string | null; bio: string | null; website: string | null } | null;
     loading: boolean;
     returnUrl: string | null;
     openAuthModal: (returnUrl?: string) => void;
@@ -47,7 +49,7 @@ export const useAuth = create<AuthState>((set, get) => ({
             if (session?.user) {
                 const { data: profile } = await supabase
                     .from('profiles')
-                    .select('username, avatar_url, cover_image_url')
+                    .select('username, avatar_url, cover_image_url, bio, website')
                     .eq('id', session.user.id)
                     .single();
 
@@ -58,7 +60,9 @@ export const useAuth = create<AuthState>((set, get) => ({
                         email: session.user.email!,
                         username: profile?.username || session.user.email!.split('@')[0],
                         avatar_url: profile?.avatar_url || null,
-                        cover_image_url: profile?.cover_image_url || null
+                        cover_image_url: profile?.cover_image_url || null,
+                        bio: profile?.bio || null,
+                        website: profile?.website || null
                     },
                     loading: false
                 });
@@ -75,7 +79,7 @@ export const useAuth = create<AuthState>((set, get) => ({
             if (session?.user) {
                 const { data: profile } = await supabase
                     .from('profiles')
-                    .select('username, avatar_url, cover_image_url')
+                    .select('username, avatar_url, cover_image_url, bio, website')
                     .eq('id', session.user.id)
                     .single();
 
@@ -86,7 +90,9 @@ export const useAuth = create<AuthState>((set, get) => ({
                         email: session.user.email!,
                         username: profile?.username || session.user.email!.split('@')[0],
                         avatar_url: profile?.avatar_url || null,
-                        cover_image_url: profile?.cover_image_url || null
+                        cover_image_url: profile?.cover_image_url || null,
+                        bio: profile?.bio || null,
+                        website: profile?.website || null
                     }
                 });
             } else {
@@ -116,7 +122,7 @@ export const useAuth = create<AuthState>((set, get) => ({
         if (data.user) {
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('username, avatar_url, cover_image_url')
+                .select('username, avatar_url, cover_image_url, bio, website')
                 .eq('id', data.user.id)
                 .single();
 
@@ -127,7 +133,9 @@ export const useAuth = create<AuthState>((set, get) => ({
                     email: data.user.email!,
                     username: profile?.username || data.user.email!.split('@')[0],
                     avatar_url: profile?.avatar_url || null,
-                    cover_image_url: profile?.cover_image_url || null
+                    cover_image_url: profile?.cover_image_url || null,
+                    bio: profile?.bio || null,
+                    website: profile?.website || null
                 }
             });
         }
@@ -170,7 +178,9 @@ export const useAuth = create<AuthState>((set, get) => ({
                     email: data.user.email!,
                     username,
                     avatar_url: null,
-                    cover_image_url: null
+                    cover_image_url: null,
+                    bio: null,
+                    website: null
                 }
             });
         }
@@ -201,6 +211,8 @@ export const useAuth = create<AuthState>((set, get) => ({
             if (updates.username !== undefined) dbUpdates.username = updates.username;
             if (updates.avatar_url !== undefined) dbUpdates.avatar_url = updates.avatar_url;
             if (updates.cover_image_url !== undefined) dbUpdates.cover_image_url = updates.cover_image_url;
+            if (updates.bio !== undefined) dbUpdates.bio = updates.bio;
+            if (updates.website !== undefined) dbUpdates.website = updates.website;
 
             if (Object.keys(dbUpdates).length === 0) return { error: null };
 

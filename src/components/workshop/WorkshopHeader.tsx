@@ -5,8 +5,10 @@ import Link from "next/link";
 import { Search, Construction, Plus, X, User, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { LogoutConfirmationModal } from "@/components/auth/LogoutConfirmationModal";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 
 interface WorkshopHeaderProps {
     searchQuery?: string;
@@ -17,6 +19,16 @@ interface WorkshopHeaderProps {
 export function WorkshopHeader({ searchQuery = "", onSearchChange, showSearch = true }: WorkshopHeaderProps) {
     const { isAuthenticated, user, logout } = useAuth();
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+    const pathname = usePathname();
+    const router = useRouter();
+
+    const handleExplore = () => {
+        if (pathname === '/') {
+            document.getElementById('explore-section')?.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            router.push('/#explore-section');
+        }
+    };
 
     return (
         <>
@@ -32,17 +44,16 @@ export function WorkshopHeader({ searchQuery = "", onSearchChange, showSearch = 
                         </h1>
                     </Link>
 
-                    {/* Enhanced Search Bar */}
+                    {/* Search Bar */}
                     {showSearch && (
                         <div className="relative w-full md:w-auto flex-1 max-w-md mx-4">
-                            {/* Decorative Pin */}
-                            <div className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-6 h-6 rounded-full bg-accent-orange border-2 border-ink" />
-
                             <div className="relative flex items-center">
+                                {/* Search icon (left side, inline) */}
+                                <Search className="absolute left-3 w-4 h-4 text-ink/40 stroke-[2.5] pointer-events-none" />
                                 <input
-                                    className="w-full bg-[#e8e4d9] border-3 border-ink pl-10 pr-16 py-3 font-mono text-sm font-bold text-ink 
-                                focus:ring-0 focus:border-primary focus:bg-white focus:shadow-hard-sm
-                                transition-all placeholder-ink/50 outline-none rounded-none shadow-hard-sm"
+                                    className="w-full bg-white border-3 border-ink pl-10 pr-12 py-2.5 font-mono text-sm font-bold text-ink 
+                                focus:ring-0 focus:border-ink focus:shadow-hard-sm
+                                transition-all placeholder-ink/35 outline-none rounded-none shadow-hard-sm"
                                     placeholder="Search prompts..."
                                     type="text"
                                     value={searchQuery}
@@ -52,38 +63,40 @@ export function WorkshopHeader({ searchQuery = "", onSearchChange, showSearch = 
                                 {searchQuery && (
                                     <button
                                         onClick={() => onSearchChange?.("")}
-                                        className="absolute right-12 w-6 h-6 rounded-full bg-ink text-white hover:bg-accent-orange transition-colors duration-200 flex items-center justify-center"
+                                        className="absolute right-3 w-6 h-6 rounded-full bg-ink/10 text-ink hover:bg-ink hover:text-white transition-colors duration-200 flex items-center justify-center"
                                         aria-label="Clear search"
                                     >
-                                        <X className="w-4 h-4 stroke-[3]" />
+                                        <X className="w-3.5 h-3.5 stroke-[3]" />
                                     </button>
                                 )}
-                                {/* Search icon button */}
-                                <button className="absolute right-2 w-9 h-9 rounded-full bg-accent-orange border-2 border-ink text-white hover:bg-primary hover:scale-110 transition-all duration-300 ease-in-out flex items-center justify-center">
-                                    <Search className="w-4 h-4 stroke-[3]" />
-                                </button>
                             </div>
                         </div>
                     )}
 
                     {/* Nav Actions */}
                     <nav className="flex items-center gap-6">
-                        <Link
-                            className="font-mono font-bold text-lg hover:underline decoration-4 decoration-primary underline-offset-4 hidden sm:block text-ink transition-all duration-300 ease-in-out hover:scale-105"
-                            href="#"
-                        >
-                            Explore
-                        </Link>
-                        <Link
-                            className="font-mono font-bold text-lg hover:underline decoration-4 decoration-accent-green underline-offset-4 hidden sm:block text-ink transition-all duration-300 ease-in-out hover:scale-105"
-                            href="#"
-                        >
-                            Workshop
-                        </Link>
+                        {pathname !== '/' && (
+                            <>
+                                <button
+                                    onClick={handleExplore}
+                                    className="font-mono font-bold text-lg hover:underline decoration-4 decoration-primary underline-offset-4 hidden sm:block text-ink transition-all duration-300 ease-in-out hover:scale-105 cursor-pointer"
+                                >
+                                    Explore
+                                </button>
+                                <Link
+                                    className="font-mono font-bold text-lg hover:underline decoration-4 decoration-accent-green underline-offset-4 hidden sm:block text-ink transition-all duration-300 ease-in-out hover:scale-105"
+                                    href={isAuthenticated ? "/profile" : "/auth?returnUrl=/profile"}
+                                >
+                                    Workshop
+                                </Link>
+                            </>
+                        )}
 
                         {/* User Actions */}
                         {isAuthenticated && user ? (
                             <div className="flex items-center gap-3">
+                                <NotificationBell />
+                                
                                 <Link href="/profile" className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-ink hover:bg-gray-50 transition-colors">
                                     <User className="w-4 h-4 text-ink" />
                                     <span className="font-mono font-bold text-sm text-ink">{user.username}</span>
