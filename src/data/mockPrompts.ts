@@ -18,7 +18,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     title: "Retro Neon Dashboard UI",
     tags: ["#Analytics", "#RetroUI", "#NeoBrutalism"],
     prompt: "A retro-futuristic dashboard interface with glowing green text on a dark CRT monitor background, scanlines visible, chunky 8-bit icons, high contrast, neo-brutalist layout with thick borders, data visualization charts in wireframe style, cyberpunk aesthetic.",
-    author: { name: "@pixel_artisan", avatar: "/images/default-avatar.png" },
+    author: { name: "@pixel_artisan", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80" },
     image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
@@ -36,7 +36,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     title: "SaaS Analytics Engine",
     tags: ["#Analytics", "#Developer", "#UI"],
     prompt: "Modern Neo-Brutalist SaaS Analytics Dashboard with bold yellow & purple accents, thick black 4px borders, hard drop shadows, high contrast revenue metric cards, line charts, and status pills.",
-    author: { name: "@neo_visionary", avatar: "/images/default-avatar.png" },
+    author: { name: "@neo_visionary", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80" },
     image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
