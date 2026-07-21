@@ -15,236 +15,233 @@ export const MOCK_PROMPTS: Prompt[] = [
   },
   {
     id: "card-1",
-    title: "Retro Dashboard UI",
+    title: "Retro Neon Dashboard UI",
     tags: ["#Analytics", "#RetroUI", "#NeoBrutalism"],
     prompt: "A retro-futuristic dashboard interface with glowing green text on a dark CRT monitor background, scanlines visible, chunky 8-bit icons, high contrast, neo-brutalist layout with thick borders, data visualization charts in wireframe style, cyberpunk aesthetic.",
-    author: {
-      name: "@pixel_artisan",
-      avatar: "/images/default-avatar.png",
-    },
-    image: "https://picsum.photos/seed/retro/800/600",
+    author: { name: "@pixel_artisan", avatar: "/images/default-avatar.png" },
+    image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
     gallery: [
-      "https://picsum.photos/seed/retro/800/600",
-      "https://picsum.photos/seed/retro2/800/800",
-      "https://picsum.photos/seed/retro3/600/1000",
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80"
     ],
-    imageAlt: "Retro dashboard UI design",
+    imageAlt: "Retro Neon Dashboard UI",
     pinColor: "bg-accent-orange",
     rotation: "-rotate-2",
-    likesCount: 0,
+    likesCount: 482,
     featured: true,
-    codeSnippet: `<div class="dashboard-container">
-  <!-- Sidebar Navigation -->
-  <nav class="sidebar">
-    <ul>
-      <li class="active"><a href="#">Overview</a></li>
-      <li><a href="#">Analytics</a></li>
-      <li><a href="#">Settings</a></li>
-    </ul>
-  </nav>
-  
-  <!-- Main Content Area -->
-  <main class="content">
-    <div class="card stat-card">
-      <h3>Active Users</h3>
-      <span class="value">12,345</span>
-      <div class="chart-placeholder"></div>
-    </div>
-  </main>
-</div>`,
+    codeSnippet: `<div class="dashboard-container">\n  <nav class="sidebar">\n    <ul>\n      <li class="active"><a href="#">Overview</a></li>\n      <li><a href="#">Analytics</a></li>\n      <li><a href="#">Settings</a></li>\n    </ul>\n  </nav>\n  <main class="content">\n    <div class="card stat-card">\n      <h3>Active Users</h3>\n      <span class="value">12,345</span>\n      <div class="chart-placeholder"></div>\n    </div>\n  </main>\n</div>`,
   },
   {
     id: "card-2",
-    title: "Neon Mobile App",
-    tags: ["#Mobile", "#AppDesign", "#Neon"],
-    prompt: "High-fidelity mobile app design for a music streaming service, dark mode with vibrant neon pink and blue accents, glassmorphism effects on cards, large bold typography, minimal navigation bar, album art with glowing drop shadows.",
-    author: {
-      name: "@neon_dreams",
-      avatar: "/images/default-avatar.png",
-    },
-    image: "https://picsum.photos/seed/neon/800/600",
+    title: "SaaS Analytics Engine",
+    tags: ["#Analytics", "#Developer", "#UI"],
+    prompt: "Modern Neo-Brutalist SaaS Analytics Dashboard with bold yellow & purple accents, thick black 4px borders, hard drop shadows, high contrast revenue metric cards, line charts, and status pills.",
+    author: { name: "@neo_visionary", avatar: "/images/default-avatar.png" },
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
     gallery: [
-      "https://picsum.photos/seed/neon/800/600",
-      "https://picsum.photos/seed/neon-detail/800/800",
-      "https://picsum.photos/seed/neon-mobile/400/800",
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80"
     ],
-    imageAlt: "Neon mobile app interface",
-    pinColor: "bg-primary",
+    imageAlt: "SaaS Analytics Engine",
+    pinColor: "bg-accent-green",
     rotation: "rotate-1",
-    likesCount: 0,
-    codeSnippet: `.glass-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-.neon-text {
-  color: #fff;
-  text-shadow:
-    0 0 7px #fff,
-    0 0 10px #fff,
-    0 0 21px #ff00de,
-    0 0 42px #ff00de,
-    0 0 82px #ff00de;
-}`,
+    likesCount: 315,
+    featured: true,
+    codeSnippet: `<div class="saas-card">\n  <div class="header flex justify-between">\n    <h2>Monthly Recurring Revenue</h2>\n    <span class="badge bg-yellow">$48,250</span>\n  </div>\n  <div class="chart-area">\n    <canvas id="mrrChart"></canvas>\n  </div>\n</div>`,
   },
   {
     id: "card-3",
-    title: "E-commerce Hero",
-    tags: ["#Shop", "#WebDesign", "#Minimal"],
-    prompt: "Clean and minimalist e-commerce website hero section for a luxury sneaker brand, large high-quality product image on the right, bold serif typography on the left, plenty of whitespace, 'Shop Now' button with a subtle hover animation, soft pastel background.",
-    author: {
-      name: "@minimal_store",
-      avatar: "/images/default-avatar.png",
-    },
-    image: "https://picsum.photos/seed/shop/800/600",
-    gallery: [
-      "https://picsum.photos/seed/shop/800/600",
-      "https://picsum.photos/seed/shop-hero/1200/600",
-    ],
-    imageAlt: "E-commerce hero section",
-    pinColor: "bg-accent-green",
+    title: "Crypto & Web3 Vault UI",
+    tags: ["#Developer", "#Trend", "#UI"],
+    prompt: "Dark mode crypto wallet interface featuring neon green highlights, crisp balance cards, quick token swap widget, transaction history table, and hard border neo-brutalist styling.",
+    author: { name: "@cyber_craft", avatar: "/images/default-avatar.png" },
+    image: "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=1200&q=80",
+    gallery: ["https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=1200&q=80"],
+    imageAlt: "Crypto & Web3 Vault UI",
+    pinColor: "bg-primary",
     rotation: "-rotate-1",
-    likesCount: 0,
-    codeSnippet: `const HeroSection = () => {
-  return (
-    <section className="flex h-screen items-center justify-between px-20 bg-cream-50">
-      <div className="space-y-6 max-w-xl">
-        <h1 className="text-6xl font-serif text-gray-900 leading-tight">
-          Step Into <br/>
-          <span className="italic">Future Comfort</span>
-        </h1>
-        <p className="text-lg text-gray-600">
-          Discover the blend of premium materials and ergonomic design.
-        </p>
-        <button className="px-8 py-4 bg-black text-white hover:bg-gray-800 transition-colors">
-          Shop Collection
-        </button>
-      </div>
-      <div className="hero-image">
-        <img src="/shoe-hero.png" alt="Luxury Sneaker" />
-      </div>
-    </section>
-  );
-};`,
+    likesCount: 289,
+    featured: false,
+    codeSnippet: `<div class="wallet-card bg-black text-white p-6 border-4 border-white">\n  <span class="text-xs font-mono text-gray-400">Total Portfolio Value</span>\n  <h1 class="text-4xl font-black text-green-400 mt-1">$142,890.50</h1>\n  <div class="flex gap-4 mt-6">\n    <button class="bg-green-400 text-black font-bold px-6 py-3 border-2 border-white">Send</button>\n    <button class="bg-white text-black font-bold px-6 py-3 border-2 border-white">Receive</button>\n  </div>\n</div>`,
   },
   {
     id: "card-4",
-    title: "Developer Portfolio",
-    tags: ["#Developer", "#Portfolio", "#Dark"],
-    prompt: "Personal portfolio website for a full-stack developer, dark theme with code snippet background textures, monospaced typography, timeline component for work experience, skill badges with glow effects, contact form with floating labels.",
-    author: {
-      name: "@dev_guru",
-      avatar: "/images/default-avatar.png",
-    },
-    image: "https://picsum.photos/seed/developer/800/600",
-    imageAlt: "Developer portfolio website",
-    pinColor: "bg-ink",
+    title: "Neo-Brutalist Checkout Page",
+    tags: ["#Shop", "#UI", "#Trend"],
+    prompt: "E-commerce order summary and payment form in pastel pink and electric blue, featuring high contrast input fields, promo code sticker badge, and 3D hard shadow CTA button.",
+    author: { name: "@design_punk", avatar: "/images/default-avatar.png" },
+    image: "https://images.unsplash.com/photo-1556742049-0a67e5621413?auto=format&fit=crop&w=1200&q=80",
+    gallery: ["https://images.unsplash.com/photo-1556742049-0a67e5621413?auto=format&fit=crop&w=1200&q=80"],
+    imageAlt: "Neo-Brutalist Checkout Page",
+    pinColor: "bg-accent-orange",
     rotation: "rotate-2",
-    likesCount: 0,
-    codeSnippet: `// Experience Data
-const experiences = [
-  {
-    role: "Senior Frontend Engineer",
-    company: "TechCorp",
-    period: "2020 - Present",
-    description: "Leading the core UI team, migrating legacy codebase to React."
-  },
-  {
-    role: "Full Stack Developer",
-    company: "StartupInc",
-    period: "2018 - 2020",
-    description: "Built scalable APIs with Node.js and designed responsive UIs."
-  }
-];
-
-// In Component
-{experiences.map((exp, index) => (
-  <TimelineItem key={index} data={exp} />
-))}`,
+    likesCount: 198,
+    featured: false,
+    codeSnippet: `<form class="checkout-form bg-pink-100 p-8 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">\n  <h2 class="text-2xl font-black uppercase mb-4">Order Summary</h2>\n  <div class="form-group mb-4">\n    <label class="block font-mono font-bold text-xs uppercase mb-1">Cardholder Name</label>\n    <input type="text" class="w-full bg-white border-2 border-black p-3 font-mono" placeholder="Satoshi Nakamoto" />\n  </div>\n  <button class="w-full bg-blue-500 text-white font-black py-4 uppercase border-2 border-black hover:translate-y-1">Pay $129.00</button>\n</form>`,
   },
   {
     id: "card-5",
-    title: "Crypto Wallet",
-    tags: ["#Trend", "#Finance", "#Mobile"],
-    prompt: "Modern cryptocurrency wallet mobile app interface, clean white background with bold black borders (neo-brutalism light), colorful pill-shaped buttons for 'Send' and 'Receive', real-time graph with gradient fill, large balance display.",
-    author: {
-      name: "@crypto_king",
-      avatar: "/images/default-avatar.png",
-    },
-    image: "https://picsum.photos/seed/crypto/800/600",
-    imageAlt: "Crypto wallet app design",
-    pinColor: "bg-accent-orange",
-    rotation: "-rotate-1",
-    codeSnippet: `fun WalletScreen(
-    balance: String,
-    onSendClick: () -> Unit,
-    onReceiveClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Total Balance",
-            style = MaterialTheme.typography.labelMedium
-        )
-        Text(
-            text = balance,
-            style = MaterialTheme.typography.displayLarge,
-            fontWeight = FontWeight.Bold
-        )
-        
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            ActionButton(text = "Send", color = Color.Green, onClick = onSendClick)
-            ActionButton(text = "Receive", color = Color.Blue, onClick = onReceiveClick)
-        }
-    }
-}`,
+    title: "Mobile Fitness Workout Tracker",
+    tags: ["#Mobile", "#UI", "#Trend"],
+    prompt: "Mobile app card design for workout tracking, featuring circular progress ring, heart rate gauge, dark mode with neon lime accents, and activity breakdown list.",
+    author: { name: "@app_artisan", avatar: "/images/default-avatar.png" },
+    image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=80",
+    gallery: ["https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=80"],
+    imageAlt: "Mobile Fitness Workout Tracker",
+    pinColor: "bg-accent-green",
+    rotation: "-rotate-2",
+    likesCount: 412,
+    featured: true,
+    codeSnippet: `<div class="fitness-card bg-neutral-900 text-white p-6 rounded-none border-4 border-lime-400">\n  <div class="flex justify-between items-center mb-6">\n    <h3 class="font-black text-xl text-lime-400">DAILY BURN</h3>\n    <span class="bg-lime-400 text-black px-3 py-1 font-mono font-bold text-xs">850 kcal</span>\n  </div>\n  <div class="progress-bar w-full bg-neutral-800 h-4 border border-lime-400 overflow-hidden">\n    <div class="bg-lime-400 h-full w-[78%]"></div>\n  </div>\n</div>`,
   },
   {
     id: "card-6",
-    title: "Task Manager",
-    tags: ["#UI", "#Productivity", "#Clean"],
-    prompt: "Productivity dashboard for project management, Kanban board layout with drag-and-drop cards, soft shadows, rounded corners, pastel color coding for tags, user avatars overlapping, sidebar navigation with collapsible menus.",
-    author: {
-      name: "@task_master",
-      avatar: "https://i.pravatar.cc/150?u=task_master",
-    },
-    image: "https://picsum.photos/seed/task/800/600",
-    imageAlt: "Task manager dashboard",
+    title: "AI Command Console & Prompt IDE",
+    tags: ["#Developer", "#Analytics", "#UI"],
+    prompt: "Developer-focused AI prompt engineer console with syntax highlighting, token usage counter, model selection dropdown, and terminal execution log window.",
+    author: { name: "@ai_architect", avatar: "/images/default-avatar.png" },
+    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+    gallery: ["https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80"],
+    imageAlt: "AI Command Console & Prompt IDE",
     pinColor: "bg-primary",
     rotation: "rotate-1",
-    codeSnippet: `interface Task {
-  id: string;
-  title: string;
-  status: 'todo' | 'in-progress' | 'done';
-  assignees: User[];
-}
-
-function KanbanBoard({ tasks }: { tasks: Task[] }) {
-  const columns = ['todo', 'in-progress', 'done'];
-
-  return (
-    <div className="flex gap-4 h-full p-6 bg-gray-50">
-      {columns.map(status => (
-        <div key={status} className="flex-1 bg-gray-100 rounded-lg p-4">
-          <h3 className="font-bold mb-4 uppercase text-gray-500">{status}</h3>
-          <div className="space-y-3">
-            {tasks.filter(t => t.status === status).map(task => (
-              <TaskCard key={task.id} task={task} />
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}`,
+    likesCount: 530,
+    featured: true,
+    codeSnippet: `<div class="ai-console bg-gray-950 text-green-400 font-mono p-6 border-4 border-gray-700">\n  <div class="status-bar border-b border-gray-800 pb-2 mb-4 flex justify-between">\n    <span>MODEL: gpt-4o-realtime</span>\n    <span>TOKENS: 412 / 8192</span>\n  </div>\n  <pre className="text-xs"><code>> System initialized. Ready for prompt execution.</code></pre>\n</div>`,
   },
+  {
+    id: "card-7",
+    title: "Editorial Magazine Article Card",
+    tags: ["#UI", "#Trend"],
+    prompt: "Clean, bold editorial article card layout featuring exaggerated typography, thick black borders, category sticker, reading time indicator, and author signature.",
+    author: { name: "@type_master", avatar: "/images/default-avatar.png" },
+    image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80",
+    gallery: ["https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80"],
+    imageAlt: "Editorial Magazine Article Card",
+    pinColor: "bg-accent-orange",
+    rotation: "-rotate-1",
+    likesCount: 165,
+    featured: false,
+    codeSnippet: `<article class="magazine-card bg-amber-50 p-6 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">\n  <span class="bg-black text-white font-mono text-xs px-3 py-1 uppercase font-bold">Design Trends</span>\n  <h2 class="font-black text-3xl uppercase text-black mt-3 leading-tight">The Death of Bland Minimalist Web Design</h2>\n  <p class="font-mono text-xs text-gray-700 mt-2">5 min read • By @art_director</p>\n</article>`,
+  },
+  {
+    id: "card-8",
+    title: "Cyberpunk Audio Wave Player",
+    tags: ["#Mobile", "#UI"],
+    prompt: "Vibrant music player component with interactive waveform visualizer, album cover glow, volume slider, and neo-brutalist playback controls.",
+    author: { name: "@sound_wave", avatar: "/images/default-avatar.png" },
+    image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80",
+    gallery: ["https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80"],
+    imageAlt: "Cyberpunk Audio Wave Player",
+    pinColor: "bg-accent-green",
+    rotation: "rotate-2",
+    likesCount: 240,
+    featured: false,
+    codeSnippet: `<div class="player bg-purple-950 text-purple-200 p-6 border-4 border-pink-500">\n  <div class="track-info mb-4 flex justify-between items-center">\n    <div>\n      <h4 class="font-black text-white text-lg">HYPERDRIVE</h4>\n      <p class="text-xs font-mono text-pink-400">CyberSynth Vol. 4</p>\n    </div>\n    <button class="w-12 h-12 bg-pink-500 text-black font-black border-2 border-white flex items-center justify-center">▶</button>\n  </div>\n</div>`,
+  },
+  {
+    id: "card-9",
+    title: "Fintech Expense Breakdown",
+    tags: ["#Analytics", "#Mobile", "#Shop"],
+    prompt: "Financial budget tracker card with category badges, percentage progress bars, weekly spending limits, and quick add transaction modal button.",
+    author: { name: "@fintech_pro", avatar: "/images/default-avatar.png" },
+    image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80",
+    gallery: ["https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80"],
+    imageAlt: "Fintech Expense Breakdown",
+    pinColor: "bg-primary",
+    rotation: "-rotate-2",
+    likesCount: 210,
+    featured: false,
+    codeSnippet: `<div class="budget-card bg-white p-6 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">\n  <h3 class="font-black text-xl uppercase mb-4">Weekly Budget</h3>\n  <div class="space-y-3 font-mono text-sm">\n    <div class="flex justify-between"><span>Shopping</span><span class="font-bold text-red-500">$340.00</span></div>\n    <div class="flex justify-between"><span>Food & Dining</span><span class="font-bold text-green-600">$185.50</span></div>\n  </div>\n</div>`,
+  },
+  {
+    id: "card-10",
+    title: "Developer Documentation Portal",
+    tags: ["#Developer", "#UI"],
+    prompt: "Sleek API documentation sidebar and code viewer widget with copy-to-clipboard button, endpoint HTTP badges (GET, POST), and JSON response pre-tag.",
+    author: { name: "@code_craft", avatar: "/images/default-avatar.png" },
+    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
+    gallery: ["https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80"],
+    imageAlt: "Developer Documentation Portal",
+    pinColor: "bg-accent-orange",
+    rotation: "rotate-1",
+    likesCount: 380,
+    featured: true,
+    codeSnippet: `<div class="doc-widget bg-slate-900 text-slate-100 p-6 border-4 border-slate-700 font-mono">\n  <div class="flex items-center gap-2 mb-3">\n    <span class="bg-green-500 text-black px-2 py-0.5 text-xs font-bold">GET</span>\n    <span class="text-sm">/v1/prompts/featured</span>\n  </div>\n  <pre class="bg-black p-4 text-xs text-emerald-400 border border-slate-800"><code>{ "status": 200, "count": 15 }</code></pre>\n</div>`,
+  },
+  {
+    id: "card-11",
+    title: "NFT Marketplace Collection Card",
+    tags: ["#Shop", "#Trend", "#UI"],
+    prompt: "Digital art NFT auction card featuring live countdown timer, highest bidder avatar, current ETH price badge, and bold placing bid button.",
+    author: { name: "@crypto_king", avatar: "/images/default-avatar.png" },
+    image: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1200&q=80",
+    gallery: ["https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1200&q=80"],
+    imageAlt: "NFT Marketplace Collection Card",
+    pinColor: "bg-accent-green",
+    rotation: "-rotate-1",
+    likesCount: 175,
+    featured: false,
+    codeSnippet: `<div class="nft-card bg-neutral-950 text-white p-5 border-4 border-cyan-400 shadow-[6px_6px_0px_0px_rgba(6,182,212,1)]">\n  <div class="flex justify-between items-center mb-3">\n    <span class="font-mono text-xs text-cyan-400">Current Bid</span>\n    <span class="font-black text-lg text-white">4.85 ETH</span>\n  </div>\n  <button class="w-full bg-cyan-400 text-black font-black py-3 uppercase border-2 border-white">Place Bid</button>\n</div>`,
+  },
+  {
+    id: "card-12",
+    title: "Kanban Task Management Card",
+    tags: ["#Analytics", "#Developer"],
+    prompt: "Project management task card with urgency status pill, avatar stack of assigned team members, progress checklist counter, and drag handle.",
+    author: { name: "@flow_creator", avatar: "/images/default-avatar.png" },
+    image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&w=1200&q=80",
+    gallery: ["https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&w=1200&q=80"],
+    imageAlt: "Kanban Task Management Card",
+    pinColor: "bg-primary",
+    rotation: "rotate-2",
+    likesCount: 295,
+    featured: false,
+    codeSnippet: `<div class="task-card bg-yellow-100 p-5 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">\n  <div class="flex justify-between mb-2">\n    <span class="bg-red-500 text-white font-mono text-[10px] uppercase font-bold px-2 py-0.5">High Priority</span>\n  </div>\n  <h4 class="font-black text-lg text-black">Refactor Authentication Flow</h4>\n  <p class="font-mono text-xs text-gray-700 mt-1">2 / 5 subtasks completed</p>\n</div>`,
+  },
+  {
+    id: "card-13",
+    title: "Cyberpunk Auth & Login Form",
+    tags: ["#Developer", "#UI", "#RetroUI"],
+    prompt: "High contrast futuristic login screen component with glitch text styling, social login buttons, remember session checkbox, and password visibility toggle.",
+    author: { name: "@hacker_ui", avatar: "/images/default-avatar.png" },
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80",
+    gallery: ["https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80"],
+    imageAlt: "Cyberpunk Auth & Login Form",
+    pinColor: "bg-accent-orange",
+    rotation: "-rotate-2",
+    likesCount: 440,
+    featured: true,
+    codeSnippet: `<div class="auth-box bg-black text-green-400 p-8 border-4 border-green-500 font-mono shadow-[8px_8px_0px_0px_rgba(34,197,94,1)]">\n  <h2 class="text-3xl font-black uppercase text-white mb-6">ACCESS TERMINAL</h2>\n  <input type="email" placeholder="USER_IDENTITY" class="w-full bg-neutral-900 border-2 border-green-500 p-3 mb-4 text-green-400" />\n  <button class="w-full bg-green-500 text-black font-black py-4 uppercase hover:bg-white">AUTHENTICATE</button>\n</div>`,
+  },
+  {
+    id: "card-14",
+    title: "Food Delivery Mobile Order Card",
+    tags: ["#Mobile", "#Shop"],
+    prompt: "Mobile app card for food delivery featuring dish thumbnail, star rating badge, estimated delivery countdown, and quick reorder button.",
+    author: { name: "@tasty_design", avatar: "/images/default-avatar.png" },
+    image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1200&q=80",
+    gallery: ["https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1200&q=80"],
+    imageAlt: "Food Delivery Mobile Order Card",
+    pinColor: "bg-accent-green",
+    rotation: "rotate-1",
+    likesCount: 190,
+    featured: false,
+    codeSnippet: `<div class="food-card bg-orange-50 p-4 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">\n  <div class="flex justify-between items-center mb-2">\n    <h4 class="font-black text-lg text-black">Artisanal Ramen Bowl</h4>\n    <span class="bg-yellow-400 text-black font-mono font-bold text-xs px-2 py-0.5">★ 4.9</span>\n  </div>\n  <p class="font-mono text-xs text-gray-600 mb-4">ETA: 20-30 mins • Free Delivery</p>\n  <button class="w-full bg-black text-white font-bold py-2.5 uppercase text-xs">Reorder $16.50</button>\n</div>`,
+  },
+  {
+    id: "card-15",
+    title: "Portfolio Hero Sticker Section",
+    tags: ["#UI", "#Trend", "#Developer"],
+    prompt: "Eye-catching Neo-Brutalist portfolio hero header component with floating sticker badges, bold headline typography, social icon strip, and contact CTA button.",
+    author: { name: "@vector_guru", avatar: "/images/default-avatar.png" },
+    image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80",
+    gallery: ["https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80"],
+    imageAlt: "Portfolio Hero Sticker Section",
+    pinColor: "bg-primary",
+    rotation: "-rotate-1",
+    likesCount: 498,
+    featured: true,
+    codeSnippet: `<header class="hero bg-yellow-300 p-12 border-4 border-black text-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">\n  <span class="inline-block bg-black text-yellow-300 font-mono font-bold text-xs px-3 py-1 uppercase mb-4">AVAILABLE FOR FREELANCE</span>\n  <h1 class="font-black text-5xl uppercase leading-none mb-6">CRAFTING DIGITAL ARTISAN UIs</h1>\n  <button class="bg-black text-white font-black text-lg px-8 py-4 uppercase border-2 border-black hover:bg-white hover:text-black">LET'S BUILD</button>\n</header>`,
+  }
 ];
