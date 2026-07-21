@@ -62,7 +62,7 @@ export function TrendingBar() {
         fetchTrending();
     }, []);
 
-    if (!loading && trending.length === 0) return null;
+    if (loading || trending.length === 0) return null;
 
     return (
         <>
