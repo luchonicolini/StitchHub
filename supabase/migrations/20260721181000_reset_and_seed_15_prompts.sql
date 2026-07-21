@@ -224,7 +224,7 @@ VALUES
     15,
     'Portfolio Hero Sticker Section',
     'Eye-catching Neo-Brutalist portfolio hero header component with floating sticker badges, bold headline typography, social icon strip, and contact CTA button.',
-    '<header class="hero bg-yellow-300 p-12 border-4 border-black text-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">\n  <span class="inline-block bg-black text-yellow-300 font-mono font-bold text-xs px-3 py-1 uppercase mb-4">AVAILABLE FOR FREELANCE</span>\n  <h1 class="font-black text-5xl uppercase leading-none mb-6">CRAFTING DIGITAL ARTISAN UIs</h1>\n  <button class="bg-black text-white font-black text-lg px-8 py-4 uppercase border-2 border-black hover:bg-white hover:text-black">LET\'S BUILD</button>\n</header>',
+    '<header class="hero bg-yellow-300 p-12 border-4 border-black text-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">\n  <span class="inline-block bg-black text-yellow-300 font-mono font-bold text-xs px-3 py-1 uppercase mb-4">AVAILABLE FOR FREELANCE</span>\n  <h1 class="font-black text-5xl uppercase leading-none mb-6">CRAFTING DIGITAL ARTISAN UIs</h1>\n  <button class="bg-black text-white font-black text-lg px-8 py-4 uppercase border-2 border-black hover:bg-white hover:text-black">LET''S BUILD</button>\n</header>',
     'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
     ARRAY['https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80'],
     ARRAY['#UI', '#Trend', '#Developer'],
