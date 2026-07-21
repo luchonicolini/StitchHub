@@ -28,11 +28,16 @@ export default function AuthPage() {
         }
     }, [isAuthenticated, loading, router]);
 
-    // Don't render auth page if already authenticated
+    // Don't render auth page if already authenticated or resolving auth state
     if (loading || isAuthenticated) {
         return (
-            <div className="min-h-screen bg-background-light flex items-center justify-center">
-                <div className="w-8 h-8 border-3 border-ink/20 border-t-primary rounded-full animate-spin" />
+            <div className="min-h-screen bg-background-light flex flex-col items-center justify-center gap-4">
+                <div className="w-12 h-12 bg-ink text-white flex items-center justify-center border-2 border-ink shadow-hard-sm animate-bounce">
+                    <Construction className="w-7 h-7" />
+                </div>
+                <span className="font-mono text-sm font-bold text-ink/70 uppercase tracking-wider">
+                    Redirecting to Workshop...
+                </span>
             </div>
         );
     }

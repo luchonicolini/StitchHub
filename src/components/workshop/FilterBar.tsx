@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, Smartphone, ShoppingCart, Code, TrendingUp, Palette, Zap, type LucideIcon } from "lucide-react";
+import { BarChart3, Smartphone, ShoppingCart, Code, TrendingUp, Palette, Zap, SlidersHorizontal, type LucideIcon } from "lucide-react";
 
 interface FilterBarProps {
     activeFilter: string | null;
@@ -13,119 +13,107 @@ interface FilterBarProps {
 }
 
 export function FilterBar({ activeFilter, onFilterChange, activeTool, onToolChange, resultCount, searchQuery, onClearAll }: FilterBarProps) {
-    const filters: { name: string; icon: LucideIcon; rotation: string; color: string }[] = [
-        { name: "#Analytics", icon: BarChart3, rotation: "rotate-1", color: "hover:bg-accent-orange" },
-        { name: "#Mobile", icon: Smartphone, rotation: "-rotate-2", color: "hover:bg-accent-green" },
-        { name: "#Shop", icon: ShoppingCart, rotation: "rotate-2", color: "hover:bg-ink hover:text-white" },
-        { name: "#Developer", icon: Code, rotation: "-rotate-1", color: "hover:bg-accent-orange" },
-        { name: "#Trend", icon: TrendingUp, rotation: "rotate-1", color: "hover:bg-accent-green" },
-        { name: "#UI", icon: Palette, rotation: "-rotate-2", color: "hover:bg-ink hover:text-white" },
+    const filters: { name: string; icon: LucideIcon; color: string }[] = [
+        { name: "#Analytics", icon: BarChart3, color: "hover:bg-accent-orange" },
+        { name: "#Mobile", icon: Smartphone, color: "hover:bg-accent-green" },
+        { name: "#Shop", icon: ShoppingCart, color: "hover:bg-ink hover:text-white" },
+        { name: "#Developer", icon: Code, color: "hover:bg-accent-orange" },
+        { name: "#Trend", icon: TrendingUp, color: "hover:bg-accent-green" },
+        { name: "#UI", icon: Palette, color: "hover:bg-ink hover:text-white" },
     ];
 
     const tools: { name: string; shortLabel: string; bg: string }[] = [
-        { name: "Google Stitch", shortLabel: "Stitch", bg: "bg-blue-100 border-blue-400 text-blue-800 hover:bg-blue-200" },
-        { name: "Claude Artifacts", shortLabel: "Claude", bg: "bg-orange-100 border-orange-400 text-orange-800 hover:bg-orange-200" },
-        { name: "v0 by Vercel", shortLabel: "v0", bg: "bg-neutral-200 border-neutral-500 text-neutral-800 hover:bg-neutral-300" },
-        { name: "Figma AI", shortLabel: "Figma AI", bg: "bg-purple-100 border-purple-400 text-purple-800 hover:bg-purple-200" },
-        { name: "Cursor", shortLabel: "Cursor", bg: "bg-green-100 border-green-400 text-green-800 hover:bg-green-200" },
+        { name: "Google Stitch", shortLabel: "Stitch", bg: "bg-blue-50 border-blue-400 text-blue-800 hover:bg-blue-100" },
+        { name: "Claude Artifacts", shortLabel: "Claude", bg: "bg-orange-50 border-orange-400 text-orange-800 hover:bg-orange-100" },
+        { name: "v0 by Vercel", shortLabel: "v0", bg: "bg-neutral-100 border-neutral-500 text-neutral-800 hover:bg-neutral-200" },
+        { name: "Figma AI", shortLabel: "Figma AI", bg: "bg-purple-50 border-purple-400 text-purple-800 hover:bg-purple-100" },
+        { name: "Cursor", shortLabel: "Cursor", bg: "bg-green-50 border-green-400 text-green-800 hover:bg-green-100" },
     ];
 
     const hasAnyFilter = !!(activeFilter || searchQuery || activeTool);
 
     return (
-        <section className="border-y-4 border-ink bg-primary py-5 mb-12 overflow-x-auto">
-            <div className="max-w-7xl mx-auto px-4 space-y-4">
-                {/* Row 1: Category Filters */}
-                <div className="flex items-center gap-4 min-w-max">
-                    <div className="relative mr-2 flex-shrink-0">
-                        <span className="font-black text-xl uppercase tracking-tight text-ink relative z-10">
-                            FILTERS:
+        <section className="border-y-4 border-ink bg-primary py-3.5 mb-10 shadow-sm">
+            <div className="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+
+                {/* Categories */}
+                <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-1.5 mr-2">
+                        <SlidersHorizontal className="w-4 h-4 text-ink" />
+                        <span className="font-black text-sm uppercase tracking-wider text-ink">
+                            TAGS:
                         </span>
-                        <div className="absolute -bottom-1 left-0 w-full h-1 bg-ink transform -rotate-1" />
                     </div>
 
-                    <div className="flex items-center gap-3">
-                        {filters.map((filter) => {
-                            const isActive = activeFilter === filter.name;
-                            return (
-                                <button
-                                    key={filter.name}
-                                    onClick={() => onFilterChange(isActive ? null : filter.name)}
-                                    className={
-                                        isActive
-                                            ? "group relative px-5 py-2.5 bg-ink !text-white border-3 border-ink font-mono font-bold text-sm transition-all duration-500 ease-in-out cursor-pointer shadow-none translate-x-[4px] translate-y-[4px] rotate-0 scale-105"
-                                            : `group relative px-5 py-2.5 bg-white text-ink border-3 border-ink font-mono font-bold text-sm transition-all duration-500 ease-in-out cursor-pointer shadow-hard-sm hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] hover:rotate-0 ${filter.rotation} ${filter.color}`
-                                    }
-                                >
-                                    <span className={isActive ? "flex items-center gap-2 !text-white" : "flex items-center gap-2"}>
-                                        <filter.icon className="w-4 h-4" />
-                                        <span>{filter.name}</span>
-                                    </span>
-                                    {isActive && (
-                                        <span className="absolute -top-2 -right-2 w-4 h-4 bg-accent-orange border-2 border-ink rounded-full animate-pulse" />
-                                    )}
-                                    {!isActive && (
-                                        <span className="absolute inset-0 border-2 border-transparent group-hover:border-dashed group-hover:border-ink/30 pointer-events-none transition-all duration-500 ease-in-out" />
-                                    )}
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    {/* Result Counter */}
-                    {hasAnyFilter && resultCount !== undefined && (
-                        <div className="ml-2 px-3 py-1 bg-white border-2 border-ink font-mono font-bold text-sm text-ink flex-shrink-0">
-                            {resultCount} {resultCount === 1 ? 'result' : 'results'}
-                            {searchQuery && (
-                                <span className="text-accent-orange ml-1">
-                                    for &quot;{searchQuery.length > 20 ? searchQuery.substring(0, 20) + '...' : searchQuery}&quot;
+                    {filters.map((filter) => {
+                        const isActive = activeFilter === filter.name;
+                        return (
+                            <button
+                                key={filter.name}
+                                onClick={() => onFilterChange(isActive ? null : filter.name)}
+                                className={
+                                    isActive
+                                        ? "px-3.5 py-1.5 bg-ink text-white border-2 border-ink font-mono font-bold text-xs transition-all shadow-none translate-y-[1px]"
+                                        : `px-3.5 py-1.5 bg-white text-ink border-2 border-ink font-mono font-bold text-xs transition-all shadow-hard-sm hover:shadow-none hover:translate-y-[1px] ${filter.color}`
+                                }
+                            >
+                                <span className="flex items-center gap-1.5">
+                                    <filter.icon className="w-3.5 h-3.5" />
+                                    <span>{filter.name}</span>
                                 </span>
-                            )}
-                        </div>
-                    )}
-
-                    {/* Clear All */}
-                    {hasAnyFilter && (
-                        <button
-                            onClick={() => {
-                                onFilterChange(null);
-                                onToolChange?.(null);
-                                onClearAll?.();
-                            }}
-                            className="ml-2 px-4 py-2 bg-accent-orange text-white border-2 border-ink font-mono font-bold text-xs uppercase
-                                hover:bg-white hover:text-ink transition-all duration-300 ease-in-out shadow-hard-sm hover:shadow-none
-                                hover:translate-x-[2px] hover:translate-y-[2px] transform -rotate-1 hover:rotate-0 cursor-pointer flex-shrink-0"
-                        >
-                            Clear ✕
-                        </button>
-                    )}
+                            </button>
+                        );
+                    })}
                 </div>
 
-                {/* Row 2: Tool Filters */}
-                <div className="flex items-center gap-3 min-w-max">
-                    <div className="flex items-center gap-2 mr-1 flex-shrink-0">
-                        <Zap className="w-4 h-4 text-ink/60" />
-                        <span className="font-mono font-bold text-xs uppercase text-ink/60 tracking-wide">AI Tool:</span>
+                {/* AI Tool Filters + Results */}
+                <div className="flex items-center gap-2 flex-wrap border-t-2 border-ink/15 lg:border-t-0 pt-2 lg:pt-0 lg:border-l-2 lg:pl-4">
+                    <div className="flex items-center gap-1 mr-1">
+                        <Zap className="w-3.5 h-3.5 text-ink/70" />
+                        <span className="font-mono font-bold text-xs uppercase text-ink/70">
+                            TOOL:
+                        </span>
                     </div>
+
                     {tools.map((tool) => {
                         const isActive = activeTool === tool.name;
                         return (
                             <button
                                 key={tool.name}
                                 onClick={() => onToolChange?.(isActive ? null : tool.name)}
-                                className={`px-3 py-1.5 font-mono font-bold text-xs border-2 transition-all duration-200 flex-shrink-0 ${isActive
-                                    ? "bg-ink text-white border-ink shadow-none translate-x-[2px] translate-y-[2px]"
-                                    : `${tool.bg} shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]`
+                                className={`px-2.5 py-1 font-mono font-bold text-xs border-2 transition-all ${isActive
+                                    ? "bg-ink text-white border-ink shadow-none translate-y-[1px]"
+                                    : `${tool.bg} shadow-sm hover:shadow-none hover:translate-y-[1px]`
                                     }`}
                             >
                                 {tool.shortLabel}
-                                {isActive && (
-                                    <span className="ml-1 text-accent-orange">✓</span>
-                                )}
+                                {isActive && <span className="ml-1 text-accent-orange">✓</span>}
                             </button>
                         );
                     })}
+
+                    {/* Result Counter & Clear */}
+                    {hasAnyFilter && (
+                        <div className="flex items-center gap-2 ml-auto lg:ml-2">
+                            {resultCount !== undefined && (
+                                <span className="px-2.5 py-1 bg-white border-2 border-ink font-mono font-bold text-xs text-ink">
+                                    {resultCount} {resultCount === 1 ? 'result' : 'results'}
+                                </span>
+                            )}
+                            <button
+                                onClick={() => {
+                                    onFilterChange(null);
+                                    onToolChange?.(null);
+                                    onClearAll?.();
+                                }}
+                                className="px-2.5 py-1 bg-accent-orange text-white border-2 border-ink font-mono font-bold text-xs uppercase hover:bg-white hover:text-ink transition-all shadow-sm hover:shadow-none"
+                            >
+                                Clear ✕
+                            </button>
+                        </div>
+                    )}
                 </div>
+
             </div>
         </section>
     );
