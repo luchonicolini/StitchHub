@@ -98,7 +98,16 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
     };
 
     const handleGoogleLogin = async () => {
-        await loginWithGoogle();
+        setLoading(true);
+        const result = await loginWithGoogle();
+        if (result?.error) {
+            toast.error("Autenticación con Google", {
+                description: result.error.includes("provider is not enabled")
+                    ? "Para activar Google, habilita el proveedor en Supabase Dashboard > Auth > Providers."
+                    : result.error
+            });
+        }
+        setLoading(false);
     };
 
     return (

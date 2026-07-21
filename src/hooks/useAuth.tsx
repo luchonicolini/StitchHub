@@ -22,7 +22,7 @@ interface AuthState {
     closeAuthModal: () => void;
     login: (email: string, password: string) => Promise<{ error: string | null }>;
     register: (username: string, email: string, password: string) => Promise<{ error: string | null }>;
-    loginWithGoogle: () => Promise<void>;
+    loginWithGoogle: () => Promise<{ error: string | null }>;
     logout: () => Promise<void>;
     updateProfile: (updates: ProfileUpdate) => Promise<{ error: string | null }>;
     resetPassword: (email: string) => Promise<{ error: string | null }>;
@@ -189,15 +189,22 @@ export const useAuth = create<AuthState>((set, get) => ({
     },
 
     loginWithGoogle: async () => {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: `${window.location.origin}/auth/callback`
-            }
-        });
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: `${window.location.origin}/auth/callback`
+                }
+            });
 
-        if (error) {
-            console.error('Google login error:', error);
+            if (error) {
+                console.error('Google login error:', error);
+                return { error: error.message };
+            }
+            return { error: null };
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : 'Error iniciando sesión con Google';
+            return { error: msg };
         }
     },
 
