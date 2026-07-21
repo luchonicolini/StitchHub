@@ -53,6 +53,10 @@ export function WorkshopPageClient({ initialPrompts, stats }: WorkshopPageClient
                         onFilterChange={setActiveFilter}
                         resultCount={resultCount}
                         searchQuery={searchQuery}
+                        onClearAll={() => {
+                            setActiveFilter(null);
+                            setSearchQuery("");
+                        }}
                     />
                     <WorkshopFeed
                         initialPrompts={initialPrompts}

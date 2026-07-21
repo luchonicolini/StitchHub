@@ -7,9 +7,10 @@ interface FilterBarProps {
     onFilterChange: (filter: string | null) => void;
     resultCount?: number;
     searchQuery?: string;
+    onClearAll?: () => void;
 }
 
-export function FilterBar({ activeFilter, onFilterChange, resultCount, searchQuery }: FilterBarProps) {
+export function FilterBar({ activeFilter, onFilterChange, resultCount, searchQuery, onClearAll }: FilterBarProps) {
     // Updated filters to match actual card tags
     const filters: { name: string; icon: LucideIcon; rotation: string; color: string }[] = [
         { name: "#Analytics", icon: BarChart3, rotation: "rotate-1", color: "hover:bg-accent-orange" },
@@ -81,10 +82,13 @@ export function FilterBar({ activeFilter, onFilterChange, resultCount, searchQue
                 {/* Clear All Button - Shows when filter OR search is active */}
                 {(activeFilter || searchQuery) && (
                     <button
-                        onClick={() => onFilterChange(null)}
+                        onClick={() => {
+                            onFilterChange(null);
+                            onClearAll?.();
+                        }}
                         className="ml-4 px-4 py-2 bg-accent-orange text-white border-2 border-ink font-mono font-bold text-xs uppercase
                             hover:bg-white hover:text-ink transition-all duration-300 ease-in-out shadow-hard-sm hover:shadow-none
-                            hover:translate-x-[2px] hover:translate-y-[2px] transform -rotate-1 hover:rotate-0"
+                            hover:translate-x-[2px] hover:translate-y-[2px] transform -rotate-1 hover:rotate-0 cursor-pointer"
                     >
                         Clear ✕
                     </button>
