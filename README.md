@@ -4,137 +4,76 @@
 
 ### Hand-picked UI prompts, code and inspiration for humans.
 
-[![Live on Vercel](https://img.shields.io/badge/Live_on_Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://stitch-hub-one.vercel.app)
+[![Live on Vercel](https://img.shields.io/badge/Explore_StitchHub-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://stitch-hub-one.vercel.app)
 [![Next.js](https://img.shields.io/badge/Next.js_16-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
 
-[Explore the live app](https://stitch-hub-one.vercel.app) · [Report a bug](https://github.com/luchonicolini/StitchHub/issues) · [Request a feature](https://github.com/luchonicolini/StitchHub/issues)
+[Visit the live experience](https://stitch-hub-one.vercel.app)
 
 </div>
 
 ![StitchHub homepage](public/screenshots/homepage.png)
 
-## About the project
+## What is StitchHub?
 
-StitchHub is a community-driven gallery for discovering and sharing interface designs. Each publication can combine the finished visual, the prompt that inspired it and the code used to build it, giving designers and developers a practical source of inspiration instead of another image-only feed.
+StitchHub is a visual discovery platform where designers, developers and AI creators can explore interface ideas together with the prompts and code behind them.
 
-The product uses a bold neo-brutalist visual language with high contrast, strong borders, offset shadows and playful motion.
+Instead of presenting designs as isolated images, StitchHub keeps the creative process attached to the final result. Every publication can become a practical reference for understanding how an interface was imagined and built.
 
-## Highlights
+## What does it offer?
 
-- Browse a responsive masonry feed of community designs.
-- Share prompts, source snippets and multi-image galleries.
-- Search and filter publications by category.
-- Create an account and manage a public creator profile.
-- Like, save, pin and edit designs.
-- Follow creators and receive realtime notifications.
-- Upload profile and project images through Supabase Storage.
-- Use the complete experience across desktop and mobile.
+- A curated gallery of interface designs and creative prompts.
+- Publications with visuals, prompts and source-code snippets.
+- Search and category filters for discovering relevant ideas.
+- Multi-image galleries for presenting complete design concepts.
+- Personal accounts and public creator profiles.
+- Likes, saved designs and pinned collections.
+- Creator following and realtime notifications.
+- A responsive experience across desktop and mobile.
 
-## Built with
+## Product foundations
 
-| Area | Technology |
-| --- | --- |
-| Framework | Next.js 16 with App Router |
-| Interface | React 19, Tailwind CSS 4 |
-| Language | TypeScript |
-| Backend | Supabase Postgres |
-| Authentication | Supabase Auth and SSR |
-| Media | Supabase Storage and Next.js Image |
-| Realtime | Supabase Realtime |
-| Motion | Framer Motion |
-| Icons | Lucide React |
-| Hosting | Vercel |
+### Discover
 
-## Project structure
+Browse community work through a visual feed designed to make exploration quick, expressive and enjoyable.
 
-```text
-src/
-├── app/          # Routes, layouts and server-rendered pages
-├── components/   # Auth, profile, workshop and reusable UI
-├── data/         # Local fallback and promotional content
-├── hooks/        # Authentication, filtering and toast state
-├── lib/          # Supabase, uploads and design submission
-└── types/        # Database and UI domain models
-```
+### Understand
 
-## Getting started
+See more than the finished image. Prompts and code provide useful context for learning from each design.
 
-### Requirements
+### Share
 
-- Node.js 20.9 or newer
-- npm
-- A Supabase project
+Publish complete ideas, organize personal work and build a public creator identity.
 
-### Installation
+### Connect
 
-```bash
-git clone https://github.com/luchonicolini/StitchHub.git
-cd StitchHub
-npm install
-```
+Follow other creators, react to their work and receive updates through a lightweight social experience.
 
-Create a `.env.local` file in the project root:
+## Visual identity
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-publishable-or-anon-key
-```
+StitchHub uses a neo-brutalist design language built around strong borders, offset shadows, high contrast, geometric shapes and playful motion. The interface is intentionally bold while remaining clear and usable.
 
-Only use a Supabase publishable or legacy `anon` key in a `NEXT_PUBLIC_` variable. Never expose a `service_role` key in the browser.
+## Technology
 
-Start the development server:
+The experience is built with:
 
-```bash
-npm run dev
-```
+- Next.js and React
+- TypeScript
+- Tailwind CSS
+- Supabase
+- Framer Motion
+- Vercel
 
-Open [http://localhost:3000](http://localhost:3000).
+## Live project
 
-## Available scripts
+StitchHub is currently available at:
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Start the local development server |
-| `npm run build` | Create an optimized production build |
-| `npm run start` | Run the production build locally |
-| `npm run lint` | Check the codebase with ESLint |
-
-## Database setup
-
-The repository includes SQL scripts for profiles, followers and notifications. Review them before running them in the Supabase SQL Editor, and keep Row Level Security enabled for every table exposed through the Data API.
-
-For authentication callbacks, add both local and production URLs to the Supabase redirect allow list:
-
-```text
-http://localhost:3000/auth/callback
-https://stitch-hub-one.vercel.app/auth/callback
-```
-
-## Deployment
-
-The public application is deployed on Vercel from the `main` branch. Configure these variables in the Vercel project for every required environment:
-
-```text
-NEXT_PUBLIC_SUPABASE_URL
-NEXT_PUBLIC_SUPABASE_ANON_KEY
-```
-
-Every push to `main` triggers a new production deployment.
-
-## Contributing
-
-Issues and pull requests are welcome. Before submitting a change:
-
-1. Create a branch from `main`.
-2. Keep the change focused and document its purpose.
-3. Run `npm run lint` and `npm run build`.
-4. Open a pull request with screenshots for visual changes.
+### [stitch-hub-one.vercel.app](https://stitch-hub-one.vercel.app)
 
 ## Author
 
-Created and maintained by [@luchonicolini](https://github.com/luchonicolini).
+A personal product created and maintained by [Luciano Nicolini](https://github.com/luchonicolini).
 
 ---
 
