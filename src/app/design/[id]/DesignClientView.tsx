@@ -28,6 +28,18 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
         return "html";
     };
 
+    const getCodeForActiveTab = () => {
+        const rawCode = initialDesign.codeSnippet || "<!-- No code snippet available -->";
+        if (activeTab === "css") {
+            return `/* Tailwind & Custom CSS Stylesheet for ${initialDesign.title} */\n@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n/* Neo-Brutalist Utilities */\n.neo-card {\n  border: 4px solid #000000;\n  box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);\n  transition: all 0.2s ease-in-out;\n}\n\n.neo-card:hover {\n  transform: translate(2px, 2px);\n  box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);\n}`;
+        }
+        if (activeTab === "react") {
+            const cleanTitle = initialDesign.title.replace(/[^a-zA-Z0-9]/g, '');
+            return `import React from 'react';\n\nexport default function ${cleanTitle}Component() {\n  return (\n    ${rawCode.replace(/class=/g, 'className=')}\n  );\n}`;
+        }
+        return rawCode;
+    };
+
     const handleCopyPrompt = async () => {
         try {
             await navigator.clipboard.writeText(initialDesign.prompt);
@@ -204,11 +216,12 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
                                         background: '#1a1b26',
                                         fontSize: '13px',
                                         lineHeight: '1.6',
-                                        wordBreak: 'break-all',
+                                        whiteSpace: 'pre-wrap',
+                                        wordBreak: 'break-word',
                                     }}
                                     showLineNumbers={true}
                                 >
-                                    {initialDesign.codeSnippet}
+                                    {getCodeForActiveTab()}
                                 </SyntaxHighlighter>
                             </div>
                         </div>

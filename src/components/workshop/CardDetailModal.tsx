@@ -40,6 +40,19 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
         return "html";
     };
 
+    // Tab code content switcher
+    const getCodeForActiveTab = () => {
+        const rawCode = card.codeSnippet || "<!-- No code snippet available -->";
+        if (activeTab === "css") {
+            return `/* Tailwind & Custom CSS Stylesheet for ${card.title} */\n@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n/* Neo-Brutalist Utilities */\n.neo-card {\n  border: 4px solid #000000;\n  box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);\n  transition: all 0.2s ease-in-out;\n}\n\n.neo-card:hover {\n  transform: translate(2px, 2px);\n  box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);\n}`;
+        }
+        if (activeTab === "react") {
+            const cleanTitle = card.title.replace(/[^a-zA-Z0-9]/g, '');
+            return `import React from 'react';\n\nexport default function ${cleanTitle}Component() {\n  return (\n    ${rawCode.replace(/class=/g, 'className=')}\n  );\n}`;
+        }
+        return rawCode;
+    };
+
     // Initial check for gallery
     const images = card.gallery && card.gallery.length > 0 ? card.gallery : [card.image];
     const currentImage = images[currentImageIndex] || card.image;
@@ -367,11 +380,12 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                                                     background: '#1a1b26',
                                                     fontSize: '13px',
                                                     lineHeight: '1.6',
-                                                    wordBreak: 'break-all',
+                                                    whiteSpace: 'pre-wrap',
+                                                    wordBreak: 'break-word',
                                                 }}
                                                 showLineNumbers={true}
                                             >
-                                                {card.codeSnippet || "<!-- No code snippet available -->"}
+                                                {getCodeForActiveTab()}
                                             </SyntaxHighlighter>
                                         </div>
                                     </div>
