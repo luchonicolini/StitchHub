@@ -30,6 +30,15 @@ export function WorkshopHeader({ searchQuery = "", onSearchChange, showSearch = 
         }
     };
 
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        if (onSearchChange) {
+            onSearchChange(val);
+        } else if (pathname !== '/' && val.trim().length > 0) {
+            router.push(`/?search=${encodeURIComponent(val)}#explore-section`);
+        }
+    };
+
     return (
         <>
             <header className="sticky top-0 z-50 w-full border-b-4 border-ink bg-background-light py-4 shadow-[0_4px_0_0_#000000]">
@@ -57,7 +66,7 @@ export function WorkshopHeader({ searchQuery = "", onSearchChange, showSearch = 
                                     placeholder="Search prompts..."
                                     type="text"
                                     value={searchQuery}
-                                    onChange={(e) => onSearchChange?.(e.target.value)}
+                                    onChange={handleInputChange}
                                 />
                                 {/* Clear button when there's text */}
                                 {searchQuery && (

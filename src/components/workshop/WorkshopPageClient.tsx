@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { WorkshopHeader } from "@/components/workshop/WorkshopHeader";
 import { HeroSection } from "@/components/workshop/HeroSection";
 import { FilterBar } from "@/components/workshop/FilterBar";
@@ -22,11 +22,37 @@ export function WorkshopPageClient({ initialPrompts, stats }: WorkshopPageClient
     const [resultCount, setResultCount] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>("");
 
+    // Auto-scroll when typing search on home page
+    const handleSearchChange = (query: string) => {
+        setSearchQuery(query);
+        if (query.trim().length > 0) {
+            const exploreElement = document.getElementById('explore-section');
+            if (exploreElement) {
+                const rect = exploreElement.getBoundingClientRect();
+                if (rect.top > 180) {
+                    exploreElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+    };
+
+    // Read ?search= param from URL if coming from another page
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchParam = urlParams.get('search');
+        if (searchParam) {
+            setSearchQuery(searchParam);
+            setTimeout(() => {
+                document.getElementById('explore-section')?.scrollIntoView({ behavior: 'smooth' });
+            }, 150);
+        }
+    }, []);
+
     return (
         <div className="bg-paper-texture min-h-screen flex flex-col overflow-x-hidden selection:bg-primary selection:text-black">
             <WorkshopHeader
                 searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
+                onSearchChange={handleSearchChange}
             />
             <main className="flex-grow">
                 <HeroSection stats={stats} />
