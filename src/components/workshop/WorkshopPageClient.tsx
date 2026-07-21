@@ -20,7 +20,6 @@ interface WorkshopPageClientProps {
 
 export function WorkshopPageClient({ initialPrompts, stats }: WorkshopPageClientProps) {
     const [activeFilter, setActiveFilter] = useState<string | null>(null);
-    const [activeTool, setActiveTool] = useState<string | null>(null);
     const [resultCount, setResultCount] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -42,7 +41,6 @@ export function WorkshopPageClient({ initialPrompts, stats }: WorkshopPageClient
 
     const clearAll = () => {
         setActiveFilter(null);
-        setActiveTool(null);
         setSearchQuery("");
     };
 
@@ -60,8 +58,6 @@ export function WorkshopPageClient({ initialPrompts, stats }: WorkshopPageClient
                     <FilterBar
                         activeFilter={activeFilter}
                         onFilterChange={setActiveFilter}
-                        activeTool={activeTool}
-                        onToolChange={setActiveTool}
                         resultCount={resultCount}
                         searchQuery={searchQuery}
                         onClearAll={clearAll}
@@ -69,7 +65,6 @@ export function WorkshopPageClient({ initialPrompts, stats }: WorkshopPageClient
                     <WorkshopFeed
                         initialPrompts={initialPrompts}
                         activeFilter={activeFilter}
-                        activeTool={activeTool}
                         searchQuery={searchQuery}
                         onResultCountChange={setResultCount}
                         onTagClick={(tag) => {
