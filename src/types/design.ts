@@ -6,6 +6,7 @@ import { Prompt } from "./prompt";
  */
 export interface DesignDB {
     id: string;
+    user_id?: string;
     title: string;
     category: string;
     prompt_content: string;
@@ -22,6 +23,7 @@ export interface DesignDB {
 export function mapDesignToPrompt(d: DesignDB, index: number): Prompt {
     return {
         id: `db-${d.id}`,
+        userId: d.user_id,
         title: d.title,
         tags: [d.category || "Design"],
         prompt: d.prompt_content,

@@ -1,7 +1,35 @@
+"use client";
+
 import Link from "next/link";
-import { Construction, ArrowRight } from "lucide-react";
+import { Construction, ArrowRight, Instagram, Github } from "lucide-react";
+import { useToast } from "@/hooks/useToast";
+
+function XIcon({ className = "w-5 h-5" }: { className?: string }) {
+    return (
+        <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+        </svg>
+    );
+}
+
+const SOCIAL_LINKS = [
+    { id: "x", name: "X (Twitter)", Icon: XIcon },
+    { id: "instagram", name: "Instagram", Icon: Instagram },
+    { id: "github", name: "GitHub", Icon: Github },
+];
 
 export function Footer() {
+    const { showToast } = useToast();
+
+    const handleSocialClick = (e: React.MouseEvent, name: string) => {
+        e.preventDefault();
+        showToast({
+            message: `${name} - Próximamente`,
+            description: "Nuestras redes sociales estarán disponibles muy pronto. ¡Mantente atento!",
+            type: "info",
+        });
+    };
+
     return (
         <footer className="bg-ink text-white py-16 border-t-8 border-accent-orange relative overflow-hidden">
             {/* Abstract shape */}
@@ -22,15 +50,17 @@ export function Footer() {
                         Hand-crafted prompts for the digital artisan. Built with sweat,
                         coffee, and slightly buggy CSS.
                     </p>
+                    {/* Social Media Icons */}
                     <div className="flex gap-4">
-                        {["X", "Ig", "Gh"].map((social) => (
-                            <Link
-                                key={social}
-                                href="#"
-                                className="w-10 h-10 flex items-center justify-center bg-white text-ink rounded-full hover:bg-accent-orange hover:text-white transition-colors"
+                        {SOCIAL_LINKS.map(({ id, name, Icon }) => (
+                            <button
+                                key={id}
+                                onClick={(e) => handleSocialClick(e, name)}
+                                className="w-10 h-10 flex items-center justify-center bg-white text-ink rounded-full border-2 border-white hover:bg-accent-yellow hover:scale-110 active:scale-95 transition-all shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)] cursor-pointer"
+                                title={`${name} (Próximamente)`}
                             >
-                                <span className="font-bold">{social}</span>
-                            </Link>
+                                <Icon className="w-5 h-5" />
+                            </button>
                         ))}
                     </div>
                 </div>
@@ -73,3 +103,4 @@ export function Footer() {
         </footer>
     );
 }
+

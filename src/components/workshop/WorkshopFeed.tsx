@@ -165,6 +165,21 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
             return;
         }
 
+        // Check if design belongs to current user
+        const targetPrompt = prompts.find(p => p.id === promptId);
+        if (targetPrompt) {
+            const isOwnCard = (targetPrompt.userId && targetPrompt.userId === user.id) ||
+                             (targetPrompt.author?.name && targetPrompt.author.name.toLowerCase() === user.username.toLowerCase());
+            if (isOwnCard) {
+                showToast({
+                    message: "Acción no permitida",
+                    description: "¡No puedes darle me gusta a tus propios diseños!",
+                    type: "warning",
+                });
+                return;
+            }
+        }
+
         // Clean ID based on how we mapped it from database
         const isDbDesign = promptId.startsWith('db-');
         const numericId = isDbDesign ? parseInt(promptId.replace('db-', ''), 10) : NaN;

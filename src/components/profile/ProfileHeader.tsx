@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Edit2, MapPin, Link as LinkIcon, Calendar } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { EditProfileModal } from "@/components/profile/EditProfileModal";
+import { FollowersModal } from "@/components/profile/FollowersModal";
+import { supabase } from "@/lib/supabase";
 
 interface ProfileHeaderProps {
     totalDesigns: number;
@@ -12,23 +14,36 @@ interface ProfileHeaderProps {
 export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
     const { user } = useAuth();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [followerCount, setFollowerCount] = useState(0);
+    const [followingCount, setFollowingCount] = useState(0);
+    const [modalConfig, setModalConfig] = useState<{ isOpen: boolean; type: "followers" | "following" }>({
+        isOpen: false,
+        type: "followers",
+    });
+
+    useEffect(() => {
+        if (!user?.id) return;
+        const fetchCounts = async () => {
+            try {
+                const { count: fCount } = await supabase
+                    .from('followers')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('following_id', user.id);
+                setFollowerCount(fCount || 0);
+
+                const { count: flCount } = await supabase
+                    .from('followers')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('follower_id', user.id);
+                setFollowingCount(flCount || 0);
+            } catch (err) {
+                console.error("Error fetching follow counts:", err);
+            }
+        };
+        fetchCounts();
+    }, [user?.id]);
 
     if (!user) return null;
-
-    // Use specific avatar or default
-    // Note: user object from useAuth might need to be enriched if we want avatar_url directly
-    // For now we might depend on what's available or fetch it.
-    // Actually useAuth initializes user with data from profiles table if available.
-    // Let's assume user object has what we need or we might need to fetch profile specifically here if extra fields are needed.
-    // looking at useAuth, it maps: id, email, username. It does NOT map avatar_url yet.
-    // We should probably update useAuth to include avatar_url or fetch it here.
-    // For MVP, let's use a placeholder if missing or update useAuth.
-    // useAuth.tsx line 46:
-    // user: { id, email, username }
-
-    // Let's rely on a reliable placeholder for now or updated auth later. 
-    // Actually, let's look at how we get the avatar. The profile table has it.
-    // I can fetch the full profile here to be sure.
 
     return (
         <div className="bg-background-light border-b-8 border-ink mb-12 relative w-full overflow-x-hidden">
@@ -91,7 +106,7 @@ export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
                         {/* Quick Edit Icon */}
                         <button
                             onClick={() => setIsEditModalOpen(true)}
-                            className="absolute -bottom-2 -right-2 flex items-center justify-center w-12 h-12 md:w-14 md:h-14 bg-accent-cyan border-4 border-ink rounded-full text-ink hover:scale-110 transition-transform shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-20 group-hover:rotate-12 hover:bg-primary active:translate-y-1 active:shadow-none"
+                            className="absolute -bottom-2 -right-2 flex items-center justify-center w-12 h-12 md:w-14 md:h-14 bg-accent-cyan border-4 border-ink rounded-full text-ink hover:scale-110 transition-transform shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-20 group-hover:rotate-12 hover:bg-primary active:translate-y-1 active:shadow-none cursor-pointer"
                             title="Change Avatar"
                         >
                             <Edit2 className="w-5 h-5 md:w-6 md:h-6 font-black" />
@@ -143,20 +158,30 @@ export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
                         </div>
                     </div>
 
-                    {/* Stats */}
-                    <div className="flex items-center gap-4 shrink-0 mt-4 md:mt-0">
+                    {/* Interactive Stats */}
+                    <div className="flex items-center justify-center md:justify-end gap-4 shrink-0 mt-4 md:mt-0">
                         <div className="flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 border-4 border-ink bg-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-2 hover:rotate-0 transition-transform cursor-default">
                             <div className="font-black text-3xl md:text-4xl text-ink leading-none">{totalDesigns}</div>
                             <div className="text-[10px] font-black font-mono text-ink uppercase mt-1 tracking-wider">Prints</div>
                         </div>
-                        <div className="flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 border-4 border-ink bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-2 hover:rotate-0 transition-transform opacity-90 cursor-default">
-                            <div className="font-black text-3xl md:text-4xl text-ink leading-none">0</div>
-                            <div className="text-[10px] font-black font-mono text-ink uppercase mt-1 tracking-wider">Remixes</div>
-                        </div>
-                        <div className="flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 border-4 border-ink bg-accent-green shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-1 hover:rotate-0 transition-transform opacity-90 cursor-default">
-                            <div className="font-black text-3xl md:text-4xl text-ink leading-none">0</div>
-                            <div className="text-[10px] font-black font-mono text-ink uppercase mt-1 tracking-wider">Likes</div>
-                        </div>
+                        
+                        <button
+                            onClick={() => setModalConfig({ isOpen: true, type: "followers" })}
+                            className="flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 border-4 border-ink bg-accent-green shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-2 hover:rotate-0 hover:scale-105 active:scale-95 transition-all cursor-pointer group"
+                            title="Ver tus seguidores"
+                        >
+                            <div className="font-black text-3xl md:text-4xl text-ink leading-none group-hover:scale-110 transition-transform">{followerCount}</div>
+                            <div className="text-[10px] font-black font-mono text-ink uppercase mt-1 tracking-wider group-hover:underline">Followers</div>
+                        </button>
+
+                        <button
+                            onClick={() => setModalConfig({ isOpen: true, type: "following" })}
+                            className="flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 border-4 border-ink bg-accent-cyan shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-1 hover:rotate-0 hover:scale-105 active:scale-95 transition-all cursor-pointer group"
+                            title="Ver a quiénes sigues"
+                        >
+                            <div className="font-black text-3xl md:text-4xl text-ink leading-none group-hover:scale-110 transition-transform">{followingCount}</div>
+                            <div className="text-[10px] font-black font-mono text-ink uppercase mt-1 tracking-wider group-hover:underline">Following</div>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -168,6 +193,17 @@ export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
                     currentUser={user}
                 />
             )}
+
+            {modalConfig.isOpen && (
+                <FollowersModal
+                    isOpen={modalConfig.isOpen}
+                    onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+                    targetUserId={user.id}
+                    username={user.username}
+                    type={modalConfig.type}
+                />
+            )}
         </div>
     );
 }
+

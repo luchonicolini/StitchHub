@@ -9,6 +9,7 @@ export type PinColor = "bg-primary" | "bg-accent-orange" | "bg-accent-green" | "
 
 export interface Prompt {
     id: string;
+    userId?: string;
     title: string;
     tags: string[];
     prompt: string;

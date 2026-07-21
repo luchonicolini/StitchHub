@@ -19,6 +19,9 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "StitchHub Neo-Brutalist Workshop",
   description: "Hand-Picked Stitch Prompts for Humans",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({

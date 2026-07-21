@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from 'react';
 import { Prompt } from '@/types/prompt';
 import { MapPin, Link as LinkIcon, Calendar } from 'lucide-react';
 import Image from 'next/image';
 import { FollowButton } from '@/components/profile/FollowButton';
 import { WorkshopFeed } from '@/components/workshop/WorkshopFeed';
+import { FollowersModal } from '@/components/profile/FollowersModal';
 
 interface PublicProfileClientProps {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -12,12 +14,15 @@ interface PublicProfileClientProps {
     designs: Prompt[];
     totalDesigns: number;
     followerCount: number;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     followingCount: number;
 }
 
 export default function PublicProfileClient({ profile, designs, totalDesigns, followerCount, followingCount }: PublicProfileClientProps) {
     const joinedYear = profile.created_at ? new Date(profile.created_at).getFullYear() : '2026';
+    const [modalConfig, setModalConfig] = useState<{ isOpen: boolean; type: "followers" | "following" }>({
+        isOpen: false,
+        type: "followers",
+    });
 
     return (
         <div className="flex flex-col w-full overflow-x-hidden">
@@ -128,10 +133,23 @@ export default function PublicProfileClient({ profile, designs, totalDesigns, fo
                                 <div className="text-[10px] font-black font-mono text-ink uppercase mt-1 tracking-wider">Prints</div>
                             </div>
 
-                            <div className="hidden sm:flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 border-4 border-ink bg-accent-green shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-2 hover:rotate-0 transition-transform cursor-default">
-                                <div className="font-black text-3xl md:text-4xl text-ink leading-none">{followerCount}</div>
-                                <div className="text-[10px] font-black font-mono text-ink uppercase mt-1 tracking-wider">Followers</div>
-                            </div>
+                            <button
+                                onClick={() => setModalConfig({ isOpen: true, type: "followers" })}
+                                className="flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 border-4 border-ink bg-accent-green shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-2 hover:rotate-0 hover:scale-105 active:scale-95 transition-all cursor-pointer group"
+                                title="Ver seguidores"
+                            >
+                                <div className="font-black text-3xl md:text-4xl text-ink leading-none group-hover:scale-110 transition-transform">{followerCount}</div>
+                                <div className="text-[10px] font-black font-mono text-ink uppercase mt-1 tracking-wider group-hover:underline">Followers</div>
+                            </button>
+
+                            <button
+                                onClick={() => setModalConfig({ isOpen: true, type: "following" })}
+                                className="flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 border-4 border-ink bg-accent-cyan shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-1 hover:rotate-0 hover:scale-105 active:scale-95 transition-all cursor-pointer group"
+                                title="Ver a quiénes sigue"
+                            >
+                                <div className="font-black text-3xl md:text-4xl text-ink leading-none group-hover:scale-110 transition-transform">{followingCount}</div>
+                                <div className="text-[10px] font-black font-mono text-ink uppercase mt-1 tracking-wider group-hover:underline">Following</div>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -156,6 +174,17 @@ export default function PublicProfileClient({ profile, designs, totalDesigns, fo
                     </div>
                 )}
             </div>
+
+            {modalConfig.isOpen && (
+                <FollowersModal
+                    isOpen={modalConfig.isOpen}
+                    onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+                    targetUserId={profile.id}
+                    username={profile.username}
+                    type={modalConfig.type}
+                />
+            )}
         </div>
     );
 }
+

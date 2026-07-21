@@ -70,7 +70,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
             });
 
             if (signInError) {
-                console.error('Login error:', signInError);
+                console.warn('Login attempt failed:', signInError.message);
                 setError(signInError.message);
                 setShake(true);
                 toast.error("Login failed", {

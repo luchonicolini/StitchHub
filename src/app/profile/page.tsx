@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { createBrowserClient } from "@supabase/ssr";
+import { supabase } from "@/lib/supabase";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileProjectCard } from "@/components/profile/ProfileProjectCard";
 import { NewDesignCard } from "@/components/profile/NewDesignCard";
@@ -25,11 +25,6 @@ export default function ProfilePage() {
     const [myDesigns, setMyDesigns] = useState<Prompt[]>([]);
     const [userLikes, setUserLikes] = useState<Set<number>>(new Set());
 
-    // Create Supabase client locally to ensure fresh session, wrapped in useState for stability
-    const [supabase] = useState(() => createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    ));
     const [loadingDesigns, setLoadingDesigns] = useState(true);
     const [selectedCard, setSelectedCard] = useState<Prompt | null>(null);
 
@@ -216,65 +211,13 @@ export default function ProfilePage() {
         }
     };
 
-    const handleToggleLike = async (design: Prompt) => {
-        if (!user) return;
-
-        const numericId = parseInt(design.id.replace('db-', ''), 10);
-        if (isNaN(numericId)) return;
-
-        const isCurrentlyLiked = userLikes.has(numericId);
-
-        // Optimistic update
-        setUserLikes(prev => {
-            const next = new Set(prev);
-            if (isCurrentlyLiked) next.delete(numericId);
-            else next.add(numericId);
-            return next;
+    const handleToggleLike = async (_design: Prompt) => {
+        showToast({
+            message: "Acción no permitida",
+            description: "¡No puedes darle me gusta a tus propios diseños!",
+            type: "warning",
         });
-
-        setMyDesigns(prev => prev.map(d => {
-            if (d.id === design.id) {
-                return {
-                    ...d,
-                    likesCount: Math.max(0, (d.likesCount || 0) + (isCurrentlyLiked ? -1 : 1))
-                };
-            }
-            return d;
-        }));
-
-        try {
-            if (isCurrentlyLiked) {
-                const { error } = await supabase
-                    .from('likes')
-                    .delete()
-                    .eq('user_id', user.id)
-                    .eq('design_id', numericId);
-                if (error) throw error;
-            } else {
-                const { error } = await supabase
-                    .from('likes')
-                    .insert({ user_id: user.id, design_id: numericId });
-                if (error) throw error;
-            }
-        } catch (err) {
-            console.error("Error toggling like:", err);
-            // Revert
-            setUserLikes(prev => {
-                const next = new Set(prev);
-                if (isCurrentlyLiked) next.add(numericId);
-                else next.delete(numericId);
-                return next;
-            });
-            setMyDesigns(prev => prev.map(d => {
-                if (d.id === design.id) {
-                    return {
-                        ...d,
-                        likesCount: Math.max(0, (d.likesCount || 0) + (isCurrentlyLiked ? 1 : -1))
-                    };
-                }
-                return d;
-            }));
-        }
+        return;
     };
 
     const handleDeleteClick = (id: string) => {

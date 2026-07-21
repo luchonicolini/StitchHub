@@ -128,36 +128,56 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
                     </div>
                 </div>
 
-                {/* Terminal Code Snippet (if it existed on Prompt interface) */}
+                {/* Terminal Code Snippet */}
                 {initialDesign.codeSnippet && (
                     <div className="relative mt-4 group">
                         <div className="bg-[#1a1b26] rounded-lg border-4 border-ink shadow-hard overflow-hidden">
                             {/* Terminal Header */}
-                            <div className="bg-[#1a1b26] border-b border-white/10 px-4 py-3 flex items-center gap-4">
-                                <div className="flex gap-2">
-                                    <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
-                                    <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
-                                    <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+                            <div className="bg-[#1a1b26] border-b border-white/10 px-4 py-3 flex items-center justify-between gap-4">
+                                <div className="flex items-center gap-4">
+                                    <div className="flex gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+                                        <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+                                        <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+                                    </div>
+                                    <div className="font-mono text-xs text-white/50 truncate">
+                                        ~/stitch/generated-output/index.html
+                                    </div>
                                 </div>
-                                <div className="flex-1 text-center font-mono text-xs text-white/40">
-                                    ~/stitch/generated-output/index.html
-                                </div>
-                                <div className="w-12"></div>
+                                
+                                {/* Copy Code Button */}
+                                <button
+                                    onClick={async () => {
+                                        try {
+                                            await navigator.clipboard.writeText(initialDesign.codeSnippet || '');
+                                            showToast({ message: "Código copiado!", type: "success" });
+                                        } catch {
+                                            showToast({ message: "Error al copiar", type: "error" });
+                                        }
+                                    }}
+                                    className="flex items-center gap-1.5 px-3 py-1 bg-white/10 hover:bg-white/20 text-white text-xs font-mono font-bold rounded border border-white/20 transition-all active:scale-95 cursor-pointer"
+                                    title="Copiar código completo"
+                                >
+                                    <Copy className="w-3.5 h-3.5" />
+                                    <span>Copiar Código</span>
+                                </button>
                             </div>
 
-                            {/* Code Content with Syntax Highlighting */}
-                            <div className="overflow-x-auto">
+                            {/* Code Content with Syntax Highlighting & Line Wrap */}
+                            <div className="max-h-[480px] overflow-y-auto overflow-x-auto scrollbar-thin scrollbar-thumb-white/20">
                                 <SyntaxHighlighter
                                     language="jsx"
                                     style={vscDarkPlus}
+                                    wrapLongLines={true}
                                     customStyle={{
                                         margin: 0,
                                         padding: '1.5rem',
                                         background: '#1a1b26',
                                         fontSize: '13px',
                                         lineHeight: '1.6',
+                                        wordBreak: 'break-all',
                                     }}
-                                    showLineNumbers={false}
+                                    showLineNumbers={true}
                                 >
                                     {initialDesign.codeSnippet}
                                 </SyntaxHighlighter>
