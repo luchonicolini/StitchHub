@@ -63,47 +63,47 @@ export function HeroSection({ stats }: HeroSectionProps) {
             <div className="max-w-5xl mx-auto text-center relative z-10">
                 {/* Version Badge with Animation */}
                 <div className="inline-block bg-accent-orange text-white font-mono text-xs px-4 py-1.5 border-2 border-ink shadow-hard-sm mb-8 transform -rotate-2 hover:rotate-0 transition-transform cursor-default">
-                    <span className="inline-block mr-2 animate-pulse">●</span>v2.0 // WORKSHOP_MODE // LIVE
+                    <span className="inline-block mr-2 animate-pulse">●</span>v2.0 // STITCH & AI DESIGN HUB // LIVE
                 </div>
 
                 {/* Main Title with More Layers */}
                 <h2 className="text-5xl md:text-8xl font-black leading-[0.85] text-ink mb-10 relative">
-                    <span className="inline-block transform hover:scale-105 transition-transform">Hand-Picked</span>
+                    <span className="inline-block transform hover:scale-105 transition-transform">Community UI</span>
                     <br />
                     <span className="relative inline-block">
                         <span className="bg-primary px-3 py-1 text-ink transform -skew-x-6 inline-block border-4 border-ink shadow-hard-lg hover:shadow-hard hover:translate-x-1 hover:translate-y-1 transition-all cursor-default">
-                            Stitch Prompts
+                            Stitch & AI Prompts
                         </span>
                         {/* Decorative Starburst */}
                         <span className="absolute -top-4 -right-4 text-accent-orange text-4xl animate-pulse">✦</span>
                     </span>
                     <br />
-                    <span className="inline-block transform hover:scale-105 transition-transform mt-4">for Humans</span>
+                    <span className="inline-block transform hover:scale-105 transition-transform mt-4">For Web & Apps</span>
                 </h2>
 
                 {/* Description with Better Styling */}
-                <p className="font-mono text-base md:text-xl max-w-2xl mx-auto text-ink/80 bg-white/70 p-6 border-l-8 border-ink backdrop-blur-sm mb-10 shadow-hard-sm">
-                    <span className="text-ink font-bold">{'// '} A collaborative repository</span> for crafting the perfect
-                    UI generation strings.
+                <p className="font-mono text-base md:text-xl max-w-3xl mx-auto text-ink/80 bg-white/80 p-6 border-l-8 border-ink backdrop-blur-sm mb-10 shadow-hard-sm">
+                    <span className="text-ink font-bold">{'// '} The open hub where developers share AI design prompts</span> for 
+                    <a href="https://stitch.withgoogle.com/" target="_blank" rel="noopener noreferrer" className="font-bold text-accent-orange hover:underline ml-1">Stitch (Google)</a>, Claude Design, v0 & Cursor.
                     <br />
-                    <span className="text-accent-orange font-bold text-lg">&gt; No robots allowed (mostly).</span>
+                    <span className="text-black font-bold text-base mt-2 block">&gt; Copy full prompt recipes, test results, and publish your web & mobile app ideas.</span>
                 </p>
 
                 {/* Enhanced CTA Buttons */}
                 <div className="mt-12 flex flex-wrap justify-center gap-6 mb-16">
                     <button 
                         onClick={handleStartBrowsing}
-                        className="group relative px-10 py-4 bg-ink text-white font-black text-xl border-4 border-ink hover:bg-white hover:text-ink transition-all duration-400 ease-in-out overflow-hidden"
+                        className="group relative px-10 py-4 bg-ink text-white font-black text-xl border-4 border-ink hover:bg-white hover:text-ink transition-all duration-400 ease-in-out overflow-hidden cursor-pointer"
                     >
                         <span className="absolute top-0 left-0 w-full h-full bg-accent-green transform translate-x-2 translate-y-2 -z-10 border-4 border-ink transition-all duration-400 ease-in-out group-hover:translate-x-0 group-hover:translate-y-0 group-hover:bg-primary" />
                         <span className="relative flex items-center gap-2">
                             <Compass className="w-6 h-6" />
-                            Start Browsing
+                            Explore Prompt Hub
                         </span>
                     </button>
                     <button 
                         onClick={() => setIsModalOpen(true)}
-                        className="group px-10 py-4 bg-white text-ink font-black text-xl border-4 border-ink hover:bg-primary hover:text-ink transition-all duration-400 ease-in-out shadow-hard hover:shadow-none hover:translate-x-1 hover:translate-y-1"
+                        className="group px-10 py-4 bg-white text-ink font-black text-xl border-4 border-ink hover:bg-primary hover:text-ink transition-all duration-400 ease-in-out shadow-hard hover:shadow-none hover:translate-x-1 hover:translate-y-1 cursor-pointer"
                     >
                         <span className="flex items-center gap-2">
                             <HelpCircle className="w-6 h-6" />
@@ -118,21 +118,21 @@ export function HeroSection({ stats }: HeroSectionProps) {
                         <div className="absolute inset-0 bg-primary transform rotate-3 group-hover:rotate-6 transition-transform duration-300 ease-in-out" />
                         <div className="relative bg-white border-4 border-ink px-8 py-4 transform -rotate-2 group-hover:rotate-0 transition-transform duration-300 ease-in-out">
                             <div className="font-black text-4xl text-accent-orange">{stats ? stats.totalPrompts : '1,247'}</div>
-                            <div className="font-mono text-xs uppercase tracking-wider text-ink/60">Prompts</div>
+                            <div className="font-mono text-xs uppercase tracking-wider text-ink/60">AI Recipes</div>
                         </div>
                     </div>
                     <div className="relative group">
                         <div className="absolute inset-0 bg-accent-green transform -rotate-2 group-hover:-rotate-6 transition-transform duration-300 ease-in-out" />
                         <div className="relative bg-white border-4 border-ink px-8 py-4 transform rotate-1 group-hover:rotate-0 transition-transform duration-300 ease-in-out">
                             <div className="font-black text-4xl text-accent-green">{stats ? stats.totalContributors : '342'}</div>
-                            <div className="font-mono text-xs uppercase tracking-wider text-ink/60">Contributors</div>
+                            <div className="font-mono text-xs uppercase tracking-wider text-ink/60">Developers</div>
                         </div>
                     </div>
                     <div className="relative group">
                         <div className="absolute inset-0 bg-accent-orange transform rotate-2 group-hover:rotate-6 transition-transform duration-300 ease-in-out" />
                         <div className="relative bg-white border-4 border-ink px-8 py-4 transform -rotate-1 group-hover:rotate-0 transition-transform duration-300 ease-in-out">
                             <div className="font-black text-4xl text-ink">{stats ? formatNumber(stats.totalLikes) : '89K'}</div>
-                            <div className="font-mono text-xs uppercase tracking-wider text-ink/60">Likes</div>
+                            <div className="font-mono text-xs uppercase tracking-wider text-ink/60">Community Stars</div>
                         </div>
                     </div>
                 </div>
@@ -150,7 +150,7 @@ export function HeroSection({ stats }: HeroSectionProps) {
                             </h2>
                             <button
                                 onClick={() => setIsModalOpen(false)}
-                                className="p-1 hover:bg-black hover:text-white transition-colors border-2 border-ink text-ink rounded-sm"
+                                className="p-1 hover:bg-black hover:text-white transition-colors border-2 border-ink text-ink rounded-sm cursor-pointer"
                             >
                                 <X className="w-5 h-5" strokeWidth={3} />
                             </button>
@@ -163,8 +163,8 @@ export function HeroSection({ stats }: HeroSectionProps) {
                                     <Search className="w-5 h-5 text-ink" />
                                 </div>
                                 <div>
-                                    <h3 className="font-black text-lg text-ink uppercase">1. Explore Designs</h3>
-                                    <p className="text-ink/80 font-mono text-sm mt-1">Browse through our curated collection of UI components, pages, and web apps.</p>
+                                    <h3 className="font-black text-lg text-ink uppercase">1. Discover UI & App Concepts</h3>
+                                    <p className="text-ink/80 font-mono text-sm mt-1">Browse real web design & mobile app UI prompts tested by developers in Stitch (Google), Claude Artifacts & v0.</p>
                                 </div>
                             </div>
 
@@ -173,8 +173,8 @@ export function HeroSection({ stats }: HeroSectionProps) {
                                     <Code className="w-5 h-5 text-ink" />
                                 </div>
                                 <div>
-                                    <h3 className="font-black text-lg text-ink uppercase">2. Copy The Prompt</h3>
-                                    <p className="text-ink/80 font-mono text-sm mt-1">Find a design you like and copy its exact generation string to feed it to your favorite AI (Gemini, Claude, GPT).</p>
+                                    <h3 className="font-black text-lg text-ink uppercase">2. Copy Prompt & Generate</h3>
+                                    <p className="text-ink/80 font-mono text-sm mt-1">Copy the exact multi-paragraph prompt recipe, paste it into <a href="https://stitch.withgoogle.com/" target="_blank" rel="noreferrer" className="underline font-bold text-accent-orange">stitch.withgoogle.com</a> or Claude, and watch your app build instantly.</p>
                                 </div>
                             </div>
 
@@ -183,16 +183,16 @@ export function HeroSection({ stats }: HeroSectionProps) {
                                     <Share2 className="w-5 h-5 text-ink" />
                                 </div>
                                 <div>
-                                    <h3 className="font-black text-lg text-ink uppercase">3. Share Your Work</h3>
-                                    <p className="text-ink/80 font-mono text-sm mt-1">Create an account to submit your own successful prompts and build your public creative portfolio.</p>
+                                    <h3 className="font-black text-lg text-ink uppercase">3. Publish & Build Portfolio</h3>
+                                    <p className="text-ink/80 font-mono text-sm mt-1">Share your best prompts and UI experiments with the developer community, like skills.sh for AI design prompt engineering.</p>
                                 </div>
                             </div>
 
                             <button
                                 onClick={() => setIsModalOpen(false)}
-                                className="mt-4 w-full px-6 py-3 bg-ink text-white font-black uppercase tracking-wider hover:bg-primary hover:text-ink border-4 border-transparent hover:border-ink transition-all duration-300"
+                                className="mt-4 w-full px-6 py-3 bg-ink text-white font-black uppercase tracking-wider hover:bg-primary hover:text-ink border-4 border-transparent hover:border-ink transition-all duration-300 cursor-pointer"
                             >
-                                Got it!
+                                Got it! Let&apos;s Build
                             </button>
                         </div>
                     </div>
