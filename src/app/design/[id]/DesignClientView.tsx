@@ -20,6 +20,13 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
     const [copiedLink, setCopiedLink] = useState(false);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
     const [isPromptExpanded, setIsPromptExpanded] = useState(false);
+    const [activeTab, setActiveTab] = useState<"html" | "css" | "react">("html");
+
+    const getTabLanguage = () => {
+        if (activeTab === "react") return "jsx";
+        if (activeTab === "css") return "css";
+        return "html";
+    };
 
     const handleCopyPrompt = async () => {
         try {
@@ -163,10 +170,32 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
                                 </button>
                             </div>
 
+                            {/* Terminal Tabs */}
+                            <div className="flex border-b border-white/10 bg-[#1a1b26]">
+                                <button
+                                    onClick={() => setActiveTab("html")}
+                                    className={`px-6 py-2 font-mono text-xs font-bold border-r border-white/10 transition-colors cursor-pointer ${activeTab === "html" ? 'bg-[#4d79ff] text-white' : 'text-white/40 hover:bg-white/5'}`}
+                                >
+                                    HTML
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab("css")}
+                                    className={`px-6 py-2 font-mono text-xs font-bold border-r border-white/10 transition-colors cursor-pointer ${activeTab === "css" ? 'bg-[#4d79ff] text-white' : 'text-white/40 hover:bg-white/5'}`}
+                                >
+                                    CSS
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab("react")}
+                                    className={`px-6 py-2 font-mono text-xs font-bold transition-colors cursor-pointer ${activeTab === "react" ? 'bg-[#4d79ff] text-white' : 'text-white/40 hover:bg-white/5'}`}
+                                >
+                                    React
+                                </button>
+                            </div>
+
                             {/* Code Content with Syntax Highlighting & Line Wrap */}
                             <div className="max-h-[480px] overflow-y-auto overflow-x-auto scrollbar-thin scrollbar-thumb-white/20">
                                 <SyntaxHighlighter
-                                    language="jsx"
+                                    language={getTabLanguage()}
                                     style={vscDarkPlus}
                                     wrapLongLines={true}
                                     customStyle={{
@@ -217,7 +246,7 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
                 <div className="flex flex-col gap-4">
                     <button
                         onClick={handleCopyPrompt}
-                        className={`w-full font-black text-lg px-6 py-5 border-4 border-ink shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all flex justify-center items-center gap-3 uppercase ${copiedPrompt ? 'bg-[#27c93f] text-white' : 'bg-primary text-ink'}`}
+                        className={`w-full font-black text-lg px-6 py-5 border-4 border-ink shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all flex justify-center items-center gap-3 uppercase cursor-pointer ${copiedPrompt ? 'bg-[#27c93f] text-white' : 'bg-primary text-ink'}`}
                     >
                         {copiedPrompt ? (
                             <><Check className="w-6 h-6" /> Recipe Copied!</>
@@ -229,7 +258,7 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
                     {/* SHARING LINK BUTTON */}
                     <button
                         onClick={handleCopyLink}
-                        className={`w-full font-black text-sm px-4 py-3 border-2 border-ink transition-all flex justify-center items-center gap-2 uppercase ${copiedLink ? 'bg-ink text-white' : 'bg-white hover:bg-gray-50 text-ink shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-1 hover:translate-x-1'}`}
+                        className={`w-full font-black text-sm px-4 py-3 border-2 border-ink transition-all flex justify-center items-center gap-2 uppercase cursor-pointer ${copiedLink ? 'bg-ink text-white' : 'bg-white hover:bg-gray-50 text-ink shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-1 hover:translate-x-1'}`}
                     >
                         {copiedLink ? (
                             <><Check className="w-5 h-5" /> Copied!</>
@@ -266,8 +295,12 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
                         className="fixed inset-0 z-[120] bg-black/90 flex items-center justify-center p-4 backdrop-blur-md"
                         onClick={() => setIsLightboxOpen(false)}
                     >
-                        <button className="absolute top-4 right-4 text-white hover:text-accent-orange transition-colors">
-                            <X className="w-8 h-8" />
+                        <button
+                            onClick={() => setIsLightboxOpen(false)}
+                            className="absolute top-6 right-6 bg-red-500 text-white border-2 border-ink p-2 hover:bg-red-600 hover:scale-105 active:scale-95 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] cursor-pointer z-50 flex items-center justify-center"
+                            title="Cerrar imagen"
+                        >
+                            <X className="w-6 h-6 stroke-[3]" />
                         </button>
                         <div className="relative w-full h-full max-w-5xl max-h-[90vh] overflow-auto flex items-center justify-center">
                             <Image

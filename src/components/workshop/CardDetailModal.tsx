@@ -31,6 +31,14 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
     const [copied, setCopied] = useState(false);
     const [copiedLink, setCopiedLink] = useState(false);
     const [isPromptExpanded, setIsPromptExpanded] = useState(false);
+    const [activeTab, setActiveTab] = useState<"html" | "css" | "react">("html");
+
+    // Code language switcher
+    const getTabLanguage = () => {
+        if (activeTab === "react") return "jsx";
+        if (activeTab === "css") return "css";
+        return "html";
+    };
 
     // Initial check for gallery
     const images = card.gallery && card.gallery.length > 0 ? card.gallery : [card.image];
@@ -327,15 +335,30 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
 
                                         {/* Terminal Tabs */}
                                         <div className="flex border-b border-white/10 bg-[#1a1b26]">
-                                            <div className="px-6 py-2 bg-[#4d79ff] text-white font-mono text-xs font-bold border-r border-white/10">HTML</div>
-                                            <div className="px-6 py-2 text-white/40 font-mono text-xs font-bold border-r border-white/10 hover:bg-white/5 cursor-pointer">CSS</div>
-                                            <div className="px-6 py-2 text-white/40 font-mono text-xs font-bold hover:bg-white/5 cursor-pointer">React</div>
+                                            <button
+                                                onClick={() => setActiveTab("html")}
+                                                className={`px-6 py-2 font-mono text-xs font-bold border-r border-white/10 transition-colors cursor-pointer ${activeTab === "html" ? 'bg-[#4d79ff] text-white' : 'text-white/40 hover:bg-white/5'}`}
+                                            >
+                                                HTML
+                                            </button>
+                                            <button
+                                                onClick={() => setActiveTab("css")}
+                                                className={`px-6 py-2 font-mono text-xs font-bold border-r border-white/10 transition-colors cursor-pointer ${activeTab === "css" ? 'bg-[#4d79ff] text-white' : 'text-white/40 hover:bg-white/5'}`}
+                                            >
+                                                CSS
+                                            </button>
+                                            <button
+                                                onClick={() => setActiveTab("react")}
+                                                className={`px-6 py-2 font-mono text-xs font-bold transition-colors cursor-pointer ${activeTab === "react" ? 'bg-[#4d79ff] text-white' : 'text-white/40 hover:bg-white/5'}`}
+                                            >
+                                                React
+                                            </button>
                                         </div>
 
                                         {/* Code Content with Syntax Highlighting & Line Wrap */}
                                         <div className="max-h-[480px] overflow-y-auto overflow-x-auto scrollbar-thin scrollbar-thumb-white/20">
                                             <SyntaxHighlighter
-                                                language="jsx"
+                                                language={getTabLanguage()}
                                                 style={vscDarkPlus}
                                                 wrapLongLines={true}
                                                 customStyle={{
@@ -397,7 +420,7 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                             {/* Primary Action: Sticky Copy Button */}
                             <button
                                 onClick={handleCopy}
-                                className={`w-full font-black text-lg px-6 py-5 border-4 border-ink shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all flex justify-center items-center gap-3 uppercase mt-4 ${copied ? 'bg-[#27c93f] text-white' : 'bg-primary text-ink'
+                                className={`w-full font-black text-lg px-6 py-5 border-4 border-ink shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all flex justify-center items-center gap-3 uppercase mt-4 cursor-pointer ${copied ? 'bg-[#27c93f] text-white' : 'bg-primary text-ink'
                                     }`}
                             >
                                 {copied ? (
@@ -416,7 +439,7 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                             {/* Share Link Button */}
                             <button
                                 onClick={handleCopyLink}
-                                className={`w-full font-black text-sm px-4 py-3 border-2 border-ink transition-all flex justify-center items-center gap-2 uppercase mt-2 ${copiedLink ? 'bg-ink text-white' : 'bg-white hover:bg-gray-50 text-ink shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-1 hover:translate-x-1'}`}
+                                className={`w-full font-black text-sm px-4 py-3 border-2 border-ink transition-all flex justify-center items-center gap-2 uppercase mt-2 cursor-pointer ${copiedLink ? 'bg-ink text-white' : 'bg-white hover:bg-gray-50 text-ink shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-1 hover:translate-x-1'}`}
                             >
                                 {copiedLink ? (
                                     <>
@@ -479,8 +502,12 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                                 className="fixed inset-0 z-[120] bg-black/90 flex items-center justify-center p-4 backdrop-blur-md"
                                 onClick={() => setIsLightboxOpen(false)}
                             >
-                                <button className="absolute top-4 right-4 text-white hover:text-accent-orange transition-colors">
-                                    <X className="w-8 h-8" />
+                                <button
+                                    onClick={() => setIsLightboxOpen(false)}
+                                    className="absolute top-6 right-6 bg-red-500 text-white border-2 border-ink p-2 hover:bg-red-600 hover:scale-105 active:scale-95 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] cursor-pointer z-50 flex items-center justify-center"
+                                    title="Cerrar imagen"
+                                >
+                                    <X className="w-6 h-6 stroke-[3]" />
                                 </button>
                                 <div className="relative w-full h-full max-w-7xl max-h-[90vh] overflow-auto flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
                                     <Image

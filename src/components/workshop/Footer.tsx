@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Construction, ArrowRight, Instagram, Github } from "lucide-react";
 import { useToast } from "@/hooks/useToast";
@@ -26,6 +27,28 @@ export function Footer() {
         showToast({
             message: `${name} - Próximamente`,
             description: "Nuestras redes sociales estarán disponibles muy pronto. ¡Mantente atento!",
+            type: "info",
+        });
+    };
+
+    const [newsletterEmail, setNewsletterEmail] = useState("");
+
+    const handleNewsletterSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newsletterEmail) return;
+        showToast({
+            message: "¡Suscripción exitosa!",
+            description: `Te has suscrito correctamente con ${newsletterEmail}`,
+            type: "success",
+        });
+        setNewsletterEmail("");
+    };
+
+    const handleFooterLinkClick = (e: React.MouseEvent, page: string) => {
+        e.preventDefault();
+        showToast({
+            message: `${page} - Próximamente`,
+            description: "Esta página informativa estará disponible en breve.",
             type: "info",
         });
     };
@@ -73,31 +96,34 @@ export function Footer() {
                         <p className="text-ink font-mono text-xs mb-4">
                             Get the weekly best-of straight to your inbox.
                         </p>
-                        <div className="flex gap-2">
+                        <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
                             <input
                                 className="bg-white border-2 border-ink px-3 py-2 text-ink font-mono text-sm w-full placeholder-ink/50 focus:ring-0 focus:border-accent-orange outline-none"
                                 placeholder="email@address.com"
                                 type="email"
+                                value={newsletterEmail}
+                                onChange={(e) => setNewsletterEmail(e.target.value)}
+                                required
                             />
-                            <button className="bg-ink text-white p-2 border-2 border-transparent hover:bg-accent-orange hover:border-ink transition-colors cursor-pointer">
+                            <button type="submit" className="bg-ink text-white p-2 border-2 border-transparent hover:bg-accent-orange hover:border-ink transition-colors cursor-pointer" title="Suscribirse">
                                 <ArrowRight className="w-5 h-5" />
                             </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
             <div className="max-w-7xl mx-auto px-4 mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center text-xs font-mono text-gray-500">
                 <p>© 2026 StitchHub Workshop. All rights reversed.</p>
                 <div className="flex gap-6 mt-4 md:mt-0">
-                    <Link className="hover:text-primary" href="#">
+                    <button onClick={(e) => handleFooterLinkClick(e, "Privacidad")} className="hover:text-primary transition-colors cursor-pointer">
                         Privacy
-                    </Link>
-                    <Link className="hover:text-primary" href="#">
+                    </button>
+                    <button onClick={(e) => handleFooterLinkClick(e, "Términos de servicio")} className="hover:text-primary transition-colors cursor-pointer">
                         Terms
-                    </Link>
-                    <Link className="hover:text-primary" href="#">
+                    </button>
+                    <button onClick={(e) => handleFooterLinkClick(e, "Mapa del sitio")} className="hover:text-primary transition-colors cursor-pointer">
                         Sitemap
-                    </Link>
+                    </button>
                 </div>
             </div>
         </footer>
