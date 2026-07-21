@@ -13,6 +13,8 @@ export interface Prompt {
     title: string;
     tags: string[];
     prompt: string;
+    description?: string;
+    toolUsed?: string;
     author: Author;
     image: string;
     imageAlt: string;
@@ -23,6 +25,7 @@ export interface Prompt {
     type?: "promo" | "card";
     isPinned?: boolean;
     likesCount?: number;
+    commentsCount?: number;
     isLikedByUser?: boolean;
     featured?: boolean;
 }

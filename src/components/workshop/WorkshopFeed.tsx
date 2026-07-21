@@ -28,13 +28,14 @@ const containerVariants = {
 interface WorkshopFeedProps {
     initialPrompts: Prompt[];
     activeFilter: string | null;
+    activeTool?: string | null;
     searchQuery?: string;
     onResultCountChange?: (count: number) => void;
     onTagClick?: (tag: string) => void;
     onClearFilters?: () => void;
 }
 
-export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResultCountChange, onTagClick, onClearFilters }: WorkshopFeedProps) {
+export function WorkshopFeed({ initialPrompts, activeFilter, activeTool, searchQuery, onResultCountChange, onTagClick, onClearFilters }: WorkshopFeedProps) {
     const ITEMS_PER_PAGE = 12;
     const { user } = useAuth();
 
@@ -126,7 +127,7 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
             if (error) throw error;
 
             if (data) {
-                const dbPrompts: Prompt[] = (data as unknown as DesignDB[]).map(mapDesignToPrompt);
+                const dbPrompts: Prompt[] = (data as unknown as DesignDB[]).map((d, i) => mapDesignToPrompt(d, i));
 
                 // Append new items
                 setPrompts(prev => [...prev, ...dbPrompts]);
@@ -146,7 +147,7 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
     };
 
     // Use custom hook for filtering (client-side for now, can be moved to server-side query if needed)
-    const filteredPrompts = useFilteredPrompts(prompts, activeFilter, searchQuery || "");
+    const filteredPrompts = useFilteredPrompts(prompts, activeFilter, searchQuery || "", activeTool || null);
 
     const handleLoadMore = () => {
         if (!hasMore || isFetchingMore) return;

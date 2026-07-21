@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { WorkshopHeader } from "@/components/workshop/WorkshopHeader";
 import { HeroSection } from "@/components/workshop/HeroSection";
+import { TrendingBar } from "@/components/workshop/TrendingBar";
 import { FilterBar } from "@/components/workshop/FilterBar";
 import { WorkshopFeed } from "@/components/workshop/WorkshopFeed";
 import { Footer } from "@/components/workshop/Footer";
@@ -19,10 +20,10 @@ interface WorkshopPageClientProps {
 
 export function WorkshopPageClient({ initialPrompts, stats }: WorkshopPageClientProps) {
     const [activeFilter, setActiveFilter] = useState<string | null>(null);
+    const [activeTool, setActiveTool] = useState<string | null>(null);
     const [resultCount, setResultCount] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>("");
 
-    // Update search query without scroll interference on typing
     const handleSearchChange = (query: string) => {
         setSearchQuery(query);
     };
@@ -39,6 +40,12 @@ export function WorkshopPageClient({ initialPrompts, stats }: WorkshopPageClient
         }
     }, []);
 
+    const clearAll = () => {
+        setActiveFilter(null);
+        setActiveTool(null);
+        setSearchQuery("");
+    };
+
     return (
         <div className="bg-paper-texture min-h-screen flex flex-col overflow-x-hidden selection:bg-primary selection:text-black">
             <WorkshopHeader
@@ -47,30 +54,29 @@ export function WorkshopPageClient({ initialPrompts, stats }: WorkshopPageClient
             />
             <main className="flex-grow">
                 <HeroSection stats={stats} />
+                {/* Trending Bar — between Hero and Filters */}
+                <TrendingBar />
                 <div id="explore-section" className="scroll-mt-24">
                     <FilterBar
                         activeFilter={activeFilter}
                         onFilterChange={setActiveFilter}
+                        activeTool={activeTool}
+                        onToolChange={setActiveTool}
                         resultCount={resultCount}
                         searchQuery={searchQuery}
-                        onClearAll={() => {
-                            setActiveFilter(null);
-                            setSearchQuery("");
-                        }}
+                        onClearAll={clearAll}
                     />
                     <WorkshopFeed
                         initialPrompts={initialPrompts}
                         activeFilter={activeFilter}
+                        activeTool={activeTool}
                         searchQuery={searchQuery}
                         onResultCountChange={setResultCount}
                         onTagClick={(tag) => {
                             setSearchQuery(tag);
                             document.getElementById('explore-section')?.scrollIntoView({ behavior: 'smooth' });
                         }}
-                        onClearFilters={() => {
-                            setActiveFilter(null);
-                            setSearchQuery("");
-                        }}
+                        onClearFilters={clearAll}
                     />
                 </div>
             </main>

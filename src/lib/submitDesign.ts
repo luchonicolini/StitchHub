@@ -5,6 +5,8 @@ import { SupabaseClient } from '@supabase/supabase-js';
 export interface DesignSubmission {
     title: string;
     promptContent: string;
+    description?: string;
+    toolUsed?: string;
     category: string;
     codeSnippet?: string;
     imageFiles: File[];
@@ -28,6 +30,8 @@ export async function submitDesign(
             .insert({
                 title: submission.title,
                 prompt_content: submission.promptContent,
+                description: submission.description || null,
+                tool_used: submission.toolUsed || null,
                 category: submission.category,
                 code_snippet: submission.codeSnippet || null,
                 image_url: imageUrls[0], // Keep for backwards compatibility

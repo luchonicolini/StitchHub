@@ -2,16 +2,18 @@ import { useMemo } from "react";
 import { Prompt } from "@/types/prompt";
 
 /**
- * Custom hook to filter prompts based on active filter and search query
+ * Custom hook to filter prompts based on active filter, tool filter, and search query
  * @param prompts - Array of prompts to filter
- * @param activeFilter - Current active filter tag (or null for all)
+ * @param activeFilter - Current active category filter tag (or null for all)
  * @param searchQuery - Search query string
+ * @param activeTool - Current active AI tool filter (or null for all)
  * @returns Filtered array of prompts
  */
 export function useFilteredPrompts(
     prompts: Prompt[],
     activeFilter: string | null,
-    searchQuery: string = ""
+    searchQuery: string = "",
+    activeTool: string | null = null
 ): Prompt[] {
     return useMemo(() => {
         return prompts.filter((prompt) => {
@@ -28,31 +30,35 @@ export function useFilteredPrompts(
                 "#UI": ["UI/UX", "Page"],
             };
 
-            // Filter by tag
+            // Filter by category tag
             let matchesFilter = true;
-
             if (activeFilter) {
                 const targetCategories = filterToCategoryMap[activeFilter];
                 if (targetCategories) {
-                    // Check if any of the prompt's tags are found in the targeted categories for this filter
                     matchesFilter = prompt.tags.some((tag) =>
                         targetCategories.some(cat => tag.toLowerCase() === cat.toLowerCase())
                     );
                 } else {
-                    // Fallback to basic string inclusion if no map found (for generic tags)
                     matchesFilter = prompt.tags.some((tag) =>
                         tag.toLowerCase().includes(activeFilter.replace('#', '').toLowerCase())
                     );
                 }
             }
 
-            // Filter by search query (title or prompt text)
+            // Filter by AI tool
+            const matchesTool =
+                !activeTool ||
+                (prompt.toolUsed && prompt.toolUsed.toLowerCase() === activeTool.toLowerCase());
+
+            // Filter by search query (title, prompt text, description, or tool)
             const matchesSearch =
                 !searchQuery ||
                 prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                prompt.prompt.toLowerCase().includes(searchQuery.toLowerCase());
+                prompt.prompt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                (prompt.description && prompt.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                (prompt.toolUsed && prompt.toolUsed.toLowerCase().includes(searchQuery.toLowerCase()));
 
-            return matchesFilter && matchesSearch;
+            return matchesFilter && matchesTool && matchesSearch;
         });
-    }, [prompts, activeFilter, searchQuery]);
+    }, [prompts, activeFilter, searchQuery, activeTool]);
 }

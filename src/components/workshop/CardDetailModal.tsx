@@ -2,13 +2,14 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Copy, Sparkles, Check, ChevronLeft, ChevronRight, ZoomIn, X, Link as LinkIcon } from "lucide-react";
+import { Copy, Sparkles, Check, ChevronLeft, ChevronRight, ZoomIn, X, Link as LinkIcon, Wrench, FileText } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { PromptCardProps } from "./PromptCard";
 import { useToast } from "@/hooks/useToast";
 import { Footer } from "./Footer";
 import { WorkshopHeader } from "./WorkshopHeader";
+import { CommentsSection } from "./CommentsSection";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
@@ -17,6 +18,9 @@ interface ExtendedCardProps extends PromptCardProps {
     id: string | number;
     codeSnippet?: string;
     gallery?: string[];
+    toolUsed?: string;
+    description?: string;
+    commentsCount?: number;
 }
 
 interface CardDetailModalProps {
@@ -451,6 +455,30 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
 
                             <hr className="border-t-4 border-ink border-dashed my-2 opacity-20" />
 
+                            {/* AI Tool Badge */}
+                            {card.toolUsed && (
+                                <div className="flex items-center gap-2 px-4 py-3 bg-ink/5 border-3 border-ink/20">
+                                    <Wrench className="w-4 h-4 text-ink/60 flex-shrink-0" />
+                                    <div>
+                                        <p className="font-mono text-[10px] uppercase text-ink/40 font-bold leading-none mb-0.5">Built with</p>
+                                        <p className="font-mono font-bold text-sm text-ink">{card.toolUsed}</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Process Description */}
+                            {card.description && (
+                                <div className="border-3 border-ink/20 bg-white p-5">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <FileText className="w-4 h-4 text-ink/50" />
+                                        <span className="font-mono font-bold text-xs uppercase text-ink/50">Process & Notes</span>
+                                    </div>
+                                    <p className="font-mono text-sm text-ink/80 leading-relaxed whitespace-pre-wrap">
+                                        {card.description}
+                                    </p>
+                                </div>
+                            )}
+
                             {/* Primary Action: Sticky Copy Button */}
                             <button
                                 onClick={handleCopy}
@@ -521,6 +549,18 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                             </div>
 
                         </div>
+                    </div>
+
+                    {/* Comments Section — below main content, full width */}
+                    <div className="max-w-7xl mx-auto px-4 md:px-8 pb-12">
+                        {(() => {
+                            const rawId = String(card.id).replace('db-', '');
+                            const numericId = parseInt(rawId);
+                            if (!isNaN(numericId)) {
+                                return <CommentsSection designId={rawId} />;
+                            }
+                            return null;
+                        })()}
                     </div>
 
                     {/* Footer */}

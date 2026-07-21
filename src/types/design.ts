@@ -10,11 +10,14 @@ export interface DesignDB {
     title: string;
     category: string;
     prompt_content: string;
+    description?: string;
+    tool_used?: string;
     profiles?: { username: string; avatar_url: string };
     image_url: string;
     image_urls?: string[];
     code_snippet: string;
     likes_count?: number;
+    comments_count?: number;
 }
 
 export function mapDesignToPrompt(d: DesignDB, index: number): Prompt {
@@ -60,6 +63,8 @@ export function mapDesignToPrompt(d: DesignDB, index: number): Prompt {
         title: d.title,
         tags: [d.category || "#UI"],
         prompt: d.prompt_content,
+        description: d.description,
+        toolUsed: d.tool_used,
         author: {
             name: d.profiles?.username || fallbackAuthor,
             avatar: d.profiles?.avatar_url || fallbackAvatar,
@@ -75,5 +80,6 @@ export function mapDesignToPrompt(d: DesignDB, index: number): Prompt {
         rotation: index % 2 === 0 ? "rotate-1" : "-rotate-1",
         type: "card",
         likesCount: d.likes_count || 0,
+        commentsCount: d.comments_count || 0,
     };
 }
