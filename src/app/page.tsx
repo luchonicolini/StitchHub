@@ -34,11 +34,13 @@ export default async function Home() {
       .order('created_at', { ascending: false })
       .limit(ITEMS_PER_PAGE);
 
-    if (data) {
+    if (data && data.length > 0) {
       const dbPrompts: Prompt[] = (data as unknown as DesignDB[]).map(mapDesignToPrompt);
 
       const promoCard = MOCK_PROMPTS.find(p => p.type === 'promo');
       initialPrompts = promoCard ? [promoCard, ...dbPrompts] : dbPrompts;
+    } else {
+      initialPrompts = MOCK_PROMPTS;
     }
 
     // Fetch Stats
