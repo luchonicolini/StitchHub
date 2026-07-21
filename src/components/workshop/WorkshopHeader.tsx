@@ -83,23 +83,27 @@ export function WorkshopHeader({ searchQuery = "", onSearchChange, showSearch = 
                     )}
 
                     {/* Nav Actions */}
-                    <nav className="flex items-center gap-6">
-                        {pathname !== '/' && (
-                            <>
-                                <button
-                                    onClick={handleExplore}
-                                    className="font-mono font-bold text-lg hover:underline decoration-4 decoration-primary underline-offset-4 hidden sm:block text-ink transition-all duration-300 ease-in-out hover:scale-105 cursor-pointer"
-                                >
-                                    Explore
-                                </button>
-                                <Link
-                                    className="font-mono font-bold text-lg hover:underline decoration-4 decoration-accent-green underline-offset-4 hidden sm:block text-ink transition-all duration-300 ease-in-out hover:scale-105"
-                                    href={isAuthenticated ? "/profile" : "/auth?returnUrl=/profile"}
-                                >
-                                    Workshop
-                                </Link>
-                            </>
-                        )}
+                    <nav className="flex items-center gap-4 sm:gap-6">
+                        <button
+                            onClick={handleExplore}
+                            className={`font-mono font-bold text-base md:text-lg transition-all duration-300 hover:scale-105 cursor-pointer hidden sm:block ${
+                                pathname === '/' 
+                                    ? 'text-ink underline decoration-4 decoration-primary underline-offset-4' 
+                                    : 'text-ink/70 hover:text-ink hover:underline decoration-4 decoration-primary underline-offset-4'
+                            }`}
+                        >
+                            Explore
+                        </button>
+                        <Link
+                            href={isAuthenticated ? "/profile" : "/auth?returnUrl=/profile"}
+                            className={`font-mono font-bold text-base md:text-lg transition-all duration-300 hover:scale-105 hidden sm:block ${
+                                pathname.startsWith('/profile') 
+                                    ? 'text-ink underline decoration-4 decoration-accent-green underline-offset-4' 
+                                    : 'text-ink/70 hover:text-ink hover:underline decoration-4 decoration-accent-green underline-offset-4'
+                            }`}
+                        >
+                            Workshop
+                        </Link>
 
                         {/* User Actions */}
                         {isAuthenticated && user ? (
