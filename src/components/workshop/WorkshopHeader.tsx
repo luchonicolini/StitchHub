@@ -30,13 +30,17 @@ export function WorkshopHeader({ searchQuery = "", onSearchChange, showSearch = 
         }
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const val = e.target.value;
-        if (onSearchChange) {
-            onSearchChange(val);
-        } else if (pathname !== '/' && val.trim().length > 0) {
-            router.push(`/?search=${encodeURIComponent(val)}#explore-section`);
+    const handleSearchSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (pathname === '/') {
+            document.getElementById('explore-section')?.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            router.push(`/?search=${encodeURIComponent(searchQuery)}#explore-section`);
         }
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onSearchChange?.(e.target.value);
     };
 
     return (
@@ -55,15 +59,21 @@ export function WorkshopHeader({ searchQuery = "", onSearchChange, showSearch = 
 
                     {/* Search Bar */}
                     {showSearch && (
-                        <div className="relative w-full md:w-auto flex-1 max-w-md mx-4">
+                        <form onSubmit={handleSearchSubmit} className="relative w-full md:w-auto flex-1 max-w-md mx-4">
                             <div className="relative flex items-center">
-                                {/* Search icon (left side, inline) */}
-                                <Search className="absolute left-3 w-4 h-4 text-ink/40 stroke-[2.5] pointer-events-none" />
+                                {/* Search submit button */}
+                                <button
+                                    type="submit"
+                                    className="absolute left-3 p-1 text-ink/50 hover:text-ink transition-colors cursor-pointer flex items-center justify-center"
+                                    title="Buscar (Presiona Enter)"
+                                >
+                                    <Search className="w-4 h-4 stroke-[2.5]" />
+                                </button>
                                 <input
                                     className="w-full bg-white border-3 border-ink pl-10 pr-12 py-2.5 font-mono text-sm font-bold text-ink 
                                 focus:ring-0 focus:border-ink focus:shadow-hard-sm
                                 transition-all placeholder-ink/35 outline-none rounded-none shadow-hard-sm"
-                                    placeholder="Search prompts..."
+                                    placeholder="Search prompts (press Enter)..."
                                     type="text"
                                     value={searchQuery}
                                     onChange={handleInputChange}
@@ -71,15 +81,16 @@ export function WorkshopHeader({ searchQuery = "", onSearchChange, showSearch = 
                                 {/* Clear button when there's text */}
                                 {searchQuery && (
                                     <button
+                                        type="button"
                                         onClick={() => onSearchChange?.("")}
-                                        className="absolute right-3 w-6 h-6 rounded-full bg-ink/10 text-ink hover:bg-ink hover:text-white transition-colors duration-200 flex items-center justify-center"
+                                        className="absolute right-3 w-6 h-6 rounded-full bg-ink/10 text-ink hover:bg-ink hover:text-white transition-colors duration-200 flex items-center justify-center cursor-pointer"
                                         aria-label="Clear search"
                                     >
                                         <X className="w-3.5 h-3.5 stroke-[3]" />
                                     </button>
                                 )}
                             </div>
-                        </div>
+                        </form>
                     )}
 
                     {/* Nav Actions */}

@@ -22,18 +22,9 @@ export function WorkshopPageClient({ initialPrompts, stats }: WorkshopPageClient
     const [resultCount, setResultCount] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>("");
 
-    // Auto-scroll when typing search on home page
+    // Update search query without scroll interference on typing
     const handleSearchChange = (query: string) => {
         setSearchQuery(query);
-        if (query.trim().length > 0) {
-            const exploreElement = document.getElementById('explore-section');
-            if (exploreElement) {
-                const rect = exploreElement.getBoundingClientRect();
-                if (rect.top > 180) {
-                    exploreElement.scrollIntoView({ behavior: 'smooth' });
-                }
-            }
-        }
     };
 
     // Read ?search= param from URL if coming from another page
