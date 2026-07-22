@@ -66,18 +66,21 @@ export function ProfileProjectCard({
                     <h3 className="font-black text-xl leading-none text-ink line-clamp-2 uppercase tracking-tight break-all">
                         {title}
                     </h3>
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            if (onTogglePin) onTogglePin();
-                        }}
-                        className={`p-1 transition-colors rounded-sm ml-2 shrink-0 ${isPinned ? 'text-accent-orange' : 'text-ink/20 hover:text-accent-orange'}`}
-                        title={isPinned ? "Unpin design" : "Pin design"}
-                    >
-                        <Pin
-                            className={`w-5 h-5 rotate-45 transition-colors ${isPinned ? 'fill-accent-orange' : ''}`}
-                        />
-                    </button>
+                    {onTogglePin && (
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onTogglePin();
+                            }}
+                            className={`p-1 transition-colors rounded-sm ml-2 shrink-0 ${isPinned ? 'text-accent-orange' : 'text-ink/20 hover:text-accent-orange'}`}
+                            title={isPinned ? "Unpin design" : "Pin design"}
+                            aria-label={isPinned ? "Unpin design" : "Pin design"}
+                        >
+                            <Pin
+                                className={`w-5 h-5 rotate-45 transition-colors ${isPinned ? 'fill-accent-orange' : ''}`}
+                            />
+                        </button>
+                    )}
                 </div>
 
                 {/* Category Badge & Interactions */}

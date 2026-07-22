@@ -15,7 +15,7 @@ interface ProfileUpdate {
 interface AuthState {
     isAuthModalOpen: boolean;
     isAuthenticated: boolean;
-    user: { username: string; email: string; id: string; avatar_url: string | null; cover_image_url: string | null; bio: string | null; website: string | null } | null;
+    user: { username: string; email: string; id: string; avatar_url: string | null; cover_image_url: string | null; bio: string | null; website: string | null; joinedAt: string } | null;
     loading: boolean;
     returnUrl: string | null;
     openAuthModal: (returnUrl?: string) => void;
@@ -62,7 +62,8 @@ export const useAuth = create<AuthState>((set, get) => ({
                         avatar_url: profile?.avatar_url || null,
                         cover_image_url: profile?.cover_image_url || null,
                         bio: profile?.bio || null,
-                        website: profile?.website || null
+                        website: profile?.website || null,
+                        joinedAt: session.user.created_at
                     },
                     loading: false
                 });
@@ -92,7 +93,8 @@ export const useAuth = create<AuthState>((set, get) => ({
                         avatar_url: profile?.avatar_url || null,
                         cover_image_url: profile?.cover_image_url || null,
                         bio: profile?.bio || null,
-                        website: profile?.website || null
+                        website: profile?.website || null,
+                        joinedAt: session.user.created_at
                     }
                 });
             } else {
@@ -107,15 +109,11 @@ export const useAuth = create<AuthState>((set, get) => ({
     },
 
     login: async (email: string, password: string) => {
-        console.log('Attempting login...', { email });
         const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password
         });
-        console.log('Login result:', { data, error });
-
         if (error) {
-            console.error('Login error:', error);
             return { error: error.message };
         }
 
@@ -135,7 +133,8 @@ export const useAuth = create<AuthState>((set, get) => ({
                     avatar_url: profile?.avatar_url || null,
                     cover_image_url: profile?.cover_image_url || null,
                     bio: profile?.bio || null,
-                    website: profile?.website || null
+                    website: profile?.website || null,
+                    joinedAt: data.user.created_at
                 }
             });
         }
@@ -198,7 +197,8 @@ export const useAuth = create<AuthState>((set, get) => ({
                     avatar_url: profile?.avatar_url || null,
                     cover_image_url: profile?.cover_image_url || null,
                     bio: profile?.bio || null,
-                    website: profile?.website || null
+                    website: profile?.website || null,
+                    joinedAt: data.user.created_at
                 }
             });
         }

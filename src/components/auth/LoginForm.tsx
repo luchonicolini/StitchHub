@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Mail, Lock, LogIn, AlertCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { useToast } from "@/hooks/useToast";
 
 interface LoginFormProps {
     onSwitchToRegister?: () => void;
@@ -42,10 +42,9 @@ function isValidEmail(email: string): boolean {
 }
 
 export function LoginForm({ onForgotPassword }: LoginFormProps) {
-    const { loginWithGoogle } = useAuth();
+    const { login, loginWithGoogle } = useAuth();
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const returnUrl = searchParams.get("returnUrl");
+    const { showToast } = useToast();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -64,24 +63,22 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
         setError(null);
 
         try {
-            const { error: signInError } = await supabase.auth.signInWithPassword({
-                email,
-                password
-            });
+            const result = await login(email, password);
 
-            if (signInError) {
-                console.warn('Login attempt failed:', signInError.message);
-                setError(signInError.message);
+            if (result.error) {
+                setError(result.error);
                 setShake(true);
                 toast.error("Login failed", {
-                    description: signInError.message,
+                    description: result.error,
                 });
                 setTimeout(() => setShake(false), 500);
             } else {
-                toast.success("Welcome back! 👋", {
-                    description: "Redirecting you now...",
+                showToast({
+                    message: "Signed in successfully",
+                    description: "Welcome back. Taking you to your profile!",
+                    type: "success",
                 });
-                setTimeout(() => router.push(returnUrl || "/"), 600);
+                router.replace("/profile");
             }
         } catch (err: unknown) {
             console.error('Unexpected login exception:', err);

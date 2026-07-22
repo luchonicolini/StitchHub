@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Edit2, MapPin, Link as LinkIcon, Calendar } from "lucide-react";
+import Link from "next/link";
+import { Edit2, Link as LinkIcon, Calendar, ExternalLink, Share2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { EditProfileModal } from "@/components/profile/EditProfileModal";
 import { FollowersModal } from "@/components/profile/FollowersModal";
 import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/useToast";
 
 interface ProfileHeaderProps {
     totalDesigns: number;
@@ -13,6 +15,7 @@ interface ProfileHeaderProps {
 
 export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
     const { user } = useAuth();
+    const { showToast } = useToast();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [followerCount, setFollowerCount] = useState(0);
     const [followingCount, setFollowingCount] = useState(0);
@@ -44,6 +47,21 @@ export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
     }, [user?.id]);
 
     if (!user) return null;
+
+    const joinedDate = new Intl.DateTimeFormat("en", {
+        month: "short",
+        year: "numeric",
+    }).format(new Date(user.joinedAt));
+
+    const handleShareProfile = async () => {
+        const profileUrl = `${window.location.origin}/profile/${encodeURIComponent(user.username)}`;
+        try {
+            await navigator.clipboard.writeText(profileUrl);
+            showToast({ message: "Profile link copied", description: "Your public profile is ready to share.", type: "success" });
+        } catch {
+            showToast({ message: "Unable to copy link", description: profileUrl, type: "warning" });
+        }
+    };
 
     return (
         <div className="bg-background-light border-b-8 border-ink mb-12 relative w-full overflow-x-hidden">
@@ -126,18 +144,33 @@ export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
                             <p className="text-sm md:text-base text-ink/70 font-mono max-w-md mb-3 leading-relaxed">
                                 {user.bio || "No bio yet."}
                             </p>
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-ink text-white font-mono text-xs md:text-sm font-bold uppercase shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] border-2 border-transparent transform rotate-1 hover:-rotate-1 transition-transform">
-                                <span className="w-2.5 h-2.5 rounded-full bg-accent-green animate-pulse border border-white"></span>
-                                Designer & Prompt Engineer
+                            <div className="flex flex-wrap justify-center gap-3 md:justify-start">
+                                <button
+                                    onClick={() => setIsEditModalOpen(true)}
+                                    className="inline-flex items-center gap-2 border-3 border-ink bg-primary px-4 py-2 font-mono text-xs font-black uppercase text-ink shadow-hard-sm transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none"
+                                >
+                                    <Edit2 className="h-4 w-4" />
+                                    Edit profile
+                                </button>
+                                <Link
+                                    href={`/profile/${encodeURIComponent(user.username)}`}
+                                    className="inline-flex items-center gap-2 border-3 border-ink bg-white px-4 py-2 font-mono text-xs font-black uppercase text-ink shadow-hard-sm transition-all hover:bg-accent-cyan hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none"
+                                >
+                                    <ExternalLink className="h-4 w-4" />
+                                    Public view
+                                </Link>
+                                <button
+                                    onClick={handleShareProfile}
+                                    className="inline-flex items-center gap-2 border-3 border-ink bg-white px-4 py-2 font-mono text-xs font-black uppercase text-ink shadow-hard-sm transition-all hover:bg-accent-green hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none"
+                                >
+                                    <Share2 className="h-4 w-4" />
+                                    Share
+                                </button>
                             </div>
                         </div>
 
                         {/* Meta Tags as Badges */}
                         <div className="flex flex-wrap justify-center md:justify-start gap-4 text-xs font-mono font-bold text-ink uppercase tracking-wide mt-2">
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-magenta border-2 border-ink shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform -rotate-2 hover:rotate-0 transition-transform cursor-default">
-                                <MapPin className="w-4 h-4" />
-                                <span>Digital Nomad</span>
-                            </div>
                             {user.website && (
                                 <a 
                                     href={user.website.startsWith('http') ? user.website : `https://${user.website}`}
@@ -153,7 +186,7 @@ export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
                             )}
                             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border-2 border-ink shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transform -rotate-1 hover:rotate-0 transition-transform cursor-default">
                                 <Calendar className="w-4 h-4" />
-                                <span>Joined 2026</span>
+                                <span>Joined {joinedDate}</span>
                             </div>
                         </div>
                     </div>
@@ -162,7 +195,7 @@ export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
                     <div className="flex items-center justify-center md:justify-end gap-4 shrink-0 mt-4 md:mt-0">
                         <div className="flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 border-4 border-ink bg-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-2 hover:rotate-0 transition-transform cursor-default">
                             <div className="font-black text-3xl md:text-4xl text-ink leading-none">{totalDesigns}</div>
-                            <div className="text-[10px] font-black font-mono text-ink uppercase mt-1 tracking-wider">Prints</div>
+                            <div className="text-[10px] font-black font-mono text-ink uppercase mt-1 tracking-wider">Designs</div>
                         </div>
                         
                         <button
