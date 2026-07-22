@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { X, Users, Loader2 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { FollowButton } from "./FollowButton";
@@ -12,6 +11,15 @@ interface FollowerUser {
     username: string;
     avatar_url: string | null;
     bio?: string | null;
+}
+
+interface FollowerQueryRow {
+    profile: FollowerUser | FollowerUser[] | null;
+}
+
+function getProfile(row: FollowerQueryRow): FollowerUser | null {
+    if (Array.isArray(row.profile)) return row.profile[0] ?? null;
+    return row.profile;
 }
 
 interface FollowersModalProps {
@@ -44,9 +52,9 @@ export function FollowersModal({ isOpen, onClose, targetUserId, username, type }
 
                     if (error) throw error;
                     if (data) {
-                        const formatted = data
-                            .map((item: any) => item.profile)
-                            .filter(Boolean) as FollowerUser[];
+                        const formatted = (data as FollowerQueryRow[])
+                            .map(getProfile)
+                            .filter((profile): profile is FollowerUser => profile !== null);
                         setUsers(formatted);
                     }
                 } else {
@@ -61,9 +69,9 @@ export function FollowersModal({ isOpen, onClose, targetUserId, username, type }
 
                     if (error) throw error;
                     if (data) {
-                        const formatted = data
-                            .map((item: any) => item.profile)
-                            .filter(Boolean) as FollowerUser[];
+                        const formatted = (data as FollowerQueryRow[])
+                            .map(getProfile)
+                            .filter((profile): profile is FollowerUser => profile !== null);
                         setUsers(formatted);
                     }
                 }
@@ -80,20 +88,21 @@ export function FollowersModal({ isOpen, onClose, targetUserId, username, type }
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn" role="dialog" aria-modal="true" aria-label={type === "followers" ? `${username}'s followers` : `Accounts followed by ${username}`}>
             <div className="relative w-full max-w-lg bg-white border-4 border-ink shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] overflow-hidden flex flex-col max-h-[85vh]">
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b-4 border-ink bg-accent-yellow shrink-0">
                     <div className="flex items-center gap-2">
                         <Users className="w-6 h-6 text-ink" />
                         <h2 className="text-xl font-black uppercase text-ink tracking-tight font-mono">
-                            {type === "followers" ? `Seguidores de @${username}` : `@${username} sigue a`}
+                            {type === "followers" ? `@${username}'s followers` : `@${username} follows`}
                         </h2>
                     </div>
                     <button
                         onClick={onClose}
                         className="p-1.5 bg-red-500 text-white border-2 border-ink hover:bg-red-600 hover:scale-105 active:scale-95 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] cursor-pointer flex items-center justify-center"
-                        title="Cerrar"
+                        title="Close"
+                        aria-label="Close followers dialog"
                     >
                         <X className="w-5 h-5 stroke-[3]" />
                     </button>
@@ -104,14 +113,14 @@ export function FollowersModal({ isOpen, onClose, targetUserId, username, type }
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center py-12 text-ink/60 font-mono gap-3">
                             <Loader2 className="w-8 h-8 animate-spin text-ink" />
-                            <span>Cargando lista...</span>
+                            <span>Loading...</span>
                         </div>
                     ) : users.length === 0 ? (
                         <div className="text-center py-12 px-4 bg-white border-2 border-ink shadow-hard-sm">
                             <p className="font-mono text-sm text-ink/70">
                                 {type === "followers"
-                                    ? `@${username} aún no tiene seguidores.`
-                                    : `@${username} aún no sigue a ningún creador.`}
+                                    ? `@${username} does not have any followers yet.`
+                                    : `@${username} is not following any creators yet.`}
                             </p>
                         </div>
                     ) : (

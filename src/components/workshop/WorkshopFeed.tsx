@@ -65,7 +65,9 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
                         setUserLikes(new Set(JSON.parse(saved)));
                         return;
                     }
-                } catch (_e) { }
+                } catch {
+                    localStorage.removeItem('stitch_local_likes');
+                }
             }
             setUserLikes(new Set());
             return;
@@ -172,8 +174,8 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
                              (targetPrompt.author?.name && targetPrompt.author.name.toLowerCase() === user.username.toLowerCase());
             if (isOwnCard) {
                 showToast({
-                    message: "Acción no permitida",
-                    description: "¡No puedes darle me gusta a tus propios diseños!",
+                    message: "Action not allowed",
+                    description: "You cannot like your own designs.",
                     type: "warning",
                 });
                 return;
@@ -209,7 +211,7 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
             return p;
         }));
 
-        // Si no es un ID numérico (es decir, es un card de prueba), no intentes guardar en DB
+        // Mock cards do not have a numeric database ID, so they stay local.
         if (isNaN(numericId)) return;
 
         try {
@@ -354,7 +356,7 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
                                         onClick={onClearFilters}
                                         className="mt-6 px-6 py-3 bg-accent-yellow border-4 border-ink shadow-hard hover:shadow-hard-hover hover:-translate-y-1 active:shadow-none active:translate-y-1 transition-all duration-200 font-mono font-bold uppercase text-ink flex items-center gap-2 mx-auto"
                                     >
-                                        Limpiar búsqueda
+                                        Clear search
                                     </button>
                                 )}
                             </div>

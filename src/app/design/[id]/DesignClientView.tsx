@@ -169,35 +169,45 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
                                     onClick={async () => {
                                         try {
                                             await navigator.clipboard.writeText(initialDesign.codeSnippet || '');
-                                            showToast({ message: "Código copiado!", type: "success" });
+                                            showToast({ message: "Code copied!", type: "success" });
                                         } catch {
-                                            showToast({ message: "Error al copiar", type: "error" });
+                                            showToast({ message: "Unable to copy code", type: "error" });
                                         }
                                     }}
                                     className="shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1 bg-white/10 hover:bg-white/20 text-white text-xs font-mono font-bold rounded border border-white/20 transition-all active:scale-95 cursor-pointer"
-                                    title="Copiar código completo"
+                                    title="Copy full code"
+                                    aria-label="Copy full code"
                                 >
                                     <Copy className="w-3.5 h-3.5" />
-                                    <span className="hidden sm:inline">Copiar Código</span>
+                                    <span className="hidden sm:inline">Copy code</span>
                                 </button>
                             </div>
 
                             {/* Terminal Tabs */}
-                            <div className="flex border-b border-white/10 bg-[#1a1b26]">
+                            <div className="flex border-b border-white/10 bg-[#1a1b26]" role="tablist" aria-label="Code format">
                                 <button
+                                    type="button"
                                     onClick={() => setActiveTab("html")}
+                                    role="tab"
+                                    aria-selected={activeTab === "html"}
                                     className={`flex-1 sm:flex-none px-3 sm:px-6 py-2 font-mono text-xs font-bold border-r border-white/10 transition-colors cursor-pointer ${activeTab === "html" ? 'bg-[#4d79ff] text-white' : 'text-white/40 hover:bg-white/5'}`}
                                 >
                                     HTML
                                 </button>
                                 <button
+                                    type="button"
                                     onClick={() => setActiveTab("css")}
+                                    role="tab"
+                                    aria-selected={activeTab === "css"}
                                     className={`flex-1 sm:flex-none px-3 sm:px-6 py-2 font-mono text-xs font-bold border-r border-white/10 transition-colors cursor-pointer ${activeTab === "css" ? 'bg-[#4d79ff] text-white' : 'text-white/40 hover:bg-white/5'}`}
                                 >
                                     CSS
                                 </button>
                                 <button
+                                    type="button"
                                     onClick={() => setActiveTab("react")}
+                                    role="tab"
+                                    aria-selected={activeTab === "react"}
                                     className={`flex-1 sm:flex-none px-3 sm:px-6 py-2 font-mono text-xs font-bold transition-colors cursor-pointer ${activeTab === "react" ? 'bg-[#4d79ff] text-white' : 'text-white/40 hover:bg-white/5'}`}
                                 >
                                     React
@@ -331,7 +341,8 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
                         <button
                             onClick={() => setIsLightboxOpen(false)}
                             className="absolute top-6 right-6 bg-red-500 text-white border-2 border-ink p-2 hover:bg-red-600 hover:scale-105 active:scale-95 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] cursor-pointer z-50 flex items-center justify-center"
-                            title="Cerrar imagen"
+                            title="Close image"
+                            aria-label="Close image preview"
                         >
                             <X className="w-6 h-6 stroke-[3]" />
                         </button>

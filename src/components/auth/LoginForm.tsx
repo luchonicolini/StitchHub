@@ -101,9 +101,9 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
         setLoading(true);
         const result = await loginWithGoogle();
         if (result?.error) {
-            toast.error("Autenticación con Google", {
+            toast.error("Google authentication", {
                 description: result.error.includes("provider is not enabled")
-                    ? "Para activar Google, habilita el proveedor en Supabase Dashboard > Auth > Providers."
+                    ? "Enable the Google provider in Supabase Dashboard > Auth > Providers."
                     : result.error
             });
         }

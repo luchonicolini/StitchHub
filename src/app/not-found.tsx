@@ -20,10 +20,10 @@ export default function NotFound() {
             404
           </h1>
           <h2 className="text-2xl font-bold font-display uppercase tracking-wide">
-            Página no encontrada
+            Page not found
           </h2>
           <p className="text-slate-600 dark:text-slate-300 text-sm font-mono leading-relaxed">
-            Parece que el diseño o la ruta que estás buscando no existe o fue movida a otro taller.
+            The design or page you are looking for does not exist or may have moved.
           </p>
         </div>
 
@@ -34,7 +34,7 @@ export default function NotFound() {
             className="inline-flex items-center justify-center gap-2 bg-[#FFDE00] text-ink font-bold font-mono px-6 py-3 border-2 border-ink shadow-[4px_4px_0px_0px_#000000] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_#000000] active:translate-x-[0px] active:translate-y-[0px] active:shadow-[2px_2px_0px_0px_#000000] transition-all"
           >
             <Home className="w-5 h-5" />
-            Volver al Inicio
+            Back to home
           </Link>
 
           <button
@@ -42,7 +42,7 @@ export default function NotFound() {
             className="inline-flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-800 text-ink dark:text-white font-bold font-mono px-6 py-3 border-2 border-ink shadow-[4px_4px_0px_0px_#000000] hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
           >
             <ArrowLeft className="w-5 h-5" />
-            Regresar a la página anterior
+            Go back
           </button>
         </div>
 
