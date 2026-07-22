@@ -25,8 +25,8 @@ export function Footer() {
     const handleSocialClick = (e: React.MouseEvent, name: string) => {
         e.preventDefault();
         showToast({
-            message: `${name} - Próximamente`,
-            description: "Nuestras redes sociales estarán disponibles muy pronto. ¡Mantente atento!",
+            message: `${name} - Coming soon`,
+            description: "Our social channels will be available soon.",
             type: "info",
         });
     };
@@ -37,8 +37,8 @@ export function Footer() {
         e.preventDefault();
         if (!newsletterEmail) return;
         showToast({
-            message: "¡Suscripción exitosa!",
-            description: `Te has suscrito correctamente con ${newsletterEmail}`,
+            message: "Subscription confirmed!",
+            description: `${newsletterEmail} has been added to the newsletter.`,
             type: "success",
         });
         setNewsletterEmail("");
@@ -47,8 +47,8 @@ export function Footer() {
     const handleFooterLinkClick = (e: React.MouseEvent, page: string) => {
         e.preventDefault();
         showToast({
-            message: `${page} - Próximamente`,
-            description: "Esta página informativa estará disponible en breve.",
+            message: `${page} - Coming soon`,
+            description: "This information page will be available soon.",
             type: "info",
         });
     };
@@ -80,7 +80,8 @@ export function Footer() {
                                 key={id}
                                 onClick={(e) => handleSocialClick(e, name)}
                                 className="w-10 h-10 flex items-center justify-center bg-white text-ink rounded-full border-2 border-white hover:bg-accent-yellow hover:scale-110 active:scale-95 transition-all shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)] cursor-pointer"
-                                title={`${name} (Próximamente)`}
+                                title={`${name} (coming soon)`}
+                                aria-label={`${name} (coming soon)`}
                             >
                                 <Icon className="w-5 h-5" />
                             </button>
@@ -113,15 +114,15 @@ export function Footer() {
                 </div>
             </div>
             <div className="max-w-7xl mx-auto px-4 mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center text-xs font-mono text-gray-500">
-                <p>© 2026 StitchHub Workshop. All rights reversed.</p>
+                <p>© 2026 StitchHub Workshop. All rights reserved.</p>
                 <div className="flex gap-6 mt-4 md:mt-0">
-                    <button onClick={(e) => handleFooterLinkClick(e, "Privacidad")} className="hover:text-primary transition-colors cursor-pointer">
+                    <button onClick={(e) => handleFooterLinkClick(e, "Privacy")} className="hover:text-primary transition-colors cursor-pointer">
                         Privacy
                     </button>
-                    <button onClick={(e) => handleFooterLinkClick(e, "Términos de servicio")} className="hover:text-primary transition-colors cursor-pointer">
+                    <button onClick={(e) => handleFooterLinkClick(e, "Terms of service")} className="hover:text-primary transition-colors cursor-pointer">
                         Terms
                     </button>
-                    <button onClick={(e) => handleFooterLinkClick(e, "Mapa del sitio")} className="hover:text-primary transition-colors cursor-pointer">
+                    <button onClick={(e) => handleFooterLinkClick(e, "Sitemap")} className="hover:text-primary transition-colors cursor-pointer">
                         Sitemap
                     </button>
                 </div>

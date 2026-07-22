@@ -23,16 +23,16 @@ export default function Error({
         {/* Error Badge */}
         <div className="inline-flex items-center gap-2 bg-[#FF6B6B] text-white px-4 py-1.5 font-mono text-sm font-bold border-2 border-ink shadow-[2px_2px_0px_0px_#000000] rotate-1">
           <AlertTriangle className="w-4 h-4" />
-          ¡ALGO SALIÓ MAL!
+          SOMETHING WENT WRONG!
         </div>
 
         {/* Title & Message */}
         <div className="space-y-2">
           <h1 className="text-3xl font-black font-display uppercase tracking-wide">
-            Error Inesperado
+            Unexpected error
           </h1>
           <p className="text-slate-600 dark:text-slate-300 text-sm font-mono leading-relaxed">
-            Ocurrió un problema temporal al cargar esta sección. Puedes intentar recargar la vista.
+            A temporary problem occurred while loading this section. Please try again.
           </p>
           {error?.message && (
             <div className="mt-4 p-3 bg-red-50 dark:bg-red-950/40 border-2 border-red-500 font-mono text-xs text-red-600 dark:text-red-300 text-left overflow-x-auto">
@@ -48,7 +48,7 @@ export default function Error({
             className="inline-flex items-center justify-center gap-2 bg-[#FFDE00] text-ink font-bold font-mono px-6 py-3 border-2 border-ink shadow-[4px_4px_0px_0px_#000000] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_#000000] active:translate-x-[0px] active:translate-y-[0px] active:shadow-[2px_2px_0px_0px_#000000] transition-all"
           >
             <RefreshCw className="w-5 h-5" />
-            Reintentar Cargar
+            Try again
           </button>
 
           <Link
@@ -56,7 +56,7 @@ export default function Error({
             className="inline-flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-800 text-ink dark:text-white font-bold font-mono px-6 py-3 border-2 border-ink shadow-[4px_4px_0px_0px_#000000] hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
           >
             <Home className="w-5 h-5" />
-            Ir al Inicio
+            Back to home
           </Link>
         </div>
 

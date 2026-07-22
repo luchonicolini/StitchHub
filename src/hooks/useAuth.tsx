@@ -203,7 +203,7 @@ export const useAuth = create<AuthState>((set, get) => ({
             }
             return { error: null };
         } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : 'Error iniciando sesión con Google';
+            const msg = err instanceof Error ? err.message : 'Unable to sign in with Google';
             return { error: msg };
         }
     },

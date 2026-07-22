@@ -66,7 +66,17 @@ export function PromptCard({
                 layout: { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
             }}
             onClick={onClick}
-            className={`break-inside-avoid mb-12 relative group transform ${rotation} hover:rotate-0 transition-all duration-400 ease-in-out pt-4 cursor-pointer`}
+            onKeyDown={(event) => {
+                if (!onClick || event.target !== event.currentTarget) return;
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    onClick();
+                }
+            }}
+            role={onClick ? "button" : undefined}
+            tabIndex={onClick ? 0 : undefined}
+            aria-label={onClick ? `Open ${title}` : undefined}
+            className={`break-inside-avoid mb-12 relative group transform ${rotation} hover:rotate-0 transition-all duration-400 ease-in-out pt-4 cursor-pointer focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#4d79ff] focus-visible:ring-offset-4`}
         >
             {/* Decorative Pin - Like a real pushpin! */}
             <div className="absolute top-1 left-1/2 -translate-x-1/2 z-30">
@@ -114,10 +124,13 @@ export function PromptCard({
                         {/* Likes */}
                         <div className="flex items-center gap-1.5 shrink-0 bg-gray-50 border-2 border-ink px-2 py-1 shadow-[2px_2px_0_0_#000]">
                             <button
+                                type="button"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     if (onToggleLike) onToggleLike();
                                 }}
+                                aria-label={isLikedByUser ? `Unlike ${title}` : `Like ${title}`}
+                                aria-pressed={isLikedByUser}
                                 className={`group/like flex items-center justify-center transition-transform active:scale-95`}
                                 title={isLikedByUser ? "Unlike" : "Like"}
                             >
@@ -132,16 +145,23 @@ export function PromptCard({
                     </div>
 
                     <div className="flex gap-2 mb-4 flex-wrap">
-                        {tags.map((tag) => (
+                        {tags.map((tag) => onTagClick ? (
+                            <button
+                                type="button"
+                                key={tag}
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    onTagClick(tag);
+                                }}
+                                className="text-xs font-bold font-mono bg-[#FFF8D6] px-2 py-1 border-2 border-ink text-ink transition-colors duration-300 ease-in-out hover:bg-primary cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4d79ff] focus-visible:ring-offset-2"
+                                aria-label={`Filter by ${tag}`}
+                            >
+                                {tag}
+                            </button>
+                        ) : (
                             <span
                                 key={tag}
-                                onClick={(e) => {
-                                    if (onTagClick) {
-                                        e.stopPropagation();
-                                        onTagClick(tag);
-                                    }
-                                }}
-                                className={`text-xs font-bold font-mono bg-[#FFF8D6] px-2 py-1 border-2 border-ink text-ink transition-colors duration-300 ease-in-out ${onTagClick ? 'hover:bg-primary cursor-pointer active:scale-95' : 'hover:bg-primary'}`}
+                                className="text-xs font-bold font-mono bg-[#FFF8D6] px-2 py-1 border-2 border-ink text-ink"
                             >
                                 {tag}
                             </span>
@@ -162,11 +182,13 @@ export function PromptCard({
                             <span className="font-mono text-xs font-bold text-ink group-hover/author:underline decoration-2 underline-offset-2">{author.name}</span>
                         </Link>
                         <motion.button
+                            type="button"
                             whileTap={{ scale: 0.9 }}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 handleCopy();
                             }}
+                            aria-label={copied ? "Prompt copied" : `Copy prompt for ${title}`}
                             className={`w-10 h-10 flex items-center justify-center rounded-full border-2 border-ink text-white hover:scale-110 transition-all duration-300 ease-in-out shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none cursor-pointer ${copied ? "bg-accent-green" : "bg-accent-orange hover:bg-ink"
                                 }`}
                             title={copied ? "Copied!" : "Copy Prompt"}
@@ -183,11 +205,13 @@ export function PromptCard({
                 {showActions && onDelete && (
                     <div className="absolute top-2 right-2 z-50">
                         <motion.button
+                            type="button"
                             whileTap={{ scale: 0.9 }}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 onDelete();
                             }}
+                            aria-label={`Delete ${title}`}
                             className="p-2 bg-white text-red-500 border-2 border-ink hover:bg-red-500 hover:text-white transition-colors shadow-sm rounded-sm"
                             title="Delete Design"
                         >

@@ -67,7 +67,7 @@ export default function ProfilePage() {
         };
 
         fetchUserLikes();
-    }, [user, supabase]);
+    }, [user]);
 
     // Fetch user designs
     useEffect(() => {
@@ -134,7 +134,7 @@ export default function ProfilePage() {
         if (user?.id) {
             fetchUserDesigns();
         }
-    }, [user, supabase]); // dependencies updated to avoid loops
+    }, [user]);
 
     const handleEditClick = (design: Prompt) => {
         setDesignToEdit(design);
@@ -211,10 +211,10 @@ export default function ProfilePage() {
         }
     };
 
-    const handleToggleLike = async (_design: Prompt) => {
+    const handleToggleLike = async () => {
         showToast({
-            message: "Acción no permitida",
-            description: "¡No puedes darle me gusta a tus propios diseños!",
+            message: "Action not allowed",
+            description: "You cannot like your own designs.",
             type: "warning",
         });
         return;
@@ -298,7 +298,7 @@ export default function ProfilePage() {
                                     onEdit={() => handleEditClick(item)}
                                     onTogglePin={() => handleTogglePin(item)}
                                     isLikedByUser={userLikes.has(parseInt(item.id.replace('db-', ''), 10))}
-                                    onToggleLike={() => handleToggleLike(item)}
+                                    onToggleLike={handleToggleLike}
                                 />
                             ))}
                             <NewDesignCard />

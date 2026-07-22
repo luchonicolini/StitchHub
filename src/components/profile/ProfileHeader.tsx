@@ -168,7 +168,8 @@ export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
                         <button
                             onClick={() => setModalConfig({ isOpen: true, type: "followers" })}
                             className="flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 border-4 border-ink bg-accent-green shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-2 hover:rotate-0 hover:scale-105 active:scale-95 transition-all cursor-pointer group"
-                            title="Ver tus seguidores"
+                            title="View your followers"
+                            aria-label="View your followers"
                         >
                             <div className="font-black text-3xl md:text-4xl text-ink leading-none group-hover:scale-110 transition-transform">{followerCount}</div>
                             <div className="text-[10px] font-black font-mono text-ink uppercase mt-1 tracking-wider group-hover:underline">Followers</div>
@@ -177,7 +178,8 @@ export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
                         <button
                             onClick={() => setModalConfig({ isOpen: true, type: "following" })}
                             className="flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 border-4 border-ink bg-accent-cyan shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-1 hover:rotate-0 hover:scale-105 active:scale-95 transition-all cursor-pointer group"
-                            title="Ver a quiénes sigues"
+                            title="View accounts you follow"
+                            aria-label="View accounts you follow"
                         >
                             <div className="font-black text-3xl md:text-4xl text-ink leading-none group-hover:scale-110 transition-transform">{followingCount}</div>
                             <div className="text-[10px] font-black font-mono text-ink uppercase mt-1 tracking-wider group-hover:underline">Following</div>

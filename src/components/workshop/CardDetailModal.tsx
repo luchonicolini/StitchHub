@@ -152,16 +152,9 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
         return () => window.removeEventListener('keydown', handleKeyboard);
     }, [images.length, isLightboxOpen, nextImage, prevImage]);
 
-    // Mock stats
-    const stats = {
-        views: "2.4k",
-        remixes: "856",
-        rating: "4.9",
-    };
-
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-[100] flex items-center justify-center">
+            <div className="fixed inset-0 z-[100] flex items-center justify-center" role="dialog" aria-modal="true" aria-label={`${card.title} details`}>
                 {/* Full Screen Page Content */}
                 <motion.div
                     initial={{ y: "100%" }}
@@ -337,35 +330,45 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                                                 onClick={async () => {
                                                     try {
                                                         await navigator.clipboard.writeText(card.codeSnippet || '');
-                                                        showToast({ message: "Código copiado!", type: "success" });
+                                                        showToast({ message: "Code copied!", type: "success" });
                                                     } catch {
-                                                        showToast({ message: "Error al copiar", type: "error" });
+                                                        showToast({ message: "Unable to copy code", type: "error" });
                                                     }
                                                 }}
                                                 className="shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1 bg-white/10 hover:bg-white/20 text-white text-xs font-mono font-bold rounded border border-white/20 transition-all active:scale-95 cursor-pointer"
-                                                title="Copiar código completo"
+                                                title="Copy full code"
+                                                aria-label="Copy full code"
                                             >
                                                 <Copy className="w-3.5 h-3.5" />
-                                                <span className="hidden sm:inline">Copiar Código</span>
+                                                <span className="hidden sm:inline">Copy code</span>
                                             </button>
                                         </div>
 
                                         {/* Terminal Tabs */}
-                                        <div className="flex border-b border-white/10 bg-[#1a1b26]">
+                                        <div className="flex border-b border-white/10 bg-[#1a1b26]" role="tablist" aria-label="Code format">
                                             <button
+                                                type="button"
                                                 onClick={() => setActiveTab("html")}
+                                                role="tab"
+                                                aria-selected={activeTab === "html"}
                                                 className={`flex-1 sm:flex-none px-3 sm:px-6 py-2 font-mono text-xs font-bold border-r border-white/10 transition-colors cursor-pointer ${activeTab === "html" ? 'bg-[#4d79ff] text-white' : 'text-white/40 hover:bg-white/5'}`}
                                             >
                                                 HTML
                                             </button>
                                             <button
+                                                type="button"
                                                 onClick={() => setActiveTab("css")}
+                                                role="tab"
+                                                aria-selected={activeTab === "css"}
                                                 className={`flex-1 sm:flex-none px-3 sm:px-6 py-2 font-mono text-xs font-bold border-r border-white/10 transition-colors cursor-pointer ${activeTab === "css" ? 'bg-[#4d79ff] text-white' : 'text-white/40 hover:bg-white/5'}`}
                                             >
                                                 CSS
                                             </button>
                                             <button
+                                                type="button"
                                                 onClick={() => setActiveTab("react")}
+                                                role="tab"
+                                                aria-selected={activeTab === "react"}
                                                 className={`flex-1 sm:flex-none px-3 sm:px-6 py-2 font-mono text-xs font-bold transition-colors cursor-pointer ${activeTab === "react" ? 'bg-[#4d79ff] text-white' : 'text-white/40 hover:bg-white/5'}`}
                                             >
                                                 React
@@ -516,22 +519,6 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                                 )}
                             </button>
 
-                            {/* Stats */}
-                            <div className="grid grid-cols-3 gap-4 mt-8">
-                                <div className="bg-white border-4 border-ink p-4 text-center shadow-hard-sm">
-                                    <div className="font-black text-2xl text-ink">{stats.views}</div>
-                                    <div className="font-mono text-[10px] uppercase text-ink/50 font-bold mt-1">Views</div>
-                                </div>
-                                <div className="bg-white border-4 border-ink p-4 text-center shadow-hard-sm">
-                                    <div className="font-black text-2xl text-ink">{stats.remixes}</div>
-                                    <div className="font-mono text-[10px] uppercase text-ink/50 font-bold mt-1">Remixes</div>
-                                </div>
-                                <div className="bg-white border-4 border-ink p-4 text-center shadow-hard-sm">
-                                    <div className="font-black text-2xl text-ink">{stats.rating}</div>
-                                    <div className="font-mono text-[10px] uppercase text-ink/50 font-bold mt-1">Rating</div>
-                                </div>
-                            </div>
-
                             {/* Tags */}
                             <div className="flex gap-2 flex-wrap">
                                 {card.tags.map((tag, i) => (
@@ -579,7 +566,8 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                                 <button
                                     onClick={() => setIsLightboxOpen(false)}
                                     className="absolute top-6 right-6 bg-red-500 text-white border-2 border-ink p-2 hover:bg-red-600 hover:scale-105 active:scale-95 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] cursor-pointer z-50 flex items-center justify-center"
-                                    title="Cerrar imagen"
+                                    title="Close image"
+                                    aria-label="Close image preview"
                                 >
                                     <X className="w-6 h-6 stroke-[3]" />
                                 </button>
