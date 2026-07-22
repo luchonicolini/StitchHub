@@ -63,12 +63,19 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
     const [resolvedImages, setResolvedImages] = useState<string[]>([]);
 
     useEffect(() => {
+        let isMounted = true;
         const rawImages = card.gallery && card.gallery.length > 0 ? card.gallery : [card.image];
-        Promise.all(rawImages.map(img => resolveImageUrl(img))).then(setResolvedImages);
+        Promise.all(rawImages.map(img => resolveImageUrl(img))).then(urls => {
+            if (isMounted) setResolvedImages(urls);
+        });
+        return () => {
+            isMounted = false;
+        };
     }, [card]);
 
-    const images = resolvedImages.length > 0 ? resolvedImages : [card.image];
-    const currentImage = images[currentImageIndex] || images[0] || card.image;
+    const sanitizeImage = (img?: string) => (!img || img.startsWith('private-design-images://') ? '/images/placeholder.png' : img);
+    const images = resolvedImages.length > 0 ? resolvedImages : (card.gallery && card.gallery.length > 0 ? card.gallery : [card.image]).map(sanitizeImage);
+    const currentImage = images[currentImageIndex] || images[0] || '/images/placeholder.png';
 
     // Lock body scroll when modal is open
     useEffect(() => {

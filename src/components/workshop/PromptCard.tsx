@@ -32,16 +32,25 @@ export function PromptCard({
     onTagClick
 }: PromptCardProps) {
     const [copied, setCopied] = useState(false);
-    const [displayImage, setDisplayImage] = useState(image);
+    const isPrivateUri = Boolean(image && image.startsWith('private-design-images://'));
+    const [displayImage, setDisplayImage] = useState<string>(
+        isPrivateUri ? '/images/placeholder.png' : image
+    );
     const { showToast } = useToast();
 
     useEffect(() => {
-        if (image && image.startsWith('private-design-images://')) {
-            resolveImageUrl(image).then(setDisplayImage);
+        let isMounted = true;
+        if (isPrivateUri) {
+            resolveImageUrl(image).then((resolved) => {
+                if (isMounted) setDisplayImage(resolved);
+            });
         } else {
             setDisplayImage(image);
         }
-    }, [image]);
+        return () => {
+            isMounted = false;
+        };
+    }, [image, isPrivateUri]);
 
     const handleCopy = async () => {
         try {

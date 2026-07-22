@@ -128,10 +128,11 @@ export function EditDesignModal({ isOpen, onClose, design, onSave }: EditDesignM
 
             let finalImageUrls = [...existingImages];
 
-            // Upload any new images added
+            // Upload any new images added with privacy setting preserved
             if (newImageFiles.length > 0) {
                 if (!user) throw new Error("Authentication required to upload images.");
-                const uploadedUrls = await uploadDesignImages(newImageFiles, user.id, supabase);
+                const isPublic = design.isPublic !== false;
+                const uploadedUrls = await uploadDesignImages(newImageFiles, user.id, supabase, isPublic);
                 finalImageUrls = [...finalImageUrls, ...uploadedUrls];
             }
 
