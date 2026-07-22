@@ -5,7 +5,7 @@ export function MasonryGrid({ children, onLoadMore, isLoading, hasMore }: { chil
         <section className="max-w-7xl mx-auto px-4 pb-20">
             <div className="masonry-grid">{children}</div>
 
-            {(hasMore !== false) && (
+            {hasMore && onLoadMore && (
                 <div className="mt-8 text-center">
                     <button
                         onClick={onLoadMore}

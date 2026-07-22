@@ -67,8 +67,8 @@ export function HeroSection({ stats }: HeroSectionProps) {
                 </div>
 
                 {/* Main Title with More Layers */}
-                <h2 className="text-5xl md:text-8xl font-black leading-[0.85] text-ink mb-10 relative">
-                    <span className="inline-block transform hover:scale-105 transition-transform">Community UI</span>
+                <h2 className="text-5xl md:text-8xl font-black leading-[0.95] text-ink mb-10 relative">
+                    <span className="inline-block pb-[0.08em] transform hover:scale-105 transition-transform">Community UI</span>
                     <br />
                     <span className="relative inline-block">
                         <span className="bg-primary px-3 py-1 text-ink transform -skew-x-6 inline-block border-4 border-ink shadow-hard-lg hover:shadow-hard hover:translate-x-1 hover:translate-y-1 transition-all cursor-default">

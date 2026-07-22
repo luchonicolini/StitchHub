@@ -22,7 +22,7 @@ export function FilterBar({ activeFilter, onFilterChange, resultCount, searchQue
     ];
 
     return (
-        <section className="border-y-4 border-ink bg-primary py-6 mb-12 overflow-x-auto">
+        <section className="mb-12 overflow-x-auto border-b-4 border-ink bg-background-light py-5">
             <div className="max-w-7xl mx-auto px-4 flex items-center gap-4 min-w-max">
                 {/* Label with decorative elements */}
                 <div className="relative mr-2">

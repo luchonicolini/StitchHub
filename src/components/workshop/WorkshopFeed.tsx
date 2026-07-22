@@ -255,6 +255,7 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
     };
 
     const resultCount = filteredPrompts.filter(item => item.type !== "promo").length;
+    const canLoadMore = hasMore && resultCount > 0;
 
     // Report result count to parent component
     useEffect(() => {
@@ -265,7 +266,7 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
 
     return (
         <>
-            <MasonryGrid onLoadMore={handleLoadMore} isLoading={isFetchingMore} hasMore={hasMore}>
+            <MasonryGrid onLoadMore={handleLoadMore} isLoading={isFetchingMore} hasMore={canLoadMore}>
                 <motion.div
                     variants={containerVariants}
                     initial="hidden"
