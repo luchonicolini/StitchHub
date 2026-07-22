@@ -140,8 +140,8 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
                     setHasMore(data.length === ITEMS_PER_PAGE);
                 }
             }
-        } catch (err) {
-            console.error("Error fetching designs:", err);
+        } catch (err: unknown) {
+            console.error("Error fetching designs:", (err as Error)?.message || err);
         } finally {
             setIsFetchingMore(false);
         }
