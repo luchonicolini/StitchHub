@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/useToast";
 import { Footer } from "./Footer";
 import { WorkshopHeader } from "./WorkshopHeader";
 import { CommentsSection } from "./CommentsSection";
+import { resolveImageUrl } from "@/lib/uploadImage";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
@@ -58,9 +59,16 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
         return rawCode;
     };
 
-    // Initial check for gallery
-    const images = card.gallery && card.gallery.length > 0 ? card.gallery : [card.image];
-    const currentImage = images[currentImageIndex] || card.image;
+    // Initial check for gallery with private URI resolution
+    const [resolvedImages, setResolvedImages] = useState<string[]>([]);
+
+    useEffect(() => {
+        const rawImages = card.gallery && card.gallery.length > 0 ? card.gallery : [card.image];
+        Promise.all(rawImages.map(img => resolveImageUrl(img))).then(setResolvedImages);
+    }, [card]);
+
+    const images = resolvedImages.length > 0 ? resolvedImages : [card.image];
+    const currentImage = images[currentImageIndex] || images[0] || card.image;
 
     // Lock body scroll when modal is open
     useEffect(() => {

@@ -1,4 +1,4 @@
--- Migration: Add is_public column, RLS policies, and Foreign Keys for StitchHub
+-- Migration: Add is_public column, RLS policies, Foreign Keys, and Private/Public Storage for StitchHub
 -- Author: StitchHub Team
 -- Date: 2026-07-22
 
@@ -65,40 +65,50 @@ DROP POLICY IF EXISTS "Users can delete own designs" ON public.designs;
 CREATE POLICY "Users can delete own designs" ON public.designs
   FOR DELETE USING (auth.uid() = user_id);
 
--- 4. Storage Buckets and RLS Policies for Storage
+-- 4. Storage Buckets: Public 'design-images' and Strictly Private 'private-design-images'
 INSERT INTO storage.buckets (id, name, public)
-VALUES ('design-images', 'design-images', true), ('designs', 'designs', true)
+VALUES ('design-images', 'design-images', true)
 ON CONFLICT (id) DO UPDATE SET public = true;
 
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('private-design-images', 'private-design-images', false)
+ON CONFLICT (id) DO UPDATE SET public = false;
+
+-- Public Storage Policies for 'design-images'
 DROP POLICY IF EXISTS "Public Read Design Images Storage" ON storage.objects;
 CREATE POLICY "Public Read Design Images Storage" ON storage.objects
-  FOR SELECT USING (bucket_id IN ('design-images', 'designs'));
+  FOR SELECT USING (bucket_id = 'design-images');
 
 DROP POLICY IF EXISTS "Authenticated Insert Design Images Storage" ON storage.objects;
 CREATE POLICY "Authenticated Insert Design Images Storage" ON storage.objects
   FOR INSERT WITH CHECK (
-    bucket_id IN ('design-images', 'designs') AND auth.role() = 'authenticated'
+    bucket_id = 'design-images' AND auth.role() = 'authenticated'
   );
 
-DROP POLICY IF EXISTS "Authenticated Delete Design Images Storage" ON storage.objects;
-CREATE POLICY "Authenticated Delete Design Images Storage" ON storage.objects
+DROP POLICY IF EXISTS "Owner Delete Design Images Storage" ON storage.objects;
+CREATE POLICY "Owner Delete Design Images Storage" ON storage.objects
   FOR DELETE USING (
-    bucket_id IN ('design-images', 'designs') AND auth.uid()::text = (storage.foldername(name))[1]
+    bucket_id = 'design-images' AND auth.uid()::text = (storage.foldername(name))[1]
   );
 
--- 5. Auto Confirm User Email Trigger
-CREATE OR REPLACE FUNCTION public.auto_confirm_user_email()
-RETURNS trigger AS $$
-BEGIN
-  new.email_confirmed_at = COALESCE(new.email_confirmed_at, now());
-  RETURN new;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+-- Strictly Private Storage Policies for 'private-design-images' (Owner Only)
+DROP POLICY IF EXISTS "Owner Read Private Design Images Storage" ON storage.objects;
+CREATE POLICY "Owner Read Private Design Images Storage" ON storage.objects
+  FOR SELECT USING (
+    bucket_id = 'private-design-images' AND auth.uid()::text = (storage.foldername(name))[1]
+  );
 
-DROP TRIGGER IF EXISTS on_auth_user_created_auto_confirm ON auth.users;
-CREATE TRIGGER on_auth_user_created_auto_confirm
-  BEFORE INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION public.auto_confirm_user_email();
+DROP POLICY IF EXISTS "Owner Insert Private Design Images Storage" ON storage.objects;
+CREATE POLICY "Owner Insert Private Design Images Storage" ON storage.objects
+  FOR INSERT WITH CHECK (
+    bucket_id = 'private-design-images' AND auth.uid()::text = (storage.foldername(name))[1]
+  );
+
+DROP POLICY IF EXISTS "Owner Delete Private Design Images Storage" ON storage.objects;
+CREATE POLICY "Owner Delete Private Design Images Storage" ON storage.objects
+  FOR DELETE USING (
+    bucket_id = 'private-design-images' AND auth.uid()::text = (storage.foldername(name))[1]
+  );
 
 -- Reload schema cache
 NOTIFY pgrst, 'reload schema';

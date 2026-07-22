@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { Copy, Check, Trash2, Layers, Heart } from "lucide-react";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/useToast";
 import { PromptCardProps } from "@/types/prompt";
+import { resolveImageUrl } from "@/lib/uploadImage";
 
 export type { PromptCardProps } from "@/types/prompt";
 
@@ -31,7 +32,16 @@ export function PromptCard({
     onTagClick
 }: PromptCardProps) {
     const [copied, setCopied] = useState(false);
+    const [displayImage, setDisplayImage] = useState(image);
     const { showToast } = useToast();
+
+    useEffect(() => {
+        if (image && image.startsWith('private-design-images://')) {
+            resolveImageUrl(image).then(setDisplayImage);
+        } else {
+            setDisplayImage(image);
+        }
+    }, [image]);
 
     const handleCopy = async () => {
         try {
@@ -92,7 +102,7 @@ export function PromptCard({
             >
                 <div className="aspect-[4/3] bg-gray-100 border-[3px] border-ink mb-4 overflow-hidden relative">
                     <Image
-                        src={image}
+                        src={displayImage || '/images/placeholder.png'}
                         alt={imageAlt}
                         width={800}
                         height={600}

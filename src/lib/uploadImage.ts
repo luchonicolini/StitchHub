@@ -38,17 +38,18 @@ export async function uploadDesignImages(
         }
     }
 
-    const bucketName = 'design-images';
-    const folderPrefix = isPublic ? 'public' : 'private';
+    // Public vs Private Bucket
+    const bucketName = isPublic ? 'design-images' : 'private-design-images';
 
-    // 2. Upload all files concurrently
+    // 2. Upload all files concurrently under `${userId}/${fileName}`
     const uploadPromises = files.map(async (file, index) => {
         const fileExt = file.name.split('.').pop();
-        const fileName = `${folderPrefix}/${userId}/${Date.now()}-${index}.${fileExt}`;
+        // Exact segment [1] is userId for RLS foldername matching
+        const filePath = `${userId}/${Date.now()}-${index}.${fileExt}`;
 
         const uploadTask = supabase.storage
             .from(bucketName)
-            .upload(fileName, file, {
+            .upload(filePath, file, {
                 cacheControl: isPublic ? '3600' : '0',
                 upsert: false
             });
@@ -62,23 +63,11 @@ export async function uploadDesignImages(
         if (isPublic) {
             const { data: { publicUrl } } = supabase.storage
                 .from(bucketName)
-                .getPublicUrl(fileName);
+                .getPublicUrl(filePath);
             return publicUrl;
         } else {
-            // Private images: generate a signed URL valid for 10 years (315,360,000s)
-            const { data, error: signError } = await supabase.storage
-                .from(bucketName)
-                .createSignedUrl(fileName, 315360000);
-
-            if (signError || !data?.signedUrl) {
-                // Fallback to public URL if signing is disabled by bucket config
-                const { data: { publicUrl } } = supabase.storage
-                    .from(bucketName)
-                    .getPublicUrl(fileName);
-                return publicUrl;
-            }
-
-            return data.signedUrl;
+            // Private images: Store private reference URI so clients fetch signed URLs on demand
+            return `private-design-images://${filePath}`;
         }
     });
 
@@ -90,4 +79,33 @@ export async function uploadDesignImages(
     }
 
     return uploadedUrls;
+}
+
+/**
+ * Resolves an image URL or private URI into a viewable image URL.
+ * Public URLs pass through unchanged.
+ * Private URIs (private-design-images://path) generate a short-lived temporary signed URL (60 seconds).
+ */
+export async function resolveImageUrl(
+    urlOrUri: string,
+    supabaseClient?: SupabaseClient
+): Promise<string> {
+    if (!urlOrUri || !urlOrUri.startsWith('private-design-images://')) {
+        return urlOrUri;
+    }
+
+    const supabase = supabaseClient || defaultSupabase;
+    const filePath = urlOrUri.replace('private-design-images://', '');
+
+    // Generate a 60-second temporary signed URL on demand
+    const { data, error } = await supabase.storage
+        .from('private-design-images')
+        .createSignedUrl(filePath, 60);
+
+    if (error || !data?.signedUrl) {
+        console.error("Failed to generate private signed URL:", error);
+        return '/images/placeholder.png'; // Fallback if user is unauthorized by RLS
+    }
+
+    return data.signedUrl;
 }
