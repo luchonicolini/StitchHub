@@ -116,15 +116,12 @@ export function Footer() {
             <div className="max-w-7xl mx-auto px-4 mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center text-xs font-mono text-gray-500">
                 <p>© 2026 StitchHub Workshop. All rights reserved.</p>
                 <div className="flex gap-6 mt-4 md:mt-0">
-                    <button onClick={(e) => handleFooterLinkClick(e, "Privacy")} className="hover:text-primary transition-colors cursor-pointer">
+                    <Link href="/privacy" className="hover:text-primary transition-colors cursor-pointer">
                         Privacy
-                    </button>
-                    <button onClick={(e) => handleFooterLinkClick(e, "Terms of service")} className="hover:text-primary transition-colors cursor-pointer">
+                    </Link>
+                    <Link href="/terms" className="hover:text-primary transition-colors cursor-pointer">
                         Terms
-                    </button>
-                    <button onClick={(e) => handleFooterLinkClick(e, "Sitemap")} className="hover:text-primary transition-colors cursor-pointer">
-                        Sitemap
-                    </button>
+                    </Link>
                 </div>
             </div>
         </footer>
