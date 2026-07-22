@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 import { User, Mail, Lock, Eye, EyeOff, UserPlus, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { PasswordStrength } from "@/components/auth/PasswordStrength";
+import { useToast } from "@/hooks/useToast";
 
 interface RegisterFormProps {
     onSwitchToLogin?: () => void;
@@ -44,8 +44,7 @@ function isValidEmail(email: string): boolean {
 export function RegisterForm({ }: RegisterFormProps) {
     const { register, loginWithGoogle } = useAuth();
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const returnUrl = searchParams.get("returnUrl");
+    const { showToast } = useToast();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -100,10 +99,12 @@ export function RegisterForm({ }: RegisterFormProps) {
             });
             setTimeout(() => setShake(false), 500);
         } else {
-            toast.success("Account created! 🎉", {
-                description: "Welcome to StitchHub!",
+            showToast({
+                message: "Account created successfully",
+                description: "Welcome to StitchHub. Your profile is ready!",
+                type: "success",
             });
-            setTimeout(() => router.push(returnUrl || "/"), 600);
+            router.replace("/profile");
         }
 
         setLoading(false);

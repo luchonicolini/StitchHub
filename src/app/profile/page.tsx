@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileProjectCard } from "@/components/profile/ProfileProjectCard";
 import { NewDesignCard } from "@/components/profile/NewDesignCard";
 import { Prompt } from "@/types/prompt";
-import { Loader2 } from "lucide-react";
+import { DesignDB, mapDesignToPrompt } from "@/types/design";
+import { Bookmark, LayoutGrid, Loader2, Pin, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/useToast";
 import { CardDetailModal } from "@/components/workshop/CardDetailModal";
 import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal";
@@ -21,11 +23,16 @@ import { WorkshopHeader } from "@/components/workshop/WorkshopHeader";
 export default function ProfilePage() {
     const { user, loading } = useAuth();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { showToast } = useToast();
+    const authToastShown = useRef(false);
     const [myDesigns, setMyDesigns] = useState<Prompt[]>([]);
+    const [savedDesigns, setSavedDesigns] = useState<Prompt[]>([]);
     const [userLikes, setUserLikes] = useState<Set<number>>(new Set());
+    const [activeTab, setActiveTab] = useState<"designs" | "saved" | "pinned">("designs");
 
     const [loadingDesigns, setLoadingDesigns] = useState(true);
+    const [loadingSaved, setLoadingSaved] = useState(true);
     const [selectedCard, setSelectedCard] = useState<Prompt | null>(null);
 
     // Delete Modal State
@@ -43,10 +50,24 @@ export default function ProfilePage() {
         }
     }, [user, loading, router]);
 
+    useEffect(() => {
+        if (user && searchParams.get("auth") === "success" && !authToastShown.current) {
+            authToastShown.current = true;
+            showToast({
+                message: "Signed in successfully",
+                description: "Welcome to StitchHub. Your profile is ready!",
+                type: "success",
+            });
+            router.replace("/profile", { scroll: false });
+        }
+    }, [router, searchParams, showToast, user]);
+
     // Fetch user likes
     useEffect(() => {
         if (!user) {
             setUserLikes(new Set());
+            setSavedDesigns([]);
+            setLoadingSaved(false);
             return;
         }
 
@@ -59,10 +80,30 @@ export default function ProfilePage() {
 
                 if (error) throw error;
                 if (data) {
-                    setUserLikes(new Set(data.map(l => l.design_id)));
-                } // Remove empty blocks
+                    const likedIds = data.map(l => l.design_id);
+                    setUserLikes(new Set(likedIds));
+
+                    if (likedIds.length === 0) {
+                        setSavedDesigns([]);
+                        return;
+                    }
+
+                    const { data: designs, error: designsError } = await supabase
+                        .from('designs')
+                        .select('*, profiles(username, avatar_url)')
+                        .in('id', likedIds)
+                        .order('created_at', { ascending: false });
+
+                    if (designsError) throw designsError;
+                    setSavedDesigns((designs as unknown as DesignDB[]).map((design, index) => ({
+                        ...mapDesignToPrompt(design, index),
+                        isLikedByUser: true,
+                    })));
+                }
             } catch (err) {
                 console.error("Error fetching user likes:", err);
+            } finally {
+                setLoadingSaved(false);
             }
         };
 
@@ -151,6 +192,7 @@ export default function ProfilePage() {
     };
 
     const handleTogglePin = async (design: Prompt) => {
+        if (!user) return;
         const newPinnedState = !design.isPinned;
 
         // Check pin limit if we're trying to pin a new design
@@ -189,7 +231,8 @@ export default function ProfilePage() {
             const { error } = await supabase
                 .from('designs')
                 .update({ is_pinned: newPinnedState })
-                .eq('id', idAsNumber);
+                .eq('id', idAsNumber)
+                .eq('user_id', user.id);
 
             if (error) throw error;
 
@@ -220,13 +263,41 @@ export default function ProfilePage() {
         return;
     };
 
+    const handleRemoveSaved = async (design: Prompt) => {
+        if (!user) return;
+        const designId = Number.parseInt(design.id.replace('db-', ''), 10);
+        if (Number.isNaN(designId)) return;
+
+        setSavedDesigns(prev => prev.filter(item => item.id !== design.id));
+        setUserLikes(prev => {
+            const next = new Set(prev);
+            next.delete(designId);
+            return next;
+        });
+
+        const { error } = await supabase
+            .from('likes')
+            .delete()
+            .eq('user_id', user.id)
+            .eq('design_id', designId);
+
+        if (error) {
+            setSavedDesigns(prev => [design, ...prev]);
+            setUserLikes(prev => new Set(prev).add(designId));
+            showToast({ message: "Unable to remove saved design", type: "error" });
+            return;
+        }
+
+        showToast({ message: "Removed from saved", type: "success" });
+    };
+
     const handleDeleteClick = (id: string) => {
         setDesignToDelete(id);
         setDeleteModalOpen(true);
     };
 
     const confirmDelete = async () => {
-        if (!designToDelete) return;
+        if (!designToDelete || !user) return;
         setIsDeleting(true);
 
         // ID formats: "db-123" or "123".
@@ -236,7 +307,8 @@ export default function ProfilePage() {
             const { error } = await supabase
                 .from('designs')
                 .delete()
-                .eq('id', cleanId);
+                .eq('id', cleanId)
+                .eq('user_id', user.id);
 
             if (error) throw error;
 
@@ -251,6 +323,15 @@ export default function ProfilePage() {
             setDesignToDelete(null);
         }
     };
+
+    const pinnedDesigns = myDesigns.filter(design => design.isPinned);
+    const visibleDesigns = activeTab === "saved"
+        ? savedDesigns
+        : activeTab === "pinned"
+            ? pinnedDesigns
+            : myDesigns;
+    const isCollectionLoading = loadingDesigns || (activeTab === "saved" && loadingSaved);
+    const collectionTitle = activeTab === "saved" ? "Saved Designs" : activeTab === "pinned" ? "Pinned Designs" : "My Designs";
 
     if (loading || !user) {
         return (
@@ -269,39 +350,92 @@ export default function ProfilePage() {
                 />
 
                 <div className="max-w-7xl mx-auto px-4">
-                    <div className="mb-12 md:mb-16 flex flex-col md:flex-row md:items-end gap-6 md:gap-8 overflow-visible px-4">
-                        <div className="flex flex-row items-center gap-4 shrink-0">
-                            <h2 className="font-black text-5xl md:text-7xl uppercase text-ink leading-none transform -skew-x-[3deg]">
-                                My Collection
-                            </h2>
-                            <div className="bg-accent-yellow text-ink text-sm md:text-base font-black px-4 py-2 border-4 border-ink shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-[12deg] z-10 hover:rotate-6 transition-transform cursor-default translate-y-[-0.5rem] md:translate-y-[-1rem]">
-                                {myDesigns.length} ITEMS
+                    <div className="mb-8 px-2 md:px-4">
+                        <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+                            <div className="flex items-center gap-4">
+                                <h2 className="font-black text-4xl md:text-6xl uppercase text-ink leading-none transform -skew-x-[3deg]">
+                                    {collectionTitle}
+                                </h2>
+                                <div className="bg-primary text-ink text-xs md:text-sm font-black px-3 py-2 border-3 border-ink shadow-hard-sm transform rotate-6">
+                                    {visibleDesigns.length} ITEMS
+                                </div>
                             </div>
+                            <p className="max-w-md font-mono text-xs leading-relaxed text-ink/55 md:text-right">
+                                Organize your work, revisit saved inspiration, and keep your strongest projects pinned.
+                            </p>
                         </div>
-                        {/* Thick Line Separator */}
-                        <div className="h-4 flex-1 bg-ink shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] w-full block mt-2 md:mt-0 md:translate-y-[-0.5rem] rounded-r-full"></div>
+
+                        <div className="mt-7 flex flex-wrap gap-3 border-b-4 border-ink pb-4" role="tablist" aria-label="Profile collections">
+                            {[
+                                { id: "designs" as const, label: "My Designs", icon: LayoutGrid, count: myDesigns.length },
+                                { id: "saved" as const, label: "Saved", icon: Bookmark, count: savedDesigns.length },
+                                { id: "pinned" as const, label: "Pinned", icon: Pin, count: pinnedDesigns.length },
+                            ].map(tab => (
+                                <button
+                                    key={tab.id}
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={activeTab === tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`inline-flex items-center gap-2 border-3 border-ink px-4 py-2 font-mono text-xs font-black uppercase transition-all ${activeTab === tab.id
+                                        ? "translate-x-0.5 translate-y-0.5 bg-ink text-white shadow-none"
+                                        : "bg-white text-ink shadow-hard-sm hover:bg-primary hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none"
+                                        }`}
+                                >
+                                    <tab.icon className="h-4 w-4" />
+                                    {tab.label}
+                                    <span className={activeTab === tab.id ? "text-primary" : "text-ink/45"}>{tab.count}</span>
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
-                    {loadingDesigns ? (
+                    {isCollectionLoading ? (
                         <div className="flex justify-center py-20">
                             <Loader2 className="w-8 h-8 animate-spin text-ink/30" />
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 pb-12">
-                            {/* Always show New Design Card first or last? The design implies it's part of the collection */}
-                            {myDesigns.map((item) => (
+                            {visibleDesigns.map((item) => (
                                 <ProfileProjectCard
                                     key={item.id}
                                     {...item}
                                     onClick={() => setSelectedCard(item)}
-                                    onDelete={() => handleDeleteClick(item.id)}
-                                    onEdit={() => handleEditClick(item)}
-                                    onTogglePin={() => handleTogglePin(item)}
+                                    onDelete={activeTab !== "saved" ? () => handleDeleteClick(item.id) : undefined}
+                                    onEdit={activeTab !== "saved" ? () => handleEditClick(item) : undefined}
+                                    onTogglePin={activeTab !== "saved" ? () => handleTogglePin(item) : undefined}
                                     isLikedByUser={userLikes.has(parseInt(item.id.replace('db-', ''), 10))}
-                                    onToggleLike={handleToggleLike}
+                                    onToggleLike={activeTab === "saved" ? () => handleRemoveSaved(item) : handleToggleLike}
                                 />
                             ))}
-                            <NewDesignCard />
+
+                            {visibleDesigns.length === 0 && (
+                                <div className="col-span-full flex min-h-[300px] flex-col items-center justify-center border-4 border-dashed border-ink/25 bg-white/60 px-6 py-12 text-center">
+                                    <div className="mb-5 grid h-16 w-16 place-items-center border-3 border-ink bg-primary shadow-hard-sm rotate-3">
+                                        <Sparkles className="h-8 w-8 text-ink" />
+                                    </div>
+                                    <h3 className="font-black text-2xl uppercase text-ink">
+                                        {activeTab === "designs" ? "Your creative space is ready" : activeTab === "saved" ? "Nothing saved yet" : "No pinned designs yet"}
+                                    </h3>
+                                    <p className="mt-2 max-w-lg font-mono text-sm leading-relaxed text-ink/60">
+                                        {activeTab === "designs"
+                                            ? "Publish your first prompt and start building a portfolio the community can explore."
+                                            : activeTab === "saved"
+                                                ? "Explore the workshop and save designs you want to revisit later."
+                                            : "Pin up to three of your strongest designs to keep them easy to find."}
+                                    </p>
+                                    {activeTab !== "pinned" && (
+                                        <Link
+                                            href={activeTab === "designs" ? "/submit" : "/#explore-section"}
+                                            className="mt-6 border-3 border-ink bg-ink px-6 py-3 font-mono text-xs font-black uppercase text-white shadow-hard-sm transition-all hover:bg-primary hover:text-ink hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none"
+                                        >
+                                            {activeTab === "designs" ? "Create first design" : "Explore workshop"}
+                                        </Link>
+                                    )}
+                                </div>
+                            )}
+
+                            {activeTab === "designs" && myDesigns.length > 0 && <NewDesignCard />}
                         </div>
                     )}
                 </div>

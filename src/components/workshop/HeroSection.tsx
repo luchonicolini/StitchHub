@@ -36,29 +36,28 @@ export function HeroSection({ stats }: HeroSectionProps) {
                 }}
             />
 
-            {/* Decorative Chaos Elements */}
-            <div
-                className="absolute top-10 left-10 w-24 h-24 border-4 border-dashed border-accent-orange/40 rounded-full animate-spin-slow"
-                style={{ animationDuration: "20s" }}
-            />
-            <div
-                className="absolute top-20 right-20 w-20 h-20 bg-primary rotate-45 border-4 border-ink shadow-hard"
-                style={{ animation: "float 6s ease-in-out infinite" }}
-            />
-            <div
-                className="absolute bottom-20 left-1/4 w-16 h-16 bg-accent-green/40 rounded-full border-3 border-ink"
-                style={{ animation: "float 8s ease-in-out infinite 1s" }}
-            />
-            <div className="absolute bottom-10 right-10 w-32 h-32 bg-accent-orange/20 -rotate-12 border-4 border-dashed border-ink/20" />
-            <div
-                className="absolute top-1/2 left-10 w-12 h-12 bg-ink rotate-12 border-2 border-ink"
-                style={{ animation: "float 7s ease-in-out infinite 2s" }}
-            />
-            <div className="absolute top-1/3 right-1/4 w-8 h-8 bg-accent-green border-2 border-ink rounded-full" />
-
-            {/* Floating Lines */}
-            <div className="absolute top-1/4 left-1/3 w-24 h-1 bg-ink/20 rotate-45" />
-            <div className="absolute bottom-1/3 right-1/3 w-32 h-1 bg-accent-orange/30 -rotate-12" />
+            {/* Perimeter decorations stay outside the title's reading area. */}
+            <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+                <div
+                    className="absolute left-5 top-8 h-16 w-16 rounded-full border-4 border-dashed border-accent-orange/35 sm:left-10 sm:top-10 sm:h-24 sm:w-24 animate-spin-slow"
+                    style={{ animationDuration: "20s" }}
+                />
+                <div
+                    className="absolute right-8 top-20 hidden h-16 w-16 rotate-45 border-4 border-ink bg-primary shadow-hard lg:block xl:right-16 xl:h-20 xl:w-20"
+                    style={{ animation: "float 6s ease-in-out infinite" }}
+                />
+                <div
+                    className="absolute bottom-36 left-6 hidden h-14 w-14 rounded-full border-3 border-ink bg-accent-green/40 md:block xl:left-14"
+                    style={{ animation: "float 8s ease-in-out infinite 1s" }}
+                />
+                <div className="absolute -bottom-5 -right-5 h-24 w-24 -rotate-12 border-4 border-dashed border-ink/20 bg-accent-orange/15 sm:bottom-10 sm:right-8 sm:h-32 sm:w-32" />
+                <div
+                    className="absolute left-5 top-[54%] hidden h-10 w-10 rotate-12 border-2 border-ink bg-ink lg:block xl:left-12 xl:h-12 xl:w-12"
+                    style={{ animation: "float 7s ease-in-out infinite 2s" }}
+                />
+                <div className="absolute right-5 top-[46%] hidden h-7 w-7 rounded-full border-2 border-ink bg-accent-green xl:block xl:right-14" />
+                <div className="absolute bottom-[28%] right-[8%] hidden h-1 w-28 -rotate-12 bg-accent-orange/25 lg:block" />
+            </div>
 
             <div className="max-w-5xl mx-auto text-center relative z-10">
                 {/* Version Badge with Animation */}
@@ -67,15 +66,15 @@ export function HeroSection({ stats }: HeroSectionProps) {
                 </div>
 
                 {/* Main Title with More Layers */}
-                <h2 className="text-5xl md:text-8xl font-black leading-[0.95] text-ink mb-10 relative">
+                <h2 className="text-5xl sm:text-6xl md:text-8xl font-black leading-[0.95] text-ink mb-10 relative">
                     <span className="inline-block pb-[0.08em] transform hover:scale-105 transition-transform">Community UI</span>
                     <br />
                     <span className="relative inline-block">
-                        <span className="bg-primary px-3 py-1 text-ink transform -skew-x-6 inline-block border-4 border-ink shadow-hard-lg hover:shadow-hard hover:translate-x-1 hover:translate-y-1 transition-all cursor-default">
+                        <span className="inline-block whitespace-nowrap border-4 border-ink bg-primary px-2 py-1 text-[clamp(1.5rem,7.3vw,6rem)] text-ink shadow-hard-lg transform -skew-x-6 transition-all cursor-default hover:translate-x-1 hover:translate-y-1 hover:shadow-hard sm:px-3">
                             Stitch & AI Prompts
                         </span>
                         {/* Decorative Starburst */}
-                        <span className="absolute -top-4 -right-4 text-accent-orange text-4xl animate-pulse">✦</span>
+                        <span className="absolute -right-3 -top-6 z-20 text-3xl text-accent-orange animate-pulse sm:-right-5 sm:-top-7 sm:text-4xl">✦</span>
                     </span>
                     <br />
                     <span className="inline-block transform hover:scale-105 transition-transform mt-4">For Web & Apps</span>

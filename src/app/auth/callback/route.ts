@@ -42,6 +42,6 @@ export async function GET(request: NextRequest) {
         }
     }
 
-    // Default: redirect to home after sign in
-    return NextResponse.redirect(new URL('/', requestUrl.origin))
+    // Default: complete the onboarding flow in the user's profile.
+    return NextResponse.redirect(new URL('/profile?auth=success', requestUrl.origin))
 }

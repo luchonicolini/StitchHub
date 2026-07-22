@@ -24,7 +24,7 @@ export default function AuthPage() {
     // Redirect if already logged in
     useEffect(() => {
         if (!loading && isAuthenticated) {
-            router.push("/");
+            router.replace("/profile");
         }
     }, [isAuthenticated, loading, router]);
 
@@ -36,7 +36,7 @@ export default function AuthPage() {
                     <Construction className="w-7 h-7" />
                 </div>
                 <span className="font-mono text-sm font-bold text-ink/70 uppercase tracking-wider">
-                    Redirecting to Workshop...
+                    Opening your profile...
                 </span>
             </div>
         );
