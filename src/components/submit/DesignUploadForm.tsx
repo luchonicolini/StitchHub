@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, X, Sparkles, ChevronDown } from "lucide-react";
+import { Upload, X, Sparkles, ChevronDown, Globe, Lock } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import { createBrowserClient } from "@supabase/ssr";
@@ -47,6 +47,7 @@ export function DesignUploadForm() {
     const [toolUsed, setToolUsed] = useState("");
     const [category, setCategory] = useState("");
     const [codeSnippet, setCodeSnippet] = useState("");
+    const [isPublic, setIsPublic] = useState(true);
     const [loading, setLoading] = useState(false);
     const [dragActive, setDragActive] = useState(false);
     const [showCodeSnippet, setShowCodeSnippet] = useState(false);
@@ -162,6 +163,7 @@ export function DesignUploadForm() {
                 toolUsed,
                 category,
                 codeSnippet: codeSnippet || undefined,
+                isPublic,
                 imageFiles
             };
 
@@ -305,6 +307,45 @@ export function DesignUploadForm() {
                             {cat}
                         </button>
                     ))}
+                </div>
+            </div>
+
+            {/* Visibility Selector (Public vs Private) */}
+            <div>
+                <label className="block font-mono font-bold text-sm uppercase text-ink mb-1">
+                    Visibility *
+                </label>
+                <p className="font-mono text-xs text-ink/50 mb-3">Choose whether your prompt is public to the community or private to you.</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button
+                        type="button"
+                        onClick={() => setIsPublic(true)}
+                        className={`p-4 border-3 text-left font-mono transition-all flex items-start gap-3 ${isPublic
+                            ? 'bg-primary border-ink shadow-hard text-ink'
+                            : 'bg-white border-ink/30 text-ink/60 hover:border-ink hover:shadow-sm'
+                            }`}
+                    >
+                        <Globe className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                        <div>
+                            <p className="font-bold text-sm uppercase">🌐 Public Workshop</p>
+                            <p className="text-xs text-ink/60 mt-0.5">Visible to everyone. Appears in search, feed, and trending lists.</p>
+                        </div>
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => setIsPublic(false)}
+                        className={`p-4 border-3 text-left font-mono transition-all flex items-start gap-3 ${!isPublic
+                            ? 'bg-ink border-ink shadow-hard text-white'
+                            : 'bg-white border-ink/30 text-ink/60 hover:border-ink hover:shadow-sm'
+                            }`}
+                    >
+                        <Lock className="w-5 h-5 flex-shrink-0 mt-0.5 text-accent-orange" />
+                        <div>
+                            <p className="font-bold text-sm uppercase">🔒 Private Vault</p>
+                            <p className={`text-xs mt-0.5 ${!isPublic ? 'text-white/70' : 'text-ink/60'}`}>Only visible to you in your personal profile. hidden from the public feed.</p>
+                        </div>
+                    </button>
                 </div>
             </div>
 

@@ -21,6 +21,7 @@ interface ExtendedCardProps extends PromptCardProps {
     toolUsed?: string;
     description?: string;
     commentsCount?: number;
+    isPublic?: boolean;
 }
 
 interface CardDetailModalProps {
@@ -426,6 +427,11 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
 
                             {/* Header Group */}
                             <div>
+                                {card.isPublic === false && (
+                                    <span className="inline-block px-3 py-1 bg-ink text-white font-mono font-bold text-xs uppercase border-2 border-ink mb-4 shadow-hard-sm mr-2">
+                                        🔒 Private Prompt
+                                    </span>
+                                )}
                                 {card.featured && (
                                     <span className="inline-block px-3 py-1 bg-[#ffe564] text-ink font-mono font-bold text-xs uppercase border-2 border-ink mb-4 shadow-hard-sm">
                                         NEW RELEASE

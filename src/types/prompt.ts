@@ -27,6 +27,7 @@ export interface Prompt {
     likesCount?: number;
     commentsCount?: number;
     isLikedByUser?: boolean;
+    isPublic?: boolean;
     featured?: boolean;
 }
 

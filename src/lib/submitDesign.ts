@@ -9,6 +9,7 @@ export interface DesignSubmission {
     toolUsed?: string;
     category: string;
     codeSnippet?: string;
+    isPublic?: boolean;
     imageFiles: File[];
 }
 
@@ -34,6 +35,7 @@ export async function submitDesign(
                 tool_used: submission.toolUsed || null,
                 category: submission.category,
                 code_snippet: submission.codeSnippet || null,
+                is_public: submission.isPublic !== undefined ? submission.isPublic : true,
                 image_url: imageUrls[0], // Keep for backwards compatibility
                 image_urls: imageUrls,   // New multi-image column
                 user_id: userId

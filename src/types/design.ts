@@ -18,6 +18,7 @@ export interface DesignDB {
     code_snippet: string;
     likes_count?: number;
     comments_count?: number;
+    is_public?: boolean;
 }
 
 export function mapDesignToPrompt(d: DesignDB, index: number): Prompt {
@@ -81,5 +82,6 @@ export function mapDesignToPrompt(d: DesignDB, index: number): Prompt {
         type: "card",
         likesCount: d.likes_count || 0,
         commentsCount: d.comments_count || 0,
+        isPublic: d.is_public !== undefined ? d.is_public : true,
     };
 }
