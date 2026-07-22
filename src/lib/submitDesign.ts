@@ -21,8 +21,9 @@ export async function submitDesign(
     const supabase = supabaseClient || defaultSupabase;
 
     try {
-        // 1. Upload array of images with timeouts
-        const imageUrls = await uploadDesignImages(submission.imageFiles, userId, supabase);
+        // 1. Upload array of images with timeouts and privacy setting
+        const isPublic = submission.isPublic !== false;
+        const imageUrls = await uploadDesignImages(submission.imageFiles, userId, supabase, isPublic);
 
         // 2. Create design record
         // Fallback or explicit mapping: imageUrls[0] is the cover image
