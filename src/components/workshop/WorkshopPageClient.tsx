@@ -11,6 +11,7 @@ import { Prompt } from "@/types/prompt";
 
 interface WorkshopPageClientProps {
     initialPrompts: Prompt[];
+    dataStatus?: "ready" | "demo" | "empty" | "error";
     stats?: {
         totalPrompts: number;
         totalContributors: number;
@@ -18,7 +19,7 @@ interface WorkshopPageClientProps {
     };
 }
 
-export function WorkshopPageClient({ initialPrompts, stats }: WorkshopPageClientProps) {
+export function WorkshopPageClient({ initialPrompts, stats, dataStatus = "ready" }: WorkshopPageClientProps) {
     const [activeFilter, setActiveFilter] = useState<string | null>(null);
     const [resultCount, setResultCount] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>("");
@@ -31,12 +32,16 @@ export function WorkshopPageClient({ initialPrompts, stats }: WorkshopPageClient
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const searchParam = urlParams.get('search');
-        if (searchParam) {
+        if (!searchParam) return;
+
+        const frame = window.requestAnimationFrame(() => {
             setSearchQuery(searchParam);
-            setTimeout(() => {
+            window.setTimeout(() => {
                 document.getElementById('explore-section')?.scrollIntoView({ behavior: 'smooth' });
             }, 150);
-        }
+        });
+
+        return () => window.cancelAnimationFrame(frame);
     }, []);
 
     const clearAll = () => {
@@ -64,6 +69,7 @@ export function WorkshopPageClient({ initialPrompts, stats }: WorkshopPageClient
                     />
                     <WorkshopFeed
                         initialPrompts={initialPrompts}
+                        dataStatus={dataStatus}
                         activeFilter={activeFilter}
                         searchQuery={searchQuery}
                         onResultCountChange={setResultCount}

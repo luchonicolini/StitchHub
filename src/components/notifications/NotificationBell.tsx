@@ -5,7 +5,6 @@ import { Bell, Heart, UserPlus, MessageSquare } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import Link from "next/link";
-import Image from "next/image";
 
 interface Notification {
     id: string;
@@ -17,6 +16,18 @@ interface Notification {
         username: string;
         avatar_url: string | null;
     };
+}
+
+interface NotificationRow {
+    id: string;
+    type: Notification['type'];
+    entity_id: string | null;
+    is_read: boolean;
+    created_at: string;
+    actor: {
+        username: string;
+        avatar_url: string | null;
+    } | null;
 }
 
 export function NotificationBell() {
@@ -47,7 +58,7 @@ export function NotificationBell() {
             }
 
             // Map the data to our interface
-            const formattedData = (data as any[]).map(n => ({
+            const formattedData: Notification[] = (data as unknown as NotificationRow[]).map(n => ({
                 id: n.id,
                 type: n.type,
                 entity_id: n.entity_id,

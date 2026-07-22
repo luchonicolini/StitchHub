@@ -22,6 +22,7 @@ export function PromptCard({
     pinColor = "bg-accent-orange",
     rotation = "rotate-0",
     featured,
+    isDemo,
     onClick,
     showActions,
     onDelete,
@@ -33,22 +34,26 @@ export function PromptCard({
 }: PromptCardProps) {
     const [copied, setCopied] = useState(false);
     const isPrivateUri = Boolean(image && image.startsWith('private-design-images://'));
-    const [displayImage, setDisplayImage] = useState<string>(
-        isPrivateUri ? '/images/placeholder.png' : image
-    );
+    const [privateImage, setPrivateImage] = useState<{ source: string; url: string } | null>(null);
+    const displayImage = isPrivateUri
+        ? (privateImage?.source === image ? privateImage.url : '/images/placeholder.png')
+        : image;
     const { showToast } = useToast();
 
     useEffect(() => {
+        if (!isPrivateUri) return;
+
         let isMounted = true;
-        if (isPrivateUri) {
+        const refreshPrivateImage = () => {
             resolveImageUrl(image).then((resolved) => {
-                if (isMounted) setDisplayImage(resolved);
+                if (isMounted) setPrivateImage({ source: image, url: resolved });
             });
-        } else {
-            setDisplayImage(image);
-        }
+        };
+        refreshPrivateImage();
+        const refreshTimer = window.setInterval(refreshPrivateImage, 9 * 60 * 1000);
         return () => {
             isMounted = false;
+            window.clearInterval(refreshTimer);
         };
     }, [image, isPrivateUri]);
 
@@ -133,6 +138,11 @@ export function PromptCard({
                     {!featured && (
                         <div className="absolute bottom-2 right-2 bg-black text-white px-2 py-0.5 text-xs font-mono font-bold border border-white">
                             STITCH_V4
+                        </div>
+                    )}
+                    {isDemo && (
+                        <div className="absolute bottom-2 left-2 z-10 border-2 border-ink bg-accent-yellow px-2 py-0.5 font-mono text-xs font-black uppercase text-ink shadow-hard-sm">
+                            Demo
                         </div>
                     )}
                 </div>

@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { id } = await params;
 
     // Check if it's a mock prompt first
-    const isMock = !id.startsWith('db-');
+    const isMock = process.env.NODE_ENV === 'development' && !id.startsWith('db-');
 
     if (isMock) {
         const promptId = parseInt(id, 10);
@@ -90,7 +90,7 @@ export default async function DesignPage({ params }: Props) {
     let designData = null;
 
     // Handle Mock Prompts Strategy
-    const isMock = !id.startsWith('db-');
+    const isMock = process.env.NODE_ENV === 'development' && !id.startsWith('db-');
 
     if (isMock) {
         const promptId = parseInt(id, 10);

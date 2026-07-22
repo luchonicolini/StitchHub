@@ -5,7 +5,7 @@ import { MasonryGrid } from "@/components/workshop/MasonryGrid";
 import { PromptCard } from "@/components/workshop/PromptCard";
 import { PromptCardSkeleton } from "@/components/workshop/PromptCardSkeleton";
 import { CardDetailModal } from "@/components/workshop/CardDetailModal";
-import { Sparkles, SearchX } from "lucide-react";
+import { AlertTriangle, Sparkles, SearchX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Prompt } from "@/types/prompt";
 import { DesignDB, mapDesignToPrompt } from "@/types/design";
@@ -27,6 +27,7 @@ const containerVariants = {
 
 interface WorkshopFeedProps {
     initialPrompts: Prompt[];
+    dataStatus?: "ready" | "demo" | "empty" | "error";
     activeFilter: string | null;
     searchQuery?: string;
     onResultCountChange?: (count: number) => void;
@@ -34,7 +35,7 @@ interface WorkshopFeedProps {
     onClearFilters?: () => void;
 }
 
-export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResultCountChange, onTagClick, onClearFilters }: WorkshopFeedProps) {
+export function WorkshopFeed({ initialPrompts, dataStatus = "ready", activeFilter, searchQuery, onResultCountChange, onTagClick, onClearFilters }: WorkshopFeedProps) {
     const ITEMS_PER_PAGE = 12;
     const { user } = useAuth();
 
@@ -359,6 +360,36 @@ export function WorkshopFeed({ initialPrompts, activeFilter, searchQuery, onResu
                                     >
                                         Clear search
                                     </button>
+                                )}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {!activeFilter && !searchQuery && resultCount === 0 && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="col-span-full py-20 text-center"
+                        >
+                            <div className="inline-block max-w-xl -rotate-1 border-4 border-ink bg-white p-8 shadow-hard-sm">
+                                {dataStatus === "error" ? (
+                                    <>
+                                        <AlertTriangle className="mx-auto mb-4 h-16 w-16 text-accent-orange" />
+                                        <h3 className="mb-2 text-2xl font-black text-ink">Workshop temporarily unavailable</h3>
+                                        <p className="font-mono text-sm text-ink/60">We could not load the community designs. Please try again shortly.</p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Sparkles className="mx-auto mb-4 h-16 w-16 text-primary" />
+                                        <h3 className="mb-2 text-2xl font-black text-ink">The workshop is ready</h3>
+                                        <p className="font-mono text-sm text-ink/60">No public prompts have been published yet. Be the first to pin one.</p>
+                                        <Link
+                                            href={user ? "/submit" : "/auth?returnUrl=/submit"}
+                                            className="mx-auto mt-6 inline-block border-4 border-ink bg-primary px-6 py-3 font-mono font-bold uppercase text-ink shadow-hard-sm transition-transform hover:-translate-y-1"
+                                        >
+                                            Submit a prompt
+                                        </Link>
+                                    </>
                                 )}
                             </div>
                         </motion.div>

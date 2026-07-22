@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X, Loader2, Sparkles, Code2, Tag, Upload, ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { useToast } from "@/hooks/useToast";
 import { Prompt } from "@/types/prompt";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
-import { uploadDesignImages } from "@/lib/uploadImage";
+import { deleteDesignImages, resolveImageUrl, uploadDesignImages } from "@/lib/uploadImage";
 
 interface EditDesignModalProps {
     isOpen: boolean;
@@ -31,8 +31,30 @@ export function EditDesignModal({ isOpen, onClose, design, onSave }: EditDesignM
     const [existingImages, setExistingImages] = useState<string[]>(
         design.gallery && design.gallery.length > 0 ? design.gallery : [design.image].filter(Boolean)
     );
+    const [resolvedExistingImages, setResolvedExistingImages] = useState<string[]>([]);
     const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
     const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
+    const originalImages = design.gallery && design.gallery.length > 0
+        ? design.gallery
+        : [design.image].filter(Boolean);
+
+    useEffect(() => {
+        let active = true;
+        const refreshImages = () => {
+            Promise.all(existingImages.map(image => resolveImageUrl(image))).then(images => {
+                if (active) setResolvedExistingImages(images);
+            });
+        };
+        refreshImages();
+        const hasPrivateImages = existingImages.some(image => image.startsWith('private-design-images://'));
+        const refreshTimer = hasPrivateImages
+            ? window.setInterval(refreshImages, 9 * 60 * 1000)
+            : null;
+        return () => {
+            active = false;
+            if (refreshTimer) window.clearInterval(refreshTimer);
+        };
+    }, [existingImages]);
     const MAX_IMAGES = 4;
     const [dragActive, setDragActive] = useState(false);
 
@@ -113,6 +135,7 @@ export function EditDesignModal({ isOpen, onClose, design, onSave }: EditDesignM
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+        let newlyUploadedUrls: string[] = [];
 
         try {
             // Clean ID based on how we mapped it in ProfilePage ("db-123" -> "123")
@@ -132,8 +155,8 @@ export function EditDesignModal({ isOpen, onClose, design, onSave }: EditDesignM
             if (newImageFiles.length > 0) {
                 if (!user) throw new Error("Authentication required to upload images.");
                 const isPublic = design.isPublic !== false;
-                const uploadedUrls = await uploadDesignImages(newImageFiles, user.id, supabase, isPublic);
-                finalImageUrls = [...finalImageUrls, ...uploadedUrls];
+                newlyUploadedUrls = await uploadDesignImages(newImageFiles, user.id, supabase, isPublic);
+                finalImageUrls = [...finalImageUrls, ...newlyUploadedUrls];
             }
 
             // If it's a mock design (ID is not a number), simulate success locally
@@ -165,9 +188,14 @@ export function EditDesignModal({ isOpen, onClose, design, onSave }: EditDesignM
                 .eq('id', idAsNumber);
 
             if (error) {
-                console.error("Error updating design:", error);
-                showToast({ message: "Failed to update design", type: "error" });
-                return;
+                throw new Error(`Failed to update design: ${error.message}`);
+            }
+
+            const removedImages = originalImages.filter(image => !finalImageUrls.includes(image));
+            if (removedImages.length > 0) {
+                await deleteDesignImages(removedImages, supabase).catch(cleanupError => {
+                    console.error("Design saved, but removed images could not be cleaned up:", cleanupError);
+                });
             }
 
             // Call onSave with updated partial data so ProfilePage can update UI safely
@@ -184,7 +212,15 @@ export function EditDesignModal({ isOpen, onClose, design, onSave }: EditDesignM
             onClose();
         } catch (error) {
             console.error('Error in edit modal submit:', error);
-            showToast({ message: "An unexpected error occurred", type: "error" });
+            if (newlyUploadedUrls.length > 0) {
+                await deleteDesignImages(newlyUploadedUrls, supabase).catch(cleanupError => {
+                    console.error("Unable to roll back newly uploaded images:", cleanupError);
+                });
+            }
+            showToast({
+                message: error instanceof Error ? error.message : "An unexpected error occurred",
+                type: "error"
+            });
         } finally {
             setLoading(false);
         }
@@ -225,7 +261,7 @@ export function EditDesignModal({ isOpen, onClose, design, onSave }: EditDesignM
                                 <div className="grid grid-cols-2 gap-4 mb-4">
                                     {/* Existing Images */}
                                     {existingImages.map((imgUrl, idx) => (
-                                        <div key={`existing-${idx}`} className="relative border-3 border-ink bg-white aspect-video p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                        <div key={`existing-${imgUrl}`} className="relative border-3 border-ink bg-white aspect-video p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                             {idx === 0 && (
                                                 <span className="absolute top-1 left-1 bg-accent-yellow text-ink text-[10px] font-black px-1.5 py-0.5 border-2 border-ink z-10 uppercase">Cover</span>
                                             )}
@@ -237,7 +273,7 @@ export function EditDesignModal({ isOpen, onClose, design, onSave }: EditDesignM
                                                 <X className="w-3 h-3" strokeWidth={3} />
                                             </button>
                                             <div className="relative w-full h-full">
-                                                <Image src={imgUrl} alt={`Uploaded ${idx + 1}`} fill className="object-cover" />
+                                                <Image src={resolvedExistingImages[idx] || '/images/placeholder.png'} alt={`Uploaded ${idx + 1}`} fill className="object-cover" />
                                             </div>
                                         </div>
                                     ))}

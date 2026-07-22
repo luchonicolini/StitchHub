@@ -12,17 +12,21 @@ export default async function Home() {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   let initialPrompts: Prompt[] = [];
+  let dataStatus: "ready" | "demo" | "empty" | "error" = "empty";
   let stats = {
-    totalPrompts: 1247, // Default fallback
-    totalContributors: 342,
-    totalLikes: 89000
+    totalPrompts: 0,
+    totalContributors: 0,
+    totalLikes: 0
   };
+  const demoPrompts = MOCK_PROMPTS.map(prompt => (
+    prompt.type === 'promo' ? prompt : { ...prompt, isDemo: true }
+  ));
 
   if (supabaseUrl && supabaseAnonKey) {
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
     const ITEMS_PER_PAGE = 12;
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('designs')
       .select(`
                 *,
@@ -34,13 +38,16 @@ export default async function Home() {
       .order('created_at', { ascending: false })
       .limit(ITEMS_PER_PAGE);
 
-    if (data && data.length > 0) {
+    if (error) {
+      dataStatus = "error";
+    } else if (data && data.length > 0) {
       const dbPrompts: Prompt[] = (data as unknown as DesignDB[]).map(mapDesignToPrompt);
-
       const promoCard = MOCK_PROMPTS.find(p => p.type === 'promo');
       initialPrompts = promoCard ? [promoCard, ...dbPrompts] : dbPrompts;
+      dataStatus = "ready";
     } else {
-      initialPrompts = MOCK_PROMPTS;
+      dataStatus = "demo";
+      initialPrompts = demoPrompts;
     }
 
     // Fetch Stats
@@ -59,7 +66,9 @@ export default async function Home() {
       totalContributors: profilesCount || 0,
       totalLikes: likesCount || 0
     };
+  } else {
+    dataStatus = "error";
   }
 
-  return <WorkshopPageClient initialPrompts={initialPrompts} stats={stats} />;
+  return <WorkshopPageClient initialPrompts={initialPrompts} stats={stats} dataStatus={dataStatus} />;
 }

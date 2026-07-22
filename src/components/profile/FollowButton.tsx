@@ -94,11 +94,14 @@ export function FollowButton({ targetUserId, targetUsername }: FollowButtonProps
                     type: "success",
                 });
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error toggling follow:", err);
             
             // Check if table missing directly inside toggle flow too
-            if (err.code === '42P01') {
+            const errorCode = typeof err === 'object' && err !== null && 'code' in err
+                ? String(err.code)
+                : null;
+            if (errorCode === '42P01') {
                 showToast({
                     message: "Data Missing",
                     description: "Please run create_followers.sql in Supabase to enable following.",

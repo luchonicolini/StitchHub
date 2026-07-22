@@ -29,6 +29,7 @@ export interface Prompt {
     isLikedByUser?: boolean;
     isPublic?: boolean;
     featured?: boolean;
+    isDemo?: boolean;
 }
 
 export interface PromptCardProps {
@@ -42,6 +43,7 @@ export interface PromptCardProps {
     pinColor?: PinColor;
     rotation?: string;
     featured?: boolean;
+    isDemo?: boolean;
     onClick?: () => void;
     showActions?: boolean;
     onDelete?: () => void;

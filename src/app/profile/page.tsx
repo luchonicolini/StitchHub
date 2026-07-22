@@ -17,6 +17,7 @@ import { DeleteConfirmationModal } from "@/components/ui/DeleteConfirmationModal
 import { EditDesignModal } from "@/components/profile/EditDesignModal";
 import { Footer } from "@/components/workshop/Footer";
 import { WorkshopHeader } from "@/components/workshop/WorkshopHeader";
+import { deleteDesignImages } from "@/lib/uploadImage";
 
 
 
@@ -304,6 +305,15 @@ export default function ProfilePage() {
         const cleanId = designToDelete.replace('db-', '');
 
         try {
+            const { data: designRecord, error: lookupError } = await supabase
+                .from('designs')
+                .select('image_url, image_urls')
+                .eq('id', cleanId)
+                .eq('user_id', user.id)
+                .single();
+
+            if (lookupError) throw lookupError;
+
             const { error } = await supabase
                 .from('designs')
                 .delete()
@@ -311,6 +321,13 @@ export default function ProfilePage() {
                 .eq('user_id', user.id);
 
             if (error) throw error;
+
+            const imageReferences = designRecord.image_urls?.length
+                ? designRecord.image_urls
+                : [designRecord.image_url].filter((value): value is string => Boolean(value));
+            await deleteDesignImages(imageReferences, supabase).catch(cleanupError => {
+                console.error("Design deleted, but its images could not be cleaned up:", cleanupError);
+            });
 
             setMyDesigns(prev => prev.filter(d => d.id !== designToDelete));
             showToast({ message: "Design deleted", type: "success" });

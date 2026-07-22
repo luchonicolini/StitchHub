@@ -1,6 +1,15 @@
 import { supabase as defaultSupabase } from './supabase';
 import { SupabaseClient } from '@supabase/supabase-js';
 
+const PUBLIC_BUCKET = 'design-images';
+const PRIVATE_BUCKET = 'private-design-images';
+const PRIVATE_URI_PREFIX = `${PRIVATE_BUCKET}://`;
+
+interface StoredImage {
+    bucket: typeof PUBLIC_BUCKET | typeof PRIVATE_BUCKET;
+    path: string;
+}
+
 // Helper to provide a timeout
 const withTimeout = <T,>(promise: Promise<T>, ms: number = 15000): Promise<T> => {
     let timeoutId: NodeJS.Timeout;
@@ -38,10 +47,9 @@ export async function uploadDesignImages(
         }
     }
 
-    // Public vs Private Bucket
-    const bucketName = isPublic ? 'design-images' : 'private-design-images';
+    const bucketName = isPublic ? PUBLIC_BUCKET : PRIVATE_BUCKET;
 
-    // 2. Upload all files concurrently under `${userId}/${fileName}`
+    // Upload concurrently while retaining enough information to roll back partial uploads.
     const uploadPromises = files.map(async (file, index) => {
         const fileExt = file.name.split('.').pop();
         // Exact segment [1] is userId for RLS foldername matching
@@ -67,12 +75,20 @@ export async function uploadDesignImages(
             return publicUrl;
         } else {
             // Private images: Store private reference URI so clients fetch signed URLs on demand
-            return `private-design-images://${filePath}`;
+            return `${PRIVATE_URI_PREFIX}${filePath}`;
         }
     });
 
-    // Await all uploads resolving
-    const uploadedUrls = await Promise.all(uploadPromises);
+    const settledUploads = await Promise.allSettled(uploadPromises);
+    const uploadedUrls = settledUploads.flatMap(result => result.status === 'fulfilled' ? [result.value] : []);
+    const failedUpload = settledUploads.find(result => result.status === 'rejected');
+
+    if (failedUpload?.status === 'rejected') {
+        await deleteDesignImages(uploadedUrls, supabase).catch(() => undefined);
+        throw failedUpload.reason instanceof Error
+            ? failedUpload.reason
+            : new Error('One or more images could not be uploaded.');
+    }
 
     if (!uploadedUrls || uploadedUrls.length === 0) {
         throw new Error('No images were successfully uploaded.');
@@ -84,23 +100,23 @@ export async function uploadDesignImages(
 /**
  * Resolves an image URL or private URI into a viewable image URL.
  * Public URLs pass through unchanged.
- * Private URIs (private-design-images://path) generate a short-lived temporary signed URL (60 seconds).
+ * Private URIs generate a temporary signed URL valid for ten minutes.
  */
 export async function resolveImageUrl(
     urlOrUri: string,
     supabaseClient?: SupabaseClient
 ): Promise<string> {
-    if (!urlOrUri || !urlOrUri.startsWith('private-design-images://')) {
+    if (!urlOrUri || !urlOrUri.startsWith(PRIVATE_URI_PREFIX)) {
         return urlOrUri;
     }
 
     const supabase = supabaseClient || defaultSupabase;
-    const filePath = urlOrUri.replace('private-design-images://', '');
+    const filePath = urlOrUri.slice(PRIVATE_URI_PREFIX.length);
 
-    // Generate a 60-second temporary signed URL on demand
+    // Ten minutes avoids broken previews while keeping private URLs short lived.
     const { data, error } = await supabase.storage
-        .from('private-design-images')
-        .createSignedUrl(filePath, 60);
+        .from(PRIVATE_BUCKET)
+        .createSignedUrl(filePath, 600);
 
     if (error || !data?.signedUrl) {
         console.error("Failed to generate private signed URL:", error);
@@ -108,4 +124,45 @@ export async function resolveImageUrl(
     }
 
     return data.signedUrl;
+}
+
+function parseStoredImage(reference: string): StoredImage | null {
+    if (reference.startsWith(PRIVATE_URI_PREFIX)) {
+        return { bucket: PRIVATE_BUCKET, path: reference.slice(PRIVATE_URI_PREFIX.length) };
+    }
+
+    try {
+        const url = new URL(reference);
+        const marker = '/storage/v1/object/public/';
+        const markerIndex = url.pathname.indexOf(marker);
+        if (markerIndex === -1) return null;
+
+        const storagePath = decodeURIComponent(url.pathname.slice(markerIndex + marker.length));
+        const separatorIndex = storagePath.indexOf('/');
+        if (separatorIndex === -1) return null;
+
+        const bucket = storagePath.slice(0, separatorIndex);
+        if (bucket !== PUBLIC_BUCKET) return null;
+
+        return { bucket: PUBLIC_BUCKET, path: storagePath.slice(separatorIndex + 1) };
+    } catch {
+        return null;
+    }
+}
+
+/** Delete known StitchHub image references. Storage RLS still enforces ownership. */
+export async function deleteDesignImages(
+    references: string[],
+    supabaseClient?: SupabaseClient
+): Promise<void> {
+    const supabase = supabaseClient || defaultSupabase;
+    const images = references.map(parseStoredImage).filter((image): image is StoredImage => image !== null);
+
+    for (const bucket of [PUBLIC_BUCKET, PRIVATE_BUCKET] as const) {
+        const paths = [...new Set(images.filter(image => image.bucket === bucket).map(image => image.path))];
+        if (paths.length === 0) continue;
+
+        const { error } = await supabase.storage.from(bucket).remove(paths);
+        if (error) throw new Error(`Failed to remove images from ${bucket}: ${error.message}`);
+    }
 }

@@ -30,13 +30,12 @@ export function CommentsSection({ designId }: CommentsSectionProps) {
 
     const [comments, setComments] = useState<Comment[]>([]);
     const [content, setContent] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [hasMore, setHasMore] = useState(false);
     const PAGE_SIZE = 10;
 
     const fetchComments = useCallback(async (offset = 0) => {
-        if (offset === 0) setLoading(true);
         const { data, error } = await supabase
             .from("comments")
             .select(`
@@ -67,7 +66,10 @@ export function CommentsSection({ designId }: CommentsSectionProps) {
     }, [designId]);
 
     useEffect(() => {
-        fetchComments(0);
+        const initialFetch = window.setTimeout(() => {
+            void fetchComments(0);
+        }, 0);
+        return () => window.clearTimeout(initialFetch);
     }, [fetchComments]);
 
     const handleSubmit = async (e: React.FormEvent) => {

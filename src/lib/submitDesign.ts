@@ -1,5 +1,5 @@
 import { supabase as defaultSupabase } from './supabase';
-import { uploadDesignImages } from './uploadImage';
+import { deleteDesignImages, uploadDesignImages } from './uploadImage';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export interface DesignSubmission {
@@ -19,11 +19,12 @@ export async function submitDesign(
     supabaseClient?: SupabaseClient
 ) {
     const supabase = supabaseClient || defaultSupabase;
+    let imageUrls: string[] = [];
 
     try {
         // 1. Upload array of images with timeouts and privacy setting
         const isPublic = submission.isPublic !== false;
-        const imageUrls = await uploadDesignImages(submission.imageFiles, userId, supabase, isPublic);
+        imageUrls = await uploadDesignImages(submission.imageFiles, userId, supabase, isPublic);
 
         // 2. Create design record
         // Fallback or explicit mapping: imageUrls[0] is the cover image
@@ -50,8 +51,11 @@ export async function submitDesign(
 
         return data;
     } catch (error) {
-        // If design creation fails, we should ideally delete the uploaded image
-        // but for now we'll just throw the error
+        if (imageUrls.length > 0) {
+            await deleteDesignImages(imageUrls, supabase).catch(cleanupError => {
+                console.error('Unable to roll back uploaded images:', cleanupError);
+            });
+        }
         throw error;
     }
 }

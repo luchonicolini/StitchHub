@@ -65,11 +65,19 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
     useEffect(() => {
         let isMounted = true;
         const rawImages = card.gallery && card.gallery.length > 0 ? card.gallery : [card.image];
-        Promise.all(rawImages.map(img => resolveImageUrl(img))).then(urls => {
-            if (isMounted) setResolvedImages(urls);
-        });
+        const refreshImages = () => {
+            Promise.all(rawImages.map(img => resolveImageUrl(img))).then(urls => {
+                if (isMounted) setResolvedImages(urls);
+            });
+        };
+        refreshImages();
+        const hasPrivateImages = rawImages.some(image => image.startsWith('private-design-images://'));
+        const refreshTimer = hasPrivateImages
+            ? window.setInterval(refreshImages, 9 * 60 * 1000)
+            : null;
         return () => {
             isMounted = false;
+            if (refreshTimer) window.clearInterval(refreshTimer);
         };
     }, [card]);
 
@@ -445,6 +453,11 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                                 {card.isPublic === false && (
                                     <span className="inline-block px-3 py-1 bg-ink text-white font-mono font-bold text-xs uppercase border-2 border-ink mb-4 shadow-hard-sm mr-2">
                                         🔒 Private Prompt
+                                    </span>
+                                )}
+                                {card.isDemo && (
+                                    <span className="mb-4 mr-2 inline-block border-2 border-ink bg-accent-yellow px-3 py-1 font-mono text-xs font-bold uppercase text-ink shadow-hard-sm">
+                                        Demo example
                                     </span>
                                 )}
                                 {card.featured && (
