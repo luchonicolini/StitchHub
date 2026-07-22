@@ -144,6 +144,7 @@ export const useAuth = create<AuthState>((set, get) => ({
     },
 
     register: async (username: string, email: string, password: string) => {
+        // 1. Sign up the user with metadata
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
@@ -159,28 +160,45 @@ export const useAuth = create<AuthState>((set, get) => ({
             return { error: error.message };
         }
 
-        // The trigger will create the profile automatically
-        // We just need to update the username if needed
         if (data.user) {
-            // Wait a bit for the trigger to complete
-            await new Promise(resolve => setTimeout(resolve, 500));
+            // 2. If data.session is not set automatically by Supabase, perform signInWithPassword to guarantee active session & cookies
+            if (!data.session) {
+                const { error: signInErr } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+                if (signInErr) {
+                    console.warn("Auto sign-in notice:", signInErr.message);
+                }
+            }
 
-            // Update username in profile
+            // 3. Wait a moment for trigger to run
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            // 4. Update profile table to ensure username is saved
             await supabase
                 .from('profiles')
                 .update({ username })
                 .eq('id', data.user.id);
 
+            // 5. Fetch updated profile
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('username, avatar_url, cover_image_url, bio, website')
+                .eq('id', data.user.id)
+                .single();
+
+            // 6. Set active user in state
             set({
                 isAuthenticated: true,
                 user: {
                     id: data.user.id,
-                    email: data.user.email!,
-                    username,
-                    avatar_url: null,
-                    cover_image_url: null,
-                    bio: null,
-                    website: null
+                    email: data.user.email || email,
+                    username: profile?.username || username,
+                    avatar_url: profile?.avatar_url || null,
+                    cover_image_url: profile?.cover_image_url || null,
+                    bio: profile?.bio || null,
+                    website: profile?.website || null
                 }
             });
         }

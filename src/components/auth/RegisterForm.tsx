@@ -42,7 +42,7 @@ function isValidEmail(email: string): boolean {
 }
 
 export function RegisterForm({ }: RegisterFormProps) {
-    const { loginWithGoogle } = useAuth();
+    const { register, loginWithGoogle } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
     const returnUrl = searchParams.get("returnUrl");
@@ -90,33 +90,16 @@ export function RegisterForm({ }: RegisterFormProps) {
             return;
         }
 
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: {
-                    username,
-                    full_name: username
-                }
-            }
-        });
+        const result = await register(username, email, password);
 
-        if (error) {
-            setError(error.message);
+        if (result.error) {
+            setError(result.error);
             setShake(true);
             toast.error("Registration failed", {
-                description: error.message,
+                description: result.error,
             });
             setTimeout(() => setShake(false), 500);
         } else {
-            if (data.user) {
-                await new Promise(resolve => setTimeout(resolve, 500));
-                await supabase
-                    .from('profiles')
-                    .update({ username })
-                    .eq('id', data.user.id);
-            }
-
             toast.success("Account created! 🎉", {
                 description: "Welcome to StitchHub!",
             });
