@@ -29,49 +29,62 @@ const createClient = async () => {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { username } = await params;
-    const decodedUsername = decodeURIComponent(username);
-    const cleanUsername = decodedUsername.replace(/^@/, '');
-    const supabase = await createClient();
+    try {
+        const { username } = await params;
+        const decodedUsername = decodeURIComponent(username || '');
+        const cleanUsername = decodedUsername.replace(/^@/, '').trim();
+        const supabase = await createClient();
 
-    const { data } = await supabase
-        .from('profiles')
-        .select('username, avatar_url')
-        .or(`username.eq.${cleanUsername},username.eq.@${cleanUsername}`)
-        .maybeSingle();
+        const { data } = await supabase
+            .from('profiles')
+            .select('username, avatar_url')
+            .or(`username.eq.${cleanUsername},username.eq.@${cleanUsername}`)
+            .maybeSingle();
 
-    const displayUsername = data?.username || cleanUsername;
+        const displayUsername = data?.username || cleanUsername || 'User';
 
-    return {
-        title: `${displayUsername}'s Profile | StitchHub`,
-        description: `Check out ${displayUsername}'s digital designs and prompts on StitchHub.`,
-        openGraph: {
+        return {
             title: `${displayUsername}'s Profile | StitchHub`,
             description: `Check out ${displayUsername}'s digital designs and prompts on StitchHub.`,
-            images: data?.avatar_url ? [data.avatar_url] : [],
-        },
-    };
+            openGraph: {
+                title: `${displayUsername}'s Profile | StitchHub`,
+                description: `Check out ${displayUsername}'s digital designs and prompts on StitchHub.`,
+                images: data?.avatar_url ? [data.avatar_url] : [],
+            },
+        };
+    } catch {
+        return {
+            title: 'Creator Profile | StitchHub',
+            description: 'Explore creator designs on StitchHub',
+        };
+    }
 }
 
 export default async function PublicProfilePage({ params }: Props) {
     const { username } = await params;
-    const decodedUsername = decodeURIComponent(username);
-    const cleanUsername = decodedUsername.replace(/^@/, '');
+    const decodedUsername = decodeURIComponent(username || '');
+    const cleanUsername = decodedUsername.replace(/^@/, '').trim();
     const supabase = await createClient();
 
-    // Fetch the user's profile from DB
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('*, bio, website')
-        .or(`username.eq.${cleanUsername},username.eq.@${cleanUsername}`)
-        .maybeSingle();
+    let profile: any = null;
 
-    // Fallback profile object for demo/seed creators
+    try {
+        const { data } = await supabase
+            .from('profiles')
+            .select('*, bio, website')
+            .or(`username.eq.${cleanUsername},username.eq.@${cleanUsername}`)
+            .maybeSingle();
+        profile = data;
+    } catch (err) {
+        console.error("Error fetching profile from DB:", err);
+    }
+
+    // Fallback profile object for demo/seed creators or when DB fails
     const effectiveProfile = profile || {
-        id: `demo-${cleanUsername}`,
-        username: cleanUsername,
-        full_name: cleanUsername,
-        avatar_url: `https://api.dicebear.com/7.x/identicon/svg?seed=${cleanUsername}`,
+        id: `demo-${cleanUsername || 'creator'}`,
+        username: cleanUsername || 'creator',
+        full_name: cleanUsername || 'Creator',
+        avatar_url: `https://api.dicebear.com/7.x/identicon/svg?seed=${cleanUsername || 'creator'}`,
         bio: `Digital artisan & UI creator on StitchHub.`,
         website: null,
         created_at: new Date().toISOString(),
@@ -81,51 +94,55 @@ export default async function PublicProfilePage({ params }: Props) {
     let followerCount = 0;
     let followingCount = 0;
 
-    if (profile) {
-        // Fetch public designs for real registered user
-        const { data } = await supabase
-            .from('designs')
-            .select(`
-                *,
-                profiles (
-                    username,
-                    avatar_url
-                )
-            `)
-            .eq('user_id', profile.id)
-            .eq('is_public', true)
-            .order('created_at', { ascending: false });
-        designsData = data;
+    try {
+        if (profile) {
+            // Fetch public designs for real registered user
+            const { data } = await supabase
+                .from('designs')
+                .select(`
+                    *,
+                    profiles (
+                        username,
+                        avatar_url
+                    )
+                `)
+                .eq('user_id', profile.id)
+                .eq('is_public', true)
+                .order('created_at', { ascending: false });
+            designsData = data;
 
-        try {
-            const { count: fCount } = await supabase
-                .from('followers')
-                .select('*', { count: 'exact', head: true })
-                .eq('following_id', profile.id);
-            followerCount = fCount || 0;
+            try {
+                const { count: fCount } = await supabase
+                    .from('followers')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('following_id', profile.id);
+                followerCount = fCount || 0;
 
-            const { count: flCount } = await supabase
-                .from('followers')
-                .select('*', { count: 'exact', head: true })
-                .eq('follower_id', profile.id);
-            followingCount = flCount || 0;
-        } catch (err) {
-            console.error("Error fetching follower stats:", err);
+                const { count: flCount } = await supabase
+                    .from('followers')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('follower_id', profile.id);
+                followingCount = flCount || 0;
+            } catch (err) {
+                console.error("Error fetching follower stats:", err);
+            }
+        } else {
+            // Fallback designs query for demo authors
+            const { data } = await supabase
+                .from('designs')
+                .select(`
+                    *,
+                    profiles (
+                        username,
+                        avatar_url
+                    )
+                `)
+                .eq('is_public', true)
+                .limit(6);
+            designsData = data;
         }
-    } else {
-        // Fallback designs query for demo authors
-        const { data } = await supabase
-            .from('designs')
-            .select(`
-                *,
-                profiles (
-                    username,
-                    avatar_url
-                )
-            `)
-            .eq('is_public', true)
-            .limit(6);
-        designsData = data;
+    } catch (err) {
+        console.error("Error fetching profile designs:", err);
     }
 
     const totalDesigns = designsData?.length || 0;

@@ -18,18 +18,22 @@ interface PublicProfileClientProps {
 }
 
 export default function PublicProfileClient({ profile, designs, totalDesigns, followerCount, followingCount }: PublicProfileClientProps) {
-    const joinedYear = profile.created_at ? new Date(profile.created_at).getFullYear() : '2026';
+    const joinedYear = profile?.created_at ? new Date(profile.created_at).getFullYear() : '2026';
     const [modalConfig, setModalConfig] = useState<{ isOpen: boolean; type: "followers" | "following" }>({
         isOpen: false,
         type: "followers",
     });
+
+    const rawAvatar = profile?.avatar_url || "";
+    const isInvalidAvatar = !rawAvatar || rawAvatar.startsWith("private-design-images://");
+    const avatarUrl = isInvalidAvatar ? "/images/default-avatar.png" : rawAvatar;
 
     return (
         <div className="flex flex-col w-full overflow-x-hidden">
             <div className="bg-background-light border-b-8 border-ink mb-12 relative w-full overflow-x-hidden">
                 {/* Cover Image */}
                 <div className="h-48 md:h-64 w-full bg-accent-yellow relative overflow-hidden flex items-center justify-center border-b-2 border-ink/20">
-                    {profile.cover_image_url ? (
+                    {profile?.cover_image_url ? (
                         <>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
@@ -55,7 +59,7 @@ export default function PublicProfileClient({ profile, designs, totalDesigns, fo
                         </>
                     )}
 
-                    {!profile.cover_image_url && (
+                    {!profile?.cover_image_url && (
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-ink opacity-10 select-none pointer-events-none whitespace-nowrap">
                             <span className="text-[10rem] md:text-[16rem] font-black uppercase tracking-tighter mix-blend-overlay">CREATOR</span>
                         </div>
@@ -67,16 +71,17 @@ export default function PublicProfileClient({ profile, designs, totalDesigns, fo
                     <div className="flex justify-center md:justify-start -mt-16 md:-mt-20 mb-4">
                         <div className="relative z-10 shrink-0 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
                             <div
-                                className="w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden bg-gray-100 relative pointer-events-none"
+                                className="w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden bg-gray-100 relative pointer-events-none border-4 border-ink"
                                 style={{
                                     boxShadow: '0 0 0 2px #000, 0 0 0 5px #fff, 0 0 0 7px #000'
                                 }}
                             >
                                 <Image
-                                    src={profile.avatar_url || "/images/default-avatar.png"}
-                                    alt={profile.username}
+                                    src={avatarUrl}
+                                    alt={profile?.username || "creator"}
                                     fill
                                     className="object-cover"
+                                    unoptimized={avatarUrl.endsWith('.svg')}
                                 />
                             </div>
                         </div>
@@ -87,10 +92,10 @@ export default function PublicProfileClient({ profile, designs, totalDesigns, fo
                         <div className="space-y-4">
                             <div>
                                 <h1 className="font-black text-5xl md:text-7xl text-ink uppercase tracking-tighter leading-none mb-2 transform -skew-x-[5deg] origin-left">
-                                    {profile.username}
+                                    {profile?.username || "Creator"}
                                 </h1>
                                 <p className="text-sm md:text-base text-ink/70 font-mono max-w-md mb-3 leading-relaxed">
-                                    {profile.bio || "No bio yet."}
+                                    {profile?.bio || "No bio yet."}
                                 </p>
                                 <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-ink text-white font-mono text-xs md:text-sm font-bold uppercase shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] border-2 border-transparent transform rotate-1 hover:-rotate-1 transition-transform">
                                     <span className="w-2.5 h-2.5 rounded-full bg-accent-green animate-pulse border border-white"></span>
@@ -103,7 +108,7 @@ export default function PublicProfileClient({ profile, designs, totalDesigns, fo
                                     <MapPin className="w-4 h-4" />
                                     <span>Global</span>
                                 </div>
-                                {profile.website && (
+                                {profile?.website && (
                                     <a
                                         href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`}
                                         target="_blank"
@@ -126,7 +131,9 @@ export default function PublicProfileClient({ profile, designs, totalDesigns, fo
                         {/* Stats & Actions */}
                         <div className="flex items-center justify-center md:justify-end gap-4 shrink-0 mt-4 md:mt-0">
                             {/* Follow Button */}
-                            <FollowButton targetUserId={profile.id} targetUsername={profile.username} />
+                            {profile?.id && (
+                                <FollowButton targetUserId={profile.id} targetUsername={profile.username} />
+                            )}
 
                             <div className="flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 border-4 border-ink bg-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-2 hover:rotate-0 transition-transform cursor-default">
                                 <div className="font-black text-3xl md:text-4xl text-ink leading-none">{totalDesigns}</div>
@@ -137,7 +144,7 @@ export default function PublicProfileClient({ profile, designs, totalDesigns, fo
                                 onClick={() => setModalConfig({ isOpen: true, type: "followers" })}
                                 className="flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 border-4 border-ink bg-accent-green shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-2 hover:rotate-0 hover:scale-105 active:scale-95 transition-all cursor-pointer group"
                                 title="View followers"
-                                aria-label={`View ${profile.username}'s followers`}
+                                aria-label={`View ${profile?.username}'s followers`}
                             >
                                 <div className="font-black text-3xl md:text-4xl text-ink leading-none group-hover:scale-110 transition-transform">{followerCount}</div>
                                 <div className="text-[10px] font-black font-mono text-ink uppercase mt-1 tracking-wider group-hover:underline">Followers</div>
@@ -147,7 +154,7 @@ export default function PublicProfileClient({ profile, designs, totalDesigns, fo
                                 onClick={() => setModalConfig({ isOpen: true, type: "following" })}
                                 className="flex flex-col items-center justify-center w-20 h-20 md:w-24 md:h-24 border-4 border-ink bg-accent-cyan shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform rotate-1 hover:rotate-0 hover:scale-105 active:scale-95 transition-all cursor-pointer group"
                                 title="View accounts followed"
-                                aria-label={`View accounts followed by ${profile.username}`}
+                                aria-label={`View accounts followed by ${profile?.username}`}
                             >
                                 <div className="font-black text-3xl md:text-4xl text-ink leading-none group-hover:scale-110 transition-transform">{followingCount}</div>
                                 <div className="text-[10px] font-black font-mono text-ink uppercase mt-1 tracking-wider group-hover:underline">Following</div>
@@ -177,7 +184,7 @@ export default function PublicProfileClient({ profile, designs, totalDesigns, fo
                 )}
             </div>
 
-            {modalConfig.isOpen && (
+            {modalConfig.isOpen && profile?.id && (
                 <FollowersModal
                     isOpen={modalConfig.isOpen}
                     onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
@@ -189,4 +196,3 @@ export default function PublicProfileClient({ profile, designs, totalDesigns, fo
         </div>
     );
 }
-
