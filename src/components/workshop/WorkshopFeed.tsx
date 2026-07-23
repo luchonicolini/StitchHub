@@ -123,6 +123,7 @@ export function WorkshopFeed({ initialPrompts, dataStatus = "ready", activeFilte
                         avatar_url
                     )
                 `, { count: 'exact' })
+                .eq('is_public', true)
                 .order('created_at', { ascending: false })
                 .range(from, to);
 

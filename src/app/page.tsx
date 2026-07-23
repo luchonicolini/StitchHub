@@ -35,6 +35,7 @@ export default async function Home() {
                     avatar_url
                 )
             `)
+      .eq('is_public', true)
       .order('created_at', { ascending: false })
       .limit(ITEMS_PER_PAGE);
 
