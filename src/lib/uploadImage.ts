@@ -120,7 +120,7 @@ export async function resolveImageUrl(
 
     if (error || !data?.signedUrl) {
         console.error("Failed to generate private signed URL:", error);
-        return '/images/placeholder.png'; // Fallback if user is unauthorized by RLS
+        return '/images/placeholder.svg'; // Fallback if user is unauthorized by RLS
     }
 
     return data.signedUrl;

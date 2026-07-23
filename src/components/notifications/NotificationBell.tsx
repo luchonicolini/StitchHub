@@ -77,8 +77,12 @@ export function NotificationBell() {
         fetchNotifications();
 
         // Subscribe to real-time changes
+        // More than one header can be mounted at once (for example, when a
+        // card detail opens over the workshop). Supabase channel names must be
+        // unique per mounted subscriber; reusing a subscribed channel throws
+        // when the second bell registers its postgres_changes callback.
         const channel = supabase
-            .channel('public:notifications')
+            .channel(`notifications:${user.id}:${crypto.randomUUID()}`)
             .on(
                 'postgres_changes',
                 {

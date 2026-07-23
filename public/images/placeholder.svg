@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title description">
+  <title id="title">StitchHub design preview placeholder</title>
+  <desc id="description">A yellow and white neo-brutalist placeholder for a design preview.</desc>
+  <rect width="1200" height="800" fill="#f7f5ef"/>
+  <path d="M0 0h1200v120H0zM0 680h1200v120H0z" fill="#ffdf00"/>
+  <rect x="180" y="180" width="840" height="440" fill="#fff" stroke="#000" stroke-width="18"/>
+  <path d="M198 638h840V198" fill="none" stroke="#000" stroke-width="18"/>
+  <path d="M480 315l120 105 120-105 95 145H385z" fill="#67d9d0" stroke="#000" stroke-width="14" stroke-linejoin="round"/>
+  <circle cx="765" cy="300" r="42" fill="#ff6b6b" stroke="#000" stroke-width="14"/>
+  <text x="600" y="555" text-anchor="middle" font-family="monospace" font-size="44" font-weight="700">PREVIEW UNAVAILABLE</text>
+</svg>

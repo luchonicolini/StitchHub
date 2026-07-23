@@ -36,7 +36,7 @@ export function PromptCard({
     const isPrivateUri = Boolean(image && image.startsWith('private-design-images://'));
     const [privateImage, setPrivateImage] = useState<{ source: string; url: string } | null>(null);
     const displayImage = isPrivateUri
-        ? (privateImage?.source === image ? privateImage.url : '/images/placeholder.png')
+        ? (privateImage?.source === image ? privateImage.url : '/images/placeholder.svg')
         : image;
     const { showToast } = useToast();
 
@@ -116,7 +116,7 @@ export function PromptCard({
             >
                 <div className="aspect-[4/3] bg-gray-100 border-[3px] border-ink mb-4 overflow-hidden relative">
                     <Image
-                        src={displayImage || '/images/placeholder.png'}
+                        src={displayImage || '/images/placeholder.svg'}
                         alt={imageAlt}
                         width={800}
                         height={600}
@@ -206,7 +206,13 @@ export function PromptCard({
                             className="flex items-center gap-2 group/author cursor-pointer hover:bg-black/5 p-1 rounded-sm transition-colors"
                         >
                             <div className="w-8 h-8 rounded-full border-2 border-ink overflow-hidden relative grayscale-0 group-hover/author:scale-110 transition-transform">
-                                <Image src={author.avatar} alt={author.name} fill className="object-cover" />
+                                <Image
+                                    src={author.avatar}
+                                    alt={author.name}
+                                    fill
+                                    className="object-cover"
+                                    unoptimized={author.avatar.endsWith('.svg') || author.avatar.includes('/svg?')}
+                                />
                             </div>
                             <span className="font-mono text-xs font-bold text-ink group-hover/author:underline decoration-2 underline-offset-2">{author.name}</span>
                         </Link>

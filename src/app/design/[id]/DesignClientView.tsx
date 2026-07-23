@@ -274,7 +274,13 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
                         className="flex items-center gap-4 p-4 border-4 border-ink bg-white shadow-hard-sm transform -rotate-1 max-w-fit hover:rotate-0 hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer group/profile"
                     >
                         <div className="w-10 h-10 rounded-full border-2 border-ink overflow-hidden relative group-hover/profile:scale-110 transition-transform">
-                            <Image src={initialDesign.author.avatar} alt={initialDesign.author.name} fill className="object-cover" />
+                            <Image
+                                src={initialDesign.author.avatar}
+                                alt={initialDesign.author.name}
+                                fill
+                                className="object-cover"
+                                unoptimized={initialDesign.author.avatar.endsWith('.svg') || initialDesign.author.avatar.includes('/svg?')}
+                            />
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="font-bold text-lg text-ink font-mono group-hover/profile:underline decoration-2 underline-offset-2">{initialDesign.author.name}</div>

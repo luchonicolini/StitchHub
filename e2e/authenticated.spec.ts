@@ -7,6 +7,20 @@ const password = process.env.E2E_USER_PASSWORD;
 test.describe('authenticated design lifecycle', () => {
     test.skip(!email || !password, 'Set E2E_USER_EMAIL and E2E_USER_PASSWORD to run authenticated CRUD tests.');
 
+    test('opens a public workshop card after login', async ({ page }) => {
+        await page.goto('/auth');
+        await page.getByPlaceholder('your@email.com').fill(email!);
+        await page.locator('input[type="password"]').fill(password!);
+        await page.getByRole('button', { name: 'Log In' }).click();
+        await expect(page).toHaveURL(/\/profile/);
+
+        await page.goto('/');
+        const firstCard = page.locator('[role="button"][aria-label^="Open "]').first();
+        await expect(firstCard).toBeVisible();
+        await firstCard.click();
+        await expect(page.getByRole('dialog')).toBeVisible();
+    });
+
     test('creates a private design, sees it in profile, and deletes it', async ({ page }) => {
         const title = `E2E private design ${Date.now()}`;
 

@@ -33,7 +33,7 @@ export function ProfileProjectCard({
     const category = tags[0] || "COMPONENT";
     const isPrivateImage = image.startsWith('private-design-images://');
     const [resolvedImage, setResolvedImage] = useState(
-        isPrivateImage ? '/images/placeholder.png' : image || '/images/placeholder.png'
+        isPrivateImage ? '/images/placeholder.svg' : image || '/images/placeholder.svg'
     );
 
     // Generate a stable random ref for this render cycle
@@ -47,14 +47,14 @@ export function ProfileProjectCard({
     useEffect(() => {
         if (!isPrivateImage) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
-            setResolvedImage(image || '/images/placeholder.png');
+            setResolvedImage(image || '/images/placeholder.svg');
             return;
         }
 
         let active = true;
         const refreshImage = () => {
             void resolveImageUrl(image).then(url => {
-                if (active) setResolvedImage(url || '/images/placeholder.png');
+            if (active) setResolvedImage(url || '/images/placeholder.svg');
             });
         };
         refreshImage();

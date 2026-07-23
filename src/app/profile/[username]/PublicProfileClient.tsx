@@ -91,7 +91,7 @@ export default function PublicProfileClient({ profile, designs, totalDesigns, fo
                                     alt={profile?.username || "creator"}
                                     fill
                                     className="object-cover"
-                                    unoptimized={avatarUrl.endsWith('.svg')}
+                                    unoptimized={avatarUrl.endsWith('.svg') || avatarUrl.includes('/svg?')}
                                 />
                             </div>
                         </div>

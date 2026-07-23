@@ -122,7 +122,13 @@ export function CommentsSection({ designId }: CommentsSectionProps) {
                     {/* User avatar or placeholder */}
                     <div className="w-9 h-9 border-2 border-ink bg-primary flex-shrink-0 overflow-hidden relative">
                         {user?.avatar_url ? (
-                            <Image src={user.avatar_url} alt={user.username} fill className="object-cover" />
+                            <Image
+                                src={user.avatar_url}
+                                alt={user.username}
+                                fill
+                                className="object-cover"
+                                unoptimized={user.avatar_url.endsWith('.svg') || user.avatar_url.includes('/svg?')}
+                            />
                         ) : (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img

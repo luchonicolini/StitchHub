@@ -155,10 +155,10 @@ export default function ProfilePage() {
                         name: user.username,
                         avatar: user.avatar_url || "/images/default-avatar.png"
                     },
-                    image: d.image_url || '/images/placeholder.png',
+            image: d.image_url || '/images/placeholder.svg',
                     gallery: d.image_urls?.length
                         ? d.image_urls
-                        : [d.image_url || '/images/placeholder.png'],
+                : [d.image_url || '/images/placeholder.svg'],
                     imageAlt: d.title,
                     codeSnippet: d.code_snippet || undefined,
                     pinColor: "bg-white",

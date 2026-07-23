@@ -273,7 +273,7 @@ export function EditDesignModal({ isOpen, onClose, design, onSave }: EditDesignM
                                                 <X className="w-3 h-3" strokeWidth={3} />
                                             </button>
                                             <div className="relative w-full h-full">
-                                                <Image src={resolvedExistingImages[idx] || '/images/placeholder.png'} alt={`Uploaded ${idx + 1}`} fill className="object-cover" />
+                                            <Image src={resolvedExistingImages[idx] || '/images/placeholder.svg'} alt={`Uploaded ${idx + 1}`} fill className="object-cover" />
                                             </div>
                                         </div>
                                     ))}

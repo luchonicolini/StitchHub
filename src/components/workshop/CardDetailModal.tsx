@@ -89,9 +89,9 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
         };
     }, [card]);
 
-    const sanitizeImage = (img?: string) => (!img || img.startsWith('private-design-images://') ? '/images/placeholder.png' : img);
+    const sanitizeImage = (img?: string) => (!img || img.startsWith('private-design-images://') ? '/images/placeholder.svg' : img);
     const images = resolvedImages.length > 0 ? resolvedImages : (card.gallery && card.gallery.length > 0 ? card.gallery : [card.image]).map(sanitizeImage);
-    const currentImage = images[currentImageIndex] || images[0] || '/images/placeholder.png';
+    const currentImage = images[currentImageIndex] || images[0] || '/images/placeholder.svg';
 
     // Lock body scroll when modal is open
     useEffect(() => {
@@ -520,6 +520,7 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                                             alt={card.author.name}
                                             fill
                                             className="object-cover"
+                                            unoptimized={card.author.avatar.endsWith('.svg') || card.author.avatar.includes('/svg?')}
                                         />
                                     </div>
                                     <div className="flex items-center gap-2">
