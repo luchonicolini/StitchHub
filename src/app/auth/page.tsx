@@ -24,9 +24,10 @@ export default function AuthPage() {
     // Redirect if already logged in
     useEffect(() => {
         if (!loading && isAuthenticated) {
-            router.replace("/profile");
+            const targetUrl = searchParams.get("returnUrl") || "/profile";
+            router.replace(targetUrl);
         }
-    }, [isAuthenticated, loading, router]);
+    }, [isAuthenticated, loading, router, searchParams]);
 
     // Don't render auth page if already authenticated or resolving auth state
     if (loading || isAuthenticated) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Mail, Lock, LogIn, AlertCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
@@ -44,6 +44,7 @@ function isValidEmail(email: string): boolean {
 export function LoginForm({ onForgotPassword }: LoginFormProps) {
     const { login, loginWithGoogle } = useAuth();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { showToast } = useToast();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -73,12 +74,13 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
                 });
                 setTimeout(() => setShake(false), 500);
             } else {
+                const targetUrl = searchParams.get('returnUrl') || "/profile";
                 showToast({
                     message: "Signed in successfully",
-                    description: "Welcome back. Taking you to your profile!",
+                    description: "Welcome back!",
                     type: "success",
                 });
-                router.replace("/profile");
+                router.replace(targetUrl);
             }
         } catch (err: unknown) {
             console.error('Unexpected login exception:', err);

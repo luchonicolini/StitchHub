@@ -10,27 +10,32 @@ test.describe('authenticated design lifecycle', () => {
     test('creates a private design, sees it in profile, and deletes it', async ({ page }) => {
         const title = `E2E private design ${Date.now()}`;
 
-        await page.goto('/auth?returnUrl=/submit');
+        // 1. Log in
+        await page.goto('/auth');
         await page.getByPlaceholder('your@email.com').fill(email!);
         await page.getByPlaceholder('••••••••').fill(password!);
         await page.getByRole('button', { name: 'Log In' }).click();
-        await expect(page).toHaveURL(/\/submit/);
+        await expect(page).toHaveURL(/\/profile/);
 
+        // 2. Go to /submit and upload private card
+        await page.goto('/submit');
         await page.locator('input[aria-label="Upload screenshots"]').setInputFiles(
             path.join(process.cwd(), 'public', 'images', 'default-avatar.png')
         );
         await page.locator('#title-input').fill(title);
         await page.getByRole('button', { name: /Google Stitch/i }).click();
-        await page.getByRole('button', { name: 'UI/UX', exact: true }).click();
+        await page.getByRole('button', { name: 'Dashboard', exact: true }).click();
         await page.getByRole('button', { name: /Private Vault/i }).click();
         await page.locator('#prompt-input').fill('Create a production-ready private dashboard with accessible navigation, responsive cards, clear hierarchy, and robust empty states.');
         await page.getByRole('button', { name: /Save to Private Vault/i }).click();
 
+        // 3. Verify design in profile and delete it
         await expect(page).toHaveURL(/\/profile/);
-        await expect(page.getByText(title, { exact: true })).toBeVisible();
+        const cardLocator = page.locator('.group', { hasText: title });
+        await expect(cardLocator).toBeVisible();
 
-        await page.getByRole('button', { name: `Delete ${title}` }).click();
-        await page.getByRole('button', { name: 'Delete', exact: true }).click();
+        await cardLocator.getByRole('button', { name: 'Delete' }).click();
+        await page.locator('div.fixed button', { hasText: 'Delete' }).click();
         await expect(page.getByText(title, { exact: true })).toHaveCount(0);
     });
 });

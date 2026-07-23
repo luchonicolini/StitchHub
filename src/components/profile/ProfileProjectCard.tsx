@@ -134,6 +134,7 @@ export function ProfileProjectCard({
                 {onDelete && (
                     <button
                         onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                        aria-label={`Delete ${title}`}
                         className="py-3 flex items-center justify-center gap-2 hover:bg-red-500 hover:text-white transition-colors group/delete"
                     >
                         <Trash2 className="w-4 h-4 text-ink group-hover/delete:text-white" />
