@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { DesignDB, mapDesignToPrompt } from '@/types/design';
 import { WorkshopHeader } from '@/components/workshop/WorkshopHeader';
 import { Footer } from '@/components/workshop/Footer';
-import PublicProfileClient from '@/app/profile/[username]/PublicProfileClient';
+import PublicProfileClient, { type PublicProfile } from '@/app/profile/[username]/PublicProfileClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -66,15 +66,15 @@ export default async function PublicProfilePage({ params }: Props) {
     const cleanUsername = decodedUsername.replace(/^@/, '').trim();
     const supabase = await createClient();
 
-    let profile: any = null;
+    let profile: PublicProfile | null = null;
 
     try {
         const { data } = await supabase
             .from('profiles')
-            .select('*, bio, website')
+            .select('id, username, avatar_url, cover_image_url, bio, website, updated_at')
             .or(`username.eq.${cleanUsername},username.eq.@${cleanUsername}`)
             .maybeSingle();
-        profile = data;
+        profile = data as PublicProfile | null;
     } catch (err) {
         console.error("Error fetching profile from DB:", err);
     }
@@ -84,13 +84,13 @@ export default async function PublicProfilePage({ params }: Props) {
         id: `demo-${cleanUsername || 'creator'}`,
         username: cleanUsername || 'creator',
         full_name: cleanUsername || 'Creator',
-        avatar_url: `https://api.dicebear.com/7.x/identicon/svg?seed=${cleanUsername || 'creator'}`,
+        avatar_url: `https://api.dicebear.com/7.x/identicon/png?seed=${cleanUsername || 'creator'}`,
         bio: `Digital artisan & UI creator on StitchHub.`,
         website: null,
         created_at: new Date().toISOString(),
     };
 
-    let designsData: any[] | null = null;
+    let designsData: DesignDB[] | null = null;
     let followerCount = 0;
     let followingCount = 0;
 
@@ -109,7 +109,7 @@ export default async function PublicProfilePage({ params }: Props) {
                 .eq('user_id', profile.id)
                 .eq('is_public', true)
                 .order('created_at', { ascending: false });
-            designsData = data;
+            designsData = data as unknown as DesignDB[] | null;
 
             try {
                 const { count: fCount } = await supabase
@@ -139,7 +139,7 @@ export default async function PublicProfilePage({ params }: Props) {
                 `)
                 .eq('is_public', true)
                 .limit(6);
-            designsData = data;
+            designsData = data as unknown as DesignDB[] | null;
         }
     } catch (err) {
         console.error("Error fetching profile designs:", err);

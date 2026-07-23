@@ -8,9 +8,19 @@ import { FollowButton } from '@/components/profile/FollowButton';
 import { WorkshopFeed } from '@/components/workshop/WorkshopFeed';
 import { FollowersModal } from '@/components/profile/FollowersModal';
 
+export interface PublicProfile {
+    id: string;
+    username: string;
+    avatar_url?: string | null;
+    cover_image_url?: string | null;
+    bio?: string | null;
+    website?: string | null;
+    created_at?: string | null;
+    updated_at?: string | null;
+}
+
 interface PublicProfileClientProps {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    profile: any;
+    profile: PublicProfile;
     designs: Prompt[];
     totalDesigns: number;
     followerCount: number;
