@@ -49,7 +49,7 @@ export default function TermsPage() {
                             <AlertTriangle className="w-5 h-5 text-accent-orange" /> 2. Intellectual Property & License
                         </h2>
                         <p className="text-ink/80">
-                            By publishing a prompt publicly on StitchHub, you grant the community a open license to use, remix, and learn from your prompt for creative and commercial endeavors. Private prompts remain strictly your exclusive property.
+                            By publishing a prompt publicly on StitchHub, you authorize StitchHub to display and distribute that content through the service and allow community members to view, copy, and adapt it. Do not publish content you are not authorized to share. Private prompts are not made available to the community.
                         </p>
                     </section>
 
@@ -58,7 +58,7 @@ export default function TermsPage() {
                             <MessageSquare className="w-5 h-5 text-primary" /> 3. Content Reporting & Moderation
                         </h2>
                         <p className="text-ink/80">
-                            We reserve the right to remove any public content that violates our guidelines or report abusive users. To report inappropriate prompts or spam, email <a href="mailto:support@stitchhub.dev" className="underline font-bold text-accent-orange">support@stitchhub.dev</a>.
+                            We may remove public content that violates these guidelines. Use the Report button on a public design to flag inappropriate prompts or spam. For account and moderation questions, use our authenticated <Link href="/contact" className="underline font-bold text-accent-orange">support form</Link>.
                         </p>
                     </section>
                 </div>

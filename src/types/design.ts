@@ -32,8 +32,8 @@ export function mapDesignToPrompt(d: DesignDB, index: number): Prompt {
         "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=250&q=80",
         "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=250&q=80",
         "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&w=250&q=80",
-        "https://api.dicebear.com/7.x/bottts/svg?seed=pixelbot",
-        "https://api.dicebear.com/7.x/identicon/svg?seed=cyberdev",
+        "https://api.dicebear.com/7.x/bottts/png?seed=pixelbot",
+        "https://api.dicebear.com/7.x/identicon/png?seed=cyberdev",
     ];
 
     const AUTHOR_POOL = [

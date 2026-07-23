@@ -1,58 +1,7 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
-import { Construction, ArrowRight, Instagram, Github } from "lucide-react";
-import { useToast } from "@/hooks/useToast";
-
-function XIcon({ className = "w-5 h-5" }: { className?: string }) {
-    return (
-        <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-        </svg>
-    );
-}
-
-const SOCIAL_LINKS = [
-    { id: "x", name: "X (Twitter)", Icon: XIcon },
-    { id: "instagram", name: "Instagram", Icon: Instagram },
-    { id: "github", name: "GitHub", Icon: Github },
-];
+import { Construction, ArrowRight } from "lucide-react";
 
 export function Footer() {
-    const { showToast } = useToast();
-
-    const handleSocialClick = (e: React.MouseEvent, name: string) => {
-        e.preventDefault();
-        showToast({
-            message: `${name} - Coming soon`,
-            description: "Our social channels will be available soon.",
-            type: "info",
-        });
-    };
-
-    const [newsletterEmail, setNewsletterEmail] = useState("");
-
-    const handleNewsletterSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!newsletterEmail) return;
-        showToast({
-            message: "Subscription confirmed!",
-            description: `${newsletterEmail} has been added to the newsletter.`,
-            type: "success",
-        });
-        setNewsletterEmail("");
-    };
-
-    const handleFooterLinkClick = (e: React.MouseEvent, page: string) => {
-        e.preventDefault();
-        showToast({
-            message: `${page} - Coming soon`,
-            description: "This information page will be available soon.",
-            type: "info",
-        });
-    };
-
     return (
         <footer className="bg-ink text-white py-16 border-t-8 border-accent-orange relative overflow-hidden">
             {/* Abstract shape */}
@@ -73,43 +22,19 @@ export function Footer() {
                         Hand-crafted prompts for the digital artisan. Built with sweat,
                         coffee, and slightly buggy CSS.
                     </p>
-                    {/* Social Media Icons */}
-                    <div className="flex gap-4">
-                        {SOCIAL_LINKS.map(({ id, name, Icon }) => (
-                            <button
-                                key={id}
-                                onClick={(e) => handleSocialClick(e, name)}
-                                className="w-10 h-10 flex items-center justify-center bg-white text-ink rounded-full border-2 border-white hover:bg-accent-yellow hover:scale-110 active:scale-95 transition-all shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)] cursor-pointer"
-                                title={`${name} (coming soon)`}
-                                aria-label={`${name} (coming soon)`}
-                            >
-                                <Icon className="w-5 h-5" />
-                            </button>
-                        ))}
-                    </div>
                 </div>
-                {/* Newsletter Sticker */}
+                {/* Workshop CTA */}
                 <div className="bg-primary p-1 transform rotate-1 w-full md:w-auto shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]">
                     <div className="border-2 border-ink p-6 bg-primary">
                         <h3 className="text-ink font-black text-xl mb-2 uppercase">
-                            Spam? No thanks.
+                            Build something bold.
                         </h3>
                         <p className="text-ink font-mono text-xs mb-4">
-                            Get the weekly best-of straight to your inbox.
+                            Share a prompt with the community or keep it in your private vault.
                         </p>
-                        <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
-                            <input
-                                className="bg-white border-2 border-ink px-3 py-2 text-ink font-mono text-sm w-full placeholder-ink/50 focus:ring-0 focus:border-accent-orange outline-none"
-                                placeholder="email@address.com"
-                                type="email"
-                                value={newsletterEmail}
-                                onChange={(e) => setNewsletterEmail(e.target.value)}
-                                required
-                            />
-                            <button type="submit" className="bg-ink text-white p-2 border-2 border-transparent hover:bg-accent-orange hover:border-ink transition-colors cursor-pointer" title="Suscribirse">
-                                <ArrowRight className="w-5 h-5" />
-                            </button>
-                        </form>
+                        <Link href="/submit" className="inline-flex items-center gap-2 border-2 border-ink bg-ink px-4 py-2 font-mono text-xs font-black uppercase text-white transition-colors hover:bg-accent-orange">
+                            Submit a prompt <ArrowRight className="w-4 h-4" />
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -121,6 +46,9 @@ export function Footer() {
                     </Link>
                     <Link href="/terms" className="hover:text-primary transition-colors cursor-pointer">
                         Terms
+                    </Link>
+                    <Link href="/contact" className="hover:text-primary transition-colors cursor-pointer">
+                        Contact
                     </Link>
                 </div>
             </div>

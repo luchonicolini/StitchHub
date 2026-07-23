@@ -22,7 +22,7 @@ function timeAgo(date: string): string {
     return `${Math.floor(diff / 86400)}d ago`;
 }
 
-const AVATAR_FALLBACK = "https://api.dicebear.com/7.x/identicon/svg?seed=";
+const AVATAR_FALLBACK = "https://api.dicebear.com/7.x/identicon/png?seed=";
 
 export function CommentsSection({ designId }: CommentsSectionProps) {
     const { user } = useAuth();

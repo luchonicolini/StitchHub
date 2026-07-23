@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import * as Sentry from "@sentry/nextjs";
 
 export default function Error({
   error,
@@ -12,8 +13,7 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to console or error reporting service
-    console.error("Unhandled error captured in error.tsx:", error);
+    Sentry.captureException(error);
   }, [error]);
 
   return (
@@ -34,11 +34,7 @@ export default function Error({
           <p className="text-slate-600 dark:text-slate-300 text-sm font-mono leading-relaxed">
             A temporary problem occurred while loading this section. Please try again.
           </p>
-          {error?.message && (
-            <div className="mt-4 p-3 bg-red-50 dark:bg-red-950/40 border-2 border-red-500 font-mono text-xs text-red-600 dark:text-red-300 text-left overflow-x-auto">
-              <code>{error.message}</code>
-            </div>
-          )}
+          {error.digest && <p className="font-mono text-xs text-slate-400">Reference: {error.digest}</p>}
         </div>
 
         {/* Actions */}

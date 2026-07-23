@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Copy, Sparkles, Check, ChevronLeft, ChevronRight, ZoomIn, X, Link as LinkIcon, Wrench, FileText } from "lucide-react";
+import { Copy, Sparkles, Check, ChevronLeft, ChevronRight, ZoomIn, X, Link as LinkIcon, Wrench, FileText, Flag, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { PromptCardProps } from "./PromptCard";
@@ -11,6 +11,8 @@ import { Footer } from "./Footer";
 import { WorkshopHeader } from "./WorkshopHeader";
 import { CommentsSection } from "./CommentsSection";
 import { resolveImageUrl } from "@/lib/uploadImage";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
@@ -23,6 +25,7 @@ interface ExtendedCardProps extends PromptCardProps {
     description?: string;
     commentsCount?: number;
     isPublic?: boolean;
+    userId?: string;
 }
 
 interface CardDetailModalProps {
@@ -32,12 +35,17 @@ interface CardDetailModalProps {
 
 export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
     const { showToast } = useToast();
+    const { user } = useAuth();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
     const [copied, setCopied] = useState(false);
     const [copiedLink, setCopiedLink] = useState(false);
     const [isPromptExpanded, setIsPromptExpanded] = useState(false);
     const [activeTab, setActiveTab] = useState<"html" | "css" | "react">("html");
+    const [isReportOpen, setIsReportOpen] = useState(false);
+    const [reportReason, setReportReason] = useState('spam');
+    const [reportDetails, setReportDetails] = useState('');
+    const [isReporting, setIsReporting] = useState(false);
 
     // Code language switcher
     const getTabLanguage = () => {
@@ -124,6 +132,39 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                 type: "error",
             });
         }
+    };
+
+    const numericDesignId = Number.parseInt(String(card.id).replace('db-', ''), 10);
+    const canReport = !card.isDemo && Number.isFinite(numericDesignId) && card.userId !== user?.id;
+
+    const handleReport = async (event: React.FormEvent) => {
+        event.preventDefault();
+        if (!user) {
+            showToast({ message: 'Login required', description: 'Sign in to report content.', type: 'warning' });
+            return;
+        }
+        if (!canReport || isReporting) return;
+
+        setIsReporting(true);
+        const { error } = await supabase.from('content_reports').insert({
+            reporter_id: user.id,
+            design_id: numericDesignId,
+            reason: reportReason,
+            details: reportDetails.trim() || null,
+        });
+
+        if (error) {
+            showToast({
+                message: error.code === '23505' ? 'You already reported this design.' : 'Unable to submit report.',
+                type: error.code === '23505' ? 'info' : 'error',
+            });
+        } else {
+            showToast({ message: 'Report submitted for review.', type: 'success' });
+            setIsReportOpen(false);
+            setReportDetails('');
+            setReportReason('spam');
+        }
+        setIsReporting(false);
     };
 
     const handleCopyLink = async () => {
@@ -553,6 +594,16 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                                 )}
                             </button>
 
+                            {canReport && (
+                                <button
+                                    type="button"
+                                    onClick={() => setIsReportOpen(true)}
+                                    className="mt-3 flex w-full items-center justify-center gap-2 border-2 border-ink bg-white px-4 py-3 font-mono text-xs font-bold uppercase text-ink transition-colors hover:bg-red-50 hover:text-red-700"
+                                >
+                                    <Flag className="h-4 w-4" /> Report content
+                                </button>
+                            )}
+
                             {/* Tags */}
                             <div className="flex gap-2 flex-wrap">
                                 {card.tags.map((tag, i) => (
@@ -615,6 +666,56 @@ export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
                                         quality={100}
                                     />
                                 </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    <AnimatePresence>
+                        {isReportOpen && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="fixed inset-0 z-[130] flex items-center justify-center bg-black/70 p-4"
+                                role="dialog"
+                                aria-modal="true"
+                                aria-labelledby="report-dialog-title"
+                                onClick={() => setIsReportOpen(false)}
+                            >
+                                <motion.form
+                                    initial={{ scale: 0.95, y: 16 }}
+                                    animate={{ scale: 1, y: 0 }}
+                                    exit={{ scale: 0.95, y: 16 }}
+                                    onSubmit={handleReport}
+                                    onClick={(event) => event.stopPropagation()}
+                                    className="w-full max-w-lg border-4 border-ink bg-white p-6 shadow-hard"
+                                >
+                                    <div className="mb-5 flex items-start justify-between gap-4">
+                                        <div>
+                                            <h2 id="report-dialog-title" className="text-xl font-black uppercase text-ink">Report content</h2>
+                                            <p className="mt-1 font-mono text-xs text-ink/60">Reports are private and reviewed by the StitchHub team.</p>
+                                        </div>
+                                        <button type="button" onClick={() => setIsReportOpen(false)} aria-label="Close report dialog" className="border-2 border-ink p-1 text-ink hover:bg-ink hover:text-white">
+                                            <X className="h-5 w-5" />
+                                        </button>
+                                    </div>
+                                    <label htmlFor="report-reason" className="mb-2 block font-mono text-xs font-bold uppercase text-ink">Reason</label>
+                                    <select id="report-reason" value={reportReason} onChange={(event) => setReportReason(event.target.value)} className="mb-4 w-full border-3 border-ink bg-white px-3 py-2 font-mono text-sm text-ink">
+                                        <option value="spam">Spam or misleading</option>
+                                        <option value="harassment">Harassment</option>
+                                        <option value="copyright">Copyright concern</option>
+                                        <option value="unsafe">Unsafe content</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                    <label htmlFor="report-details" className="mb-2 block font-mono text-xs font-bold uppercase text-ink">Details (optional)</label>
+                                    <textarea id="report-details" value={reportDetails} onChange={(event) => setReportDetails(event.target.value.slice(0, 1000))} rows={4} className="w-full resize-none border-3 border-ink bg-white px-3 py-2 font-mono text-sm text-ink" />
+                                    <div className="mt-5 flex justify-end gap-3">
+                                        <button type="button" onClick={() => setIsReportOpen(false)} className="border-2 border-ink bg-white px-4 py-2 font-mono text-xs font-bold uppercase text-ink">Cancel</button>
+                                        <button type="submit" disabled={isReporting} className="flex items-center gap-2 border-2 border-ink bg-red-600 px-4 py-2 font-mono text-xs font-black uppercase text-white disabled:opacity-50">
+                                            {isReporting && <Loader2 className="h-4 w-4 animate-spin" />} Submit report
+                                        </button>
+                                    </div>
+                                </motion.form>
                             </motion.div>
                         )}
                     </AnimatePresence>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { X, Loader2, Upload, ImageIcon, Camera } from "lucide-react";
+import { X, Loader2, Upload, ImageIcon, Camera, Trash2, AlertTriangle } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { uploadProfileImage, getConstraints } from "@/lib/uploadProfileImage";
@@ -22,11 +23,15 @@ interface EditProfileModalProps {
 
 export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileModalProps) {
     const { showToast } = useToast();
-    const { updateProfile } = useAuth();
+    const { updateProfile, logout } = useAuth();
+    const router = useRouter();
     const [username, setUsername] = useState(currentUser.username);
     const [bio, setBio] = useState(currentUser.bio || "");
     const [website, setWebsite] = useState(currentUser.website || "");
     const [loading, setLoading] = useState(false);
+    const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+    const [deleteConfirmation, setDeleteConfirmation] = useState("");
+    const [deletingAccount, setDeletingAccount] = useState(false);
 
     // Avatar state
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -131,6 +136,34 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
 
     const isUploading = avatarUploading || coverUploading;
 
+    const handleDeleteAccount = async () => {
+        if (deleteConfirmation !== 'DELETE' || deletingAccount) return;
+        setDeletingAccount(true);
+
+        try {
+            const response = await fetch('/api/account', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ confirmation: deleteConfirmation }),
+            });
+            const result = await response.json() as { error?: string };
+            if (!response.ok) throw new Error(result.error || 'Account deletion failed');
+
+            await logout();
+            showToast({ message: 'Your account and data were deleted.', type: 'success' });
+            onClose();
+            router.replace('/');
+            router.refresh();
+        } catch (error) {
+            showToast({
+                message: error instanceof Error ? error.message : 'Account deletion failed',
+                type: 'error',
+            });
+        } finally {
+            setDeletingAccount(false);
+        }
+    };
+
     return (
         <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <div className="bg-white border-4 border-ink shadow-hard w-full max-w-lg relative animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
@@ -140,6 +173,8 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
                     <h2 className="font-black text-lg uppercase text-ink">Edit Profile</h2>
                     <button
                         onClick={onClose}
+                        type="button"
+                        aria-label="Close profile settings"
                         className="p-1 hover:bg-red-500 hover:text-white border-2 border-transparent hover:border-ink transition-colors rounded-sm"
                     >
                         <X className="w-5 h-5" />
@@ -317,6 +352,62 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
                             {(loading || isUploading) && <Loader2 className="w-3 h-3 animate-spin" />}
                             {isUploading ? 'Uploading...' : 'Save Changes'}
                         </button>
+                    </div>
+
+                    <div className="border-3 border-red-600 bg-red-50 p-4">
+                        <div className="flex items-start gap-3">
+                            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
+                            <div className="min-w-0 flex-1">
+                                <h3 className="font-mono text-sm font-black uppercase text-red-700">Danger zone</h3>
+                                <p className="mt-1 font-mono text-xs leading-relaxed text-red-900/70">
+                                    Permanently delete your account, designs, private vault, profile images, and community activity.
+                                </p>
+                                {!showDeleteAccount ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowDeleteAccount(true)}
+                                        className="mt-3 flex items-center gap-2 border-2 border-red-700 bg-white px-3 py-2 font-mono text-xs font-bold uppercase text-red-700 hover:bg-red-700 hover:text-white"
+                                    >
+                                        <Trash2 className="h-4 w-4" /> Delete account
+                                    </button>
+                                ) : (
+                                    <div className="mt-3 space-y-3">
+                                        <label htmlFor="delete-account-confirmation" className="block font-mono text-xs font-bold text-red-900">
+                                            Type DELETE to confirm
+                                        </label>
+                                        <input
+                                            id="delete-account-confirmation"
+                                            value={deleteConfirmation}
+                                            onChange={(event) => setDeleteConfirmation(event.target.value)}
+                                            className="w-full border-2 border-red-700 bg-white px-3 py-2 font-mono text-sm text-ink outline-none focus:ring-2 focus:ring-red-500"
+                                            autoComplete="off"
+                                        />
+                                        <div className="flex flex-wrap gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={handleDeleteAccount}
+                                                disabled={deleteConfirmation !== 'DELETE' || deletingAccount}
+                                                className="flex items-center gap-2 border-2 border-ink bg-red-600 px-3 py-2 font-mono text-xs font-black uppercase text-white disabled:cursor-not-allowed disabled:opacity-40"
+                                            >
+                                                {deletingAccount && <Loader2 className="h-4 w-4 animate-spin" />}
+                                                Permanently delete
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setShowDeleteAccount(false);
+                                                    setDeleteConfirmation("");
+                                                }}
+                                                disabled={deletingAccount}
+                                                className="border-2 border-ink bg-white px-3 py-2 font-mono text-xs font-bold uppercase text-ink"
+                                            >
+                                                Keep account
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>

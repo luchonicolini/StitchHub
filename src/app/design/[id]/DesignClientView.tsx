@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/useToast";
 import { Prompt } from "@/types/prompt";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { ReportContentButton } from '@/components/workshop/ReportContentButton';
 
 interface DesignClientViewProps {
     initialDesign: Prompt; // Extended props could be added
@@ -21,6 +22,7 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
     const [isPromptExpanded, setIsPromptExpanded] = useState(false);
     const [activeTab, setActiveTab] = useState<"html" | "css" | "react">("html");
+    const numericDesignId = Number.parseInt(String(initialDesign.id).replace('db-', ''), 10);
 
     const getTabLanguage = () => {
         if (activeTab === "react") return "jsx";
@@ -309,6 +311,10 @@ export default function DesignClientView({ initialDesign }: DesignClientViewProp
                             <><LinkIcon className="w-5 h-5" /> Share Full Design</>
                         )}
                     </button>
+
+                    {!initialDesign.isDemo && Number.isFinite(numericDesignId) && (
+                        <ReportContentButton designId={numericDesignId} ownerId={initialDesign.userId} />
+                    )}
                 </div>
 
                 {/* Tags */}

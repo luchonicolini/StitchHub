@@ -30,7 +30,7 @@ export default function PrivacyPage() {
                         Privacy Policy
                     </h1>
                     <p className="font-mono text-sm text-ink/60 mt-2">
-                        Last Updated: July 22, 2026 • Version 1.0
+                        Last Updated: July 22, 2026 • Version 1.1
                     </p>
                 </header>
 
@@ -45,7 +45,8 @@ export default function PrivacyPage() {
                         <ul className="list-disc pl-6 space-y-2 text-ink/80">
                             <li><strong>Account Information:</strong> Your email address, username, and profile avatar.</li>
                             <li><strong>Prompt Content:</strong> Prompts, titles, categories, descriptions, code snippets, and screenshots you submit.</li>
-                            <li><strong>User Content Visibility:</strong> Public prompts are visible to all users. Private prompts (stored in your Private Vault) are encrypted and restricted via PostgreSQL Row Level Security (RLS).</li>
+                            <li><strong>User Content Visibility:</strong> Public prompts are visible to all users. Private prompts are access-controlled through PostgreSQL Row Level Security (RLS).</li>
+                            <li><strong>Community and Support Activity:</strong> Likes, comments, follows, content reports, and support requests associated with your account.</li>
                         </ul>
                     </section>
 
@@ -60,10 +61,19 @@ export default function PrivacyPage() {
 
                     <section>
                         <h2 className="text-xl font-black uppercase border-b-3 border-ink pb-2 mb-4 flex items-center gap-2">
-                            <FileText className="w-5 h-5 text-accent-orange" /> 3. Data Deletion & Account Erasure
+                            <Eye className="w-5 h-5 text-primary" /> 3. Service Providers & Diagnostics
                         </h2>
                         <p className="text-ink/80">
-                            You own your data. You may request account deletion or content removal at any time through your Profile Settings or by emailing <a href="mailto:privacy@stitchhub.dev" className="underline font-bold text-accent-orange">privacy@stitchhub.dev</a>.
+                            StitchHub uses Supabase for authentication, database, and storage; Vercel for hosting, aggregate traffic analytics, and performance measurements; and, when configured, Sentry for application error diagnostics. We do not intentionally send prompt contents or account passwords as analytics events.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 className="text-xl font-black uppercase border-b-3 border-ink pb-2 mb-4 flex items-center gap-2">
+                            <FileText className="w-5 h-5 text-accent-orange" /> 4. Data Deletion & Account Erasure
+                        </h2>
+                        <p className="text-ink/80">
+                            You own your data. You can permanently delete your account and associated content from Profile Settings. For another privacy or content-removal request, use our authenticated <Link href="/contact" className="underline font-bold text-accent-orange">support form</Link>.
                         </p>
                     </section>
                 </div>
