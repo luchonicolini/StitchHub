@@ -22,9 +22,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     author: { name: "pixel_artisan", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80" },
     image: "/images/designs/retro-neon-dashboard.jpg",
     gallery: [
-      "/images/designs/retro-neon-dashboard.jpg",
-      "/images/designs/ai-command-console.jpg",
-      "/images/designs/cyberpunk-audio-player.jpg"
+      "/images/designs/retro-neon-dashboard.jpg"
     ],
     imageAlt: "Retro Neon Dashboard UI",
     pinColor: "bg-accent-orange",
@@ -42,9 +40,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     author: { name: "neo_visionary", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80" },
     image: "/images/designs/saas-analytics-engine.jpg",
     gallery: [
-      "/images/designs/saas-analytics-engine.jpg",
-      "/images/designs/kanban-task-management.jpg",
-      "/images/designs/fintech-expense-breakdown.jpg"
+      "/images/designs/saas-analytics-engine.jpg"
     ],
     imageAlt: "SaaS Analytics Engine",
     pinColor: "bg-accent-green",
@@ -62,9 +58,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     author: { name: "cyber_craft", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=250&q=80" },
     image: "/images/designs/crypto-web3-vault.jpg",
     gallery: [
-      "/images/designs/crypto-web3-vault.jpg",
-      "/images/designs/nft-marketplace-card.jpg",
-      "/images/designs/retro-neon-dashboard.jpg"
+      "/images/designs/crypto-web3-vault.jpg"
     ],
     imageAlt: "Crypto & Web3 Vault UI",
     pinColor: "bg-primary",
@@ -82,9 +76,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     author: { name: "design_punk", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=250&q=80" },
     image: "/images/designs/neo-brutalist-checkout.jpg",
     gallery: [
-      "/images/designs/neo-brutalist-checkout.jpg",
-      "/images/designs/food-delivery-app.jpg",
-      "/images/designs/editorial-magazine-card.jpg"
+      "/images/designs/neo-brutalist-checkout.jpg"
     ],
     imageAlt: "Neo-Brutalist Checkout Page",
     pinColor: "bg-accent-orange",
@@ -102,9 +94,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     author: { name: "app_artisan", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=250&q=80" },
     image: "/images/designs/mobile-fitness-tracker.jpg",
     gallery: [
-      "/images/designs/mobile-fitness-tracker.jpg",
-      "/images/designs/food-delivery-app.jpg",
-      "/images/designs/cyberpunk-audio-player.jpg"
+      "/images/designs/mobile-fitness-tracker.jpg"
     ],
     imageAlt: "Mobile Fitness Workout Tracker",
     pinColor: "bg-accent-green",
@@ -122,9 +112,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     author: { name: "ai_architect", avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=250&q=80" },
     image: "/images/designs/ai-command-console.jpg",
     gallery: [
-      "/images/designs/ai-command-console.jpg",
-      "/images/designs/retro-neon-dashboard.jpg",
-      "/images/designs/editorial-magazine-card.jpg"
+      "/images/designs/ai-command-console.jpg"
     ],
     imageAlt: "AI Command Console & Prompt IDE",
     pinColor: "bg-primary",
@@ -142,9 +130,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     author: { name: "type_master", avatar: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=250&q=80" },
     image: "/images/designs/editorial-magazine-card.jpg",
     gallery: [
-      "/images/designs/editorial-magazine-card.jpg",
-      "/images/designs/portfolio-hero-section.jpg",
-      "/images/designs/neo-brutalist-checkout.jpg"
+      "/images/designs/editorial-magazine-card.jpg"
     ],
     imageAlt: "Editorial Magazine Article Card",
     pinColor: "bg-accent-orange",
@@ -162,9 +148,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     author: { name: "sound_wave", avatar: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&w=250&q=80" },
     image: "/images/designs/cyberpunk-audio-player.jpg",
     gallery: [
-      "/images/designs/cyberpunk-audio-player.jpg",
-      "/images/designs/retro-neon-dashboard.jpg",
-      "/images/designs/mobile-fitness-tracker.jpg"
+      "/images/designs/cyberpunk-audio-player.jpg"
     ],
     imageAlt: "Cyberpunk Audio Wave Player",
     pinColor: "bg-accent-green",
@@ -182,9 +166,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     author: { name: "fintech_pro", avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=250&q=80" },
     image: "/images/designs/fintech-expense-breakdown.jpg",
     gallery: [
-      "/images/designs/fintech-expense-breakdown.jpg",
-      "/images/designs/saas-analytics-engine.jpg",
-      "/images/designs/crypto-web3-vault.jpg"
+      "/images/designs/fintech-expense-breakdown.jpg"
     ],
     imageAlt: "Fintech Expense Breakdown",
     pinColor: "bg-primary",
@@ -202,9 +184,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     author: { name: "code_craft", avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=250&q=80" },
     image: "/images/designs/ai-command-console.jpg",
     gallery: [
-      "/images/designs/ai-command-console.jpg",
-      "/images/designs/retro-neon-dashboard.jpg",
-      "/images/designs/kanban-task-management.jpg"
+      "/images/designs/ai-command-console.jpg"
     ],
     imageAlt: "Developer Documentation Portal",
     pinColor: "bg-accent-orange",
@@ -222,9 +202,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     author: { name: "crypto_king", avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=250&q=80" },
     image: "/images/designs/nft-marketplace-card.jpg",
     gallery: [
-      "/images/designs/nft-marketplace-card.jpg",
-      "/images/designs/crypto-web3-vault.jpg",
-      "/images/designs/cyberpunk-audio-player.jpg"
+      "/images/designs/nft-marketplace-card.jpg"
     ],
     imageAlt: "NFT Marketplace Collection Card",
     pinColor: "bg-accent-green",
@@ -242,9 +220,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     author: { name: "flow_creator", avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=250&q=80" },
     image: "/images/designs/kanban-task-management.jpg",
     gallery: [
-      "/images/designs/kanban-task-management.jpg",
-      "/images/designs/saas-analytics-engine.jpg",
-      "/images/designs/ai-command-console.jpg"
+      "/images/designs/kanban-task-management.jpg"
     ],
     imageAlt: "Kanban Task Management Card",
     pinColor: "bg-primary",
@@ -262,9 +238,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     author: { name: "hacker_ui", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=250&q=80" },
     image: "/images/designs/retro-neon-dashboard.jpg",
     gallery: [
-      "/images/designs/retro-neon-dashboard.jpg",
-      "/images/designs/ai-command-console.jpg",
-      "/images/designs/cyberpunk-audio-player.jpg"
+      "/images/designs/retro-neon-dashboard.jpg"
     ],
     imageAlt: "Cyberpunk Auth & Login Form",
     pinColor: "bg-accent-orange",
@@ -282,9 +256,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     author: { name: "tasty_design", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=250&q=80" },
     image: "/images/designs/food-delivery-app.jpg",
     gallery: [
-      "/images/designs/food-delivery-app.jpg",
-      "/images/designs/mobile-fitness-tracker.jpg",
-      "/images/designs/neo-brutalist-checkout.jpg"
+      "/images/designs/food-delivery-app.jpg"
     ],
     imageAlt: "Food Delivery Mobile Order Card",
     pinColor: "bg-accent-green",
@@ -302,9 +274,7 @@ export const MOCK_PROMPTS: Prompt[] = [
     author: { name: "vector_guru", avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=250&q=80" },
     image: "/images/designs/portfolio-hero-section.jpg",
     gallery: [
-      "/images/designs/portfolio-hero-section.jpg",
-      "/images/designs/editorial-magazine-card.jpg",
-      "/images/designs/neo-brutalist-checkout.jpg"
+      "/images/designs/portfolio-hero-section.jpg"
     ],
     imageAlt: "Portfolio Hero Sticker Section",
     pinColor: "bg-primary",
