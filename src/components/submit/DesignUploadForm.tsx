@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { createBrowserClient } from "@supabase/ssr";
 import { submitDesign, type DesignSubmission } from "@/lib/submitDesign";
 import { useToast } from "@/hooks/useToast";
+import { revalidateWorkshopAfterPublish } from "@/app/actions/workshop";
 
 const CATEGORIES = [
     "Dashboard",
@@ -213,6 +214,19 @@ export function DesignUploadForm() {
             };
 
             await submitDesign(submission, user.id, supabase);
+
+            if (isPublic) {
+                try {
+                    const { revalidated } = await revalidateWorkshopAfterPublish();
+                    if (!revalidated) {
+                        console.warn('The workshop cache could not be refreshed for this session.');
+                    }
+                } catch (revalidationError) {
+                    // The design is already saved, so a cache refresh failure must
+                    // not turn a successful publication into a failed submission.
+                    console.error('Unable to refresh the workshop cache:', revalidationError);
+                }
+            }
 
             if (isPublic) {
                 showToast({

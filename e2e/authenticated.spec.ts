@@ -21,6 +21,37 @@ test.describe('authenticated design lifecycle', () => {
         await expect(page.getByRole('dialog')).toBeVisible();
     });
 
+    test('shows a newly published card first in the workshop', async ({ page }) => {
+        const title = `E2E newest public design ${Date.now()}`;
+
+        await page.goto('/auth');
+        await page.getByPlaceholder('your@email.com').fill(email!);
+        await page.locator('input[type="password"]').fill(password!);
+        await page.getByRole('button', { name: 'Log In' }).click();
+        await expect(page).toHaveURL(/\/profile/);
+
+        await page.goto('/submit');
+        await page.locator('input[aria-label="Upload screenshots"]').setInputFiles(
+            path.join(process.cwd(), 'public', 'images', 'default-avatar.png')
+        );
+        await page.locator('#title-input').fill(title);
+        await page.getByRole('button', { name: /Google Stitch/i }).click();
+        await page.getByRole('button', { name: 'Dashboard', exact: true }).click();
+        await page.locator('#prompt-input').fill('Create a fresh public dashboard card that must appear first in the workshop feed immediately after publishing.');
+        await page.getByRole('button', { name: /Publish to Workshop/i }).click();
+        await expect(page).toHaveURL(/\/profile/);
+
+        await page.goto('/');
+        const workshopCards = page.locator('[role="button"][aria-label^="Open "]');
+        await expect(workshopCards.first()).toHaveAttribute('aria-label', `Open ${title}`);
+
+        await page.goto('/profile');
+        const createdCard = page.locator('.group', { hasText: title });
+        await createdCard.getByRole('button', { name: 'Delete' }).click();
+        await page.locator('div.fixed button', { hasText: 'Delete' }).click();
+        await expect(page.getByText(title, { exact: true })).toHaveCount(0);
+    });
+
     test('creates a private design, sees it in profile, and deletes it', async ({ page }) => {
         const title = `E2E private design ${Date.now()}`;
 
