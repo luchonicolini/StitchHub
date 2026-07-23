@@ -48,10 +48,13 @@ export function ProfileHeader({ totalDesigns }: ProfileHeaderProps) {
 
     if (!user) return null;
 
-    const joinedDate = new Intl.DateTimeFormat("en", {
-        month: "short",
-        year: "numeric",
-    }).format(new Date(user.joinedAt));
+    const parsedJoinedAt = new Date(user.joinedAt);
+    const joinedDate = Number.isNaN(parsedJoinedAt.getTime())
+        ? "Recently"
+        : new Intl.DateTimeFormat("en", {
+            month: "short",
+            year: "numeric",
+        }).format(parsedJoinedAt);
 
     const handleShareProfile = async () => {
         const profileUrl = `${window.location.origin}/profile/${encodeURIComponent(user.username)}`;

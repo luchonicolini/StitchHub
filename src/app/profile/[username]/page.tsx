@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import { notFound } from 'next/navigation';
 import { DesignDB, mapDesignToPrompt } from '@/types/design';
 import { WorkshopHeader } from '@/components/workshop/WorkshopHeader';
 import { Footer } from '@/components/workshop/Footer';
@@ -32,93 +31,104 @@ const createClient = async () => {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { username } = await params;
     const decodedUsername = decodeURIComponent(username);
+    const cleanUsername = decodedUsername.replace(/^@/, '');
     const supabase = await createClient();
 
     const { data } = await supabase
         .from('profiles')
         .select('username, avatar_url')
-        .eq('username', decodedUsername)
-        .single();
+        .or(`username.eq.${cleanUsername},username.eq.@${cleanUsername}`)
+        .maybeSingle();
 
-    if (data) {
-        return {
-            title: `${data.username}'s Profile | StitchHub`,
-            description: `Check out ${data.username}'s digital designs and prompts on StitchHub.`,
-            openGraph: {
-                title: `${data.username}'s Profile | StitchHub`,
-                description: `Check out ${data.username}'s digital designs and prompts on StitchHub.`,
-                images: data.avatar_url ? [data.avatar_url] : [],
-            },
-        };
-    }
+    const displayUsername = data?.username || cleanUsername;
 
     return {
-        title: 'Profile Not Found | StitchHub',
+        title: `${displayUsername}'s Profile | StitchHub`,
+        description: `Check out ${displayUsername}'s digital designs and prompts on StitchHub.`,
+        openGraph: {
+            title: `${displayUsername}'s Profile | StitchHub`,
+            description: `Check out ${displayUsername}'s digital designs and prompts on StitchHub.`,
+            images: data?.avatar_url ? [data.avatar_url] : [],
+        },
     };
 }
 
 export default async function PublicProfilePage({ params }: Props) {
     const { username } = await params;
     const decodedUsername = decodeURIComponent(username);
+    const cleanUsername = decodedUsername.replace(/^@/, '');
     const supabase = await createClient();
 
-    // Fetch the user's profile
-    const { data: profile, error: profileError } = await supabase
+    // Fetch the user's profile from DB
+    const { data: profile } = await supabase
         .from('profiles')
         .select('*, bio, website')
-        .eq('username', decodedUsername)
-        .single();
+        .or(`username.eq.${cleanUsername},username.eq.@${cleanUsername}`)
+        .maybeSingle();
 
-    if (profileError || !profile) {
-        notFound();
-    }
+    // Fallback profile object for demo/seed creators
+    const effectiveProfile = profile || {
+        id: `demo-${cleanUsername}`,
+        username: cleanUsername,
+        full_name: cleanUsername,
+        avatar_url: `https://api.dicebear.com/7.x/identicon/svg?seed=${cleanUsername}`,
+        bio: `Digital artisan & UI creator on StitchHub.`,
+        website: null,
+        created_at: new Date().toISOString(),
+    };
 
-    // Fetch their public designs
-    const { data: designsData } = await supabase
-        .from('designs')
-        .select(`
-            *,
-            profiles (
-                username,
-                avatar_url
-            )
-        `)
-        .eq('user_id', profile.id)
-        .order('created_at', { ascending: false });
-
-    const totalDesigns = designsData?.length || 0;
-
-    // Default counts
+    let designsData: any[] | null = null;
     let followerCount = 0;
     let followingCount = 0;
 
-    try {
-        // Fetch Follower count (people following this user)
-        const { count: fCount, error: fError } = await supabase
-            .from('followers')
-            .select('*', { count: 'exact', head: true })
-            .eq('following_id', profile.id);
-        
-        if (fError) {
-             console.warn("Could not fetch followers (table might be missing).");
-        } else {
-             followerCount = fCount || 0;
-        }
+    if (profile) {
+        // Fetch public designs for real registered user
+        const { data } = await supabase
+            .from('designs')
+            .select(`
+                *,
+                profiles (
+                    username,
+                    avatar_url
+                )
+            `)
+            .eq('user_id', profile.id)
+            .eq('is_public', true)
+            .order('created_at', { ascending: false });
+        designsData = data;
 
-        // Fetch Following count (people this user is following)
-        const { count: flCount, error: flError } = await supabase
-            .from('followers')
-            .select('*', { count: 'exact', head: true })
-            .eq('follower_id', profile.id);
-            
-        if (flError) {
-             console.warn("Could not fetch following count (table might be missing).");
-        } else {
-             followingCount = flCount || 0;
+        try {
+            const { count: fCount } = await supabase
+                .from('followers')
+                .select('*', { count: 'exact', head: true })
+                .eq('following_id', profile.id);
+            followerCount = fCount || 0;
+
+            const { count: flCount } = await supabase
+                .from('followers')
+                .select('*', { count: 'exact', head: true })
+                .eq('follower_id', profile.id);
+            followingCount = flCount || 0;
+        } catch (err) {
+            console.error("Error fetching follower stats:", err);
         }
-    } catch (err) {
-        console.error("Error fetching follower stats:", err);
+    } else {
+        // Fallback designs query for demo authors
+        const { data } = await supabase
+            .from('designs')
+            .select(`
+                *,
+                profiles (
+                    username,
+                    avatar_url
+                )
+            `)
+            .eq('is_public', true)
+            .limit(6);
+        designsData = data;
     }
+
+    const totalDesigns = designsData?.length || 0;
 
     // Process designs into Prompts
     const processedDesigns = designsData
@@ -131,11 +141,11 @@ export default async function PublicProfilePage({ params }: Props) {
 
             <main className="pb-20">
                 <PublicProfileClient
-                    profile={profile}
+                    profile={effectiveProfile}
                     designs={processedDesigns}
                     totalDesigns={totalDesigns}
-                    followerCount={followerCount || 0}
-                    followingCount={followingCount || 0}
+                    followerCount={followerCount}
+                    followingCount={followingCount}
                 />
             </main>
 

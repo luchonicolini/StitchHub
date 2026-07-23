@@ -1,8 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-// Routes that require authentication
-const protectedRoutes = ["/submit", "/profile"];
+// Only the private dashboard is protected. `/profile/[username]` is public.
+const isProtectedRoute = (pathname: string) =>
+    pathname === "/profile" || pathname === "/submit" || pathname.startsWith("/submit/");
 
 // Routes that should redirect to home if already authenticated
 const authRoutes = ["/auth"];
@@ -43,7 +44,7 @@ export async function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname;
 
     // Protected routes: redirect to /auth if not logged in
-    if (protectedRoutes.some(route => pathname.startsWith(route))) {
+    if (isProtectedRoute(pathname)) {
         if (!user) {
             const url = request.nextUrl.clone();
             url.pathname = "/auth";

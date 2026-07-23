@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Pin, Edit2, Trash2, Heart } from "lucide-react";
 import { Prompt } from "@/types/prompt";
 import { useState, useEffect } from "react";
+import { resolveImageUrl } from "@/lib/uploadImage";
 
 interface ProfileProjectCardProps extends Prompt {
     onClick?: () => void;
@@ -30,6 +31,10 @@ export function ProfileProjectCard({
 }: ProfileProjectCardProps) {
     // Determine category based on tags or default
     const category = tags[0] || "COMPONENT";
+    const isPrivateImage = image.startsWith('private-design-images://');
+    const [resolvedImage, setResolvedImage] = useState(
+        isPrivateImage ? '/images/placeholder.png' : image || '/images/placeholder.png'
+    );
 
     // Generate a stable random ref for this render cycle
     const [randomRef, setRandomRef] = useState<string>("");
@@ -39,6 +44,27 @@ export function ProfileProjectCard({
         setRandomRef(Math.random().toString(16).substring(2, 8).toUpperCase());
     }, []);
 
+    useEffect(() => {
+        if (!isPrivateImage) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setResolvedImage(image || '/images/placeholder.png');
+            return;
+        }
+
+        let active = true;
+        const refreshImage = () => {
+            void resolveImageUrl(image).then(url => {
+                if (active) setResolvedImage(url || '/images/placeholder.png');
+            });
+        };
+        refreshImage();
+        const timer = window.setInterval(refreshImage, 9 * 60 * 1000);
+        return () => {
+            active = false;
+            window.clearInterval(timer);
+        };
+    }, [image, isPrivateImage]);
+
     return (
         <div
             onClick={onClick}
@@ -47,7 +73,7 @@ export function ProfileProjectCard({
             {/* Image Section - Top 35% */}
             <div className="relative aspect-[16/9] w-full border-b-[3px] border-ink bg-gray-100 overflow-hidden group/image">
                 <Image
-                    src={image}
+                    src={resolvedImage}
                     alt={imageAlt}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105 filter group-hover:contrast-125"

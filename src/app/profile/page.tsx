@@ -128,34 +128,45 @@ export default function ProfilePage() {
                 interface DesignDB {
                     id: number;
                     title: string;
-                    category: string;
-                    prompt_content: string;
-                    image_url: string;
-                    code_snippet: string;
+                    category: string | null;
+                    prompt_content: string | null;
+                    description: string | null;
+                    tool_used: string | null;
+                    image_url: string | null;
+                    image_urls: string[] | null;
+                    code_snippet: string | null;
                     created_at: string;
                     user_id: string;
-                    is_pinned: boolean;
-                    likes_count: number;
+                    is_pinned: boolean | null;
+                    likes_count: number | null;
+                    is_public: boolean | null;
                 }
 
                 // Transform to Prompt type
                 const designs: Prompt[] = (data as unknown as DesignDB[]).map((d, index) => ({
                     id: String(d.id), // Ensure string ID for Prompt type
+                    userId: d.user_id,
                     title: d.title,
                     tags: [d.category || 'Design'],
-                    prompt: d.prompt_content,
+                    prompt: d.prompt_content || '',
+                    description: d.description || undefined,
+                    toolUsed: d.tool_used || undefined,
                     author: {
                         name: user.username,
                         avatar: user.avatar_url || "/images/default-avatar.png"
                     },
-                    image: d.image_url || '',
+                    image: d.image_url || '/images/placeholder.png',
+                    gallery: d.image_urls?.length
+                        ? d.image_urls
+                        : [d.image_url || '/images/placeholder.png'],
                     imageAlt: d.title,
-                    codeSnippet: d.code_snippet,
+                    codeSnippet: d.code_snippet || undefined,
                     pinColor: "bg-white",
                     rotation: index % 2 === 0 ? "rotate-1" : "-rotate-1",
                     type: "card",
                     isPinned: d.is_pinned || false,
-                    likesCount: d.likes_count || 0
+                    likesCount: d.likes_count || 0,
+                    isPublic: d.is_public !== false,
                 }));
 
                 // Sort: pinned designs first, then by created_at (which is already done by the query)

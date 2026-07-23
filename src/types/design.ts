@@ -37,26 +37,29 @@ export function mapDesignToPrompt(d: DesignDB, index: number): Prompt {
     ];
 
     const AUTHOR_POOL = [
-        "@pixel_artisan",
-        "@neo_visionary",
-        "@cyber_craft",
-        "@design_punk",
-        "@app_artisan",
-        "@ai_architect",
-        "@type_master",
-        "@sound_wave",
-        "@fintech_pro",
-        "@code_craft",
-        "@crypto_king",
-        "@flow_creator",
-        "@hacker_ui",
-        "@tasty_design",
-        "@vector_guru",
+        "pixel_artisan",
+        "neo_visionary",
+        "cyber_craft",
+        "design_punk",
+        "app_artisan",
+        "ai_architect",
+        "type_master",
+        "sound_wave",
+        "fintech_pro",
+        "code_craft",
+        "crypto_king",
+        "flow_creator",
+        "hacker_ui",
+        "tasty_design",
+        "vector_guru",
     ];
 
     const idNum = parseInt(d.id.toString()) || index || 0;
     const fallbackAvatar = AVATAR_POOL[idNum % AVATAR_POOL.length];
     const fallbackAuthor = AUTHOR_POOL[idNum % AUTHOR_POOL.length];
+
+    const rawUsername = d.profiles?.username || fallbackAuthor;
+    const cleanUsername = rawUsername.replace(/^@/, '');
 
     return {
         id: `db-${d.id}`,
@@ -67,7 +70,7 @@ export function mapDesignToPrompt(d: DesignDB, index: number): Prompt {
         description: d.description,
         toolUsed: d.tool_used,
         author: {
-            name: d.profiles?.username || fallbackAuthor,
+            name: cleanUsername,
             avatar: d.profiles?.avatar_url || fallbackAvatar,
         },
         image: d.image_url || "",
