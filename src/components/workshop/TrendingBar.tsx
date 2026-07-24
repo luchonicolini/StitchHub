@@ -276,17 +276,17 @@ export function TrendingBar() {
                                 type="button"
                                 onClick={() => moveCarousel(-1)}
                                 aria-label="Previous trending designs"
-                                className="grid h-10 w-10 place-items-center border-3 border-ink bg-white shadow-[3px_3px_0_#000] transition-transform hover:-translate-y-0.5 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
+                                className="grid h-10 w-10 place-items-center border-3 border-ink bg-white text-ink shadow-[3px_3px_0_#000] transition-transform hover:-translate-y-0.5 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
                             >
-                                <ChevronLeft className="h-5 w-5" strokeWidth={3} />
+                                <ChevronLeft className="h-5 w-5 stroke-current" strokeWidth={3} aria-hidden="true" />
                             </button>
                             <button
                                 type="button"
                                 onClick={() => moveCarousel(1)}
                                 aria-label="Next trending designs"
-                                className="grid h-10 w-10 place-items-center border-3 border-ink bg-primary shadow-[3px_3px_0_#000] transition-transform hover:-translate-y-0.5 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
+                                className="grid h-10 w-10 place-items-center border-3 border-ink bg-primary text-ink shadow-[3px_3px_0_#000] transition-transform hover:-translate-y-0.5 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
                             >
-                                <ChevronRight className="h-5 w-5" strokeWidth={3} />
+                                <ChevronRight className="h-5 w-5 stroke-current" strokeWidth={3} aria-hidden="true" />
                             </button>
                         </div>
                     </div>
