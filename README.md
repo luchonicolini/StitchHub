@@ -1,82 +1,121 @@
-<div align="center">
+# StitchHub
 
-# STITCHHUB
+> **English:** A community gallery for sharing UI designs together with their prompts and code. Built with Next.js, TypeScript and Supabase, with public discovery, creator profiles and authenticated publishing.
 
-### Hand-picked UI prompts, code and inspiration for humans.
+[Demo](https://stitch-hub-one.vercel.app) · [CI](https://github.com/luchonicolini/StitchHub/actions/workflows/quality.yml)
 
-[![Live on Vercel](https://img.shields.io/badge/Explore_StitchHub-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://stitch-hub-one.vercel.app)
-[![Next.js](https://img.shields.io/badge/Next.js_16-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
+[![Quality checks](https://github.com/luchonicolini/StitchHub/actions/workflows/quality.yml/badge.svg?branch=main)](https://github.com/luchonicolini/StitchHub/actions/workflows/quality.yml)
 
-[Visit the live experience](https://stitch-hub-one.vercel.app)
+Una imagen de una interfaz no explica cómo fue construida.
+StitchHub reúne diseños, prompts y fragmentos de código para explorar referencias, comprender su proceso y compartir el trabajo de cada creador.
 
-</div>
+**Estado:** producto personal en desarrollo con una demo pública. Las capacidades autenticadas requieren un proyecto Supabase configurado.
 
-![StitchHub homepage](public/screenshots/homepage.png)
+## Vista previa
 
-## What is StitchHub?
+![Página principal de StitchHub](public/screenshots/homepage.png)
 
-StitchHub is a visual discovery platform where designers, developers and AI creators can explore interface ideas together with the prompts and code behind them.
+## Funcionalidades
 
-Instead of presenting designs as isolated images, StitchHub keeps the creative process attached to the final result. Every publication can become a practical reference for understanding how an interface was imagined and built.
+- Feed de diseños, búsqueda y filtros por categoría.
+- Publicaciones con imágenes, prompts y fragmentos de código.
+- Perfiles públicos y edición de publicaciones propias.
+- Registro, inicio y recuperación de sesión.
+- Likes, guardados, seguimiento de creadores y notificaciones.
+- Interfaz adaptable con una dirección visual de bordes marcados y alto contraste.
 
-## What does it offer?
+## Stack y arquitectura
 
-- A curated gallery of interface designs and creative prompts.
-- Publications with visuals, prompts and source-code snippets.
-- Search and category filters for discovering relevant ideas.
-- Multi-image galleries for presenting complete design concepts.
-- Personal accounts and public creator profiles.
-- Likes, saved designs and pinned collections.
-- Creator following and realtime notifications.
-- A responsive experience across desktop and mobile.
+| Área | Implementación |
+| --- | --- |
+| Aplicación | Next.js 16, App Router, React 19 y TypeScript |
+| UI | Tailwind CSS, Framer Motion y componentes por funcionalidad |
+| Backend | Supabase: acceso a datos, autenticación y almacenamiento |
+| Estado cliente | Hooks y Zustand |
+| Observabilidad | Integraciones de Sentry y Vercel |
+| Calidad | ESLint, TypeScript y Playwright; workflow existente en Ubuntu |
 
-## Product foundations
+El renderizado del servidor carga los datos iniciales y los componentes cliente manejan las interacciones.
+Las acciones del servidor y rutas API coordinan operaciones que requieren contexto de sesión.
+La configuración de Supabase y sus políticas es parte del entorno necesario, no una capacidad suministrada por clonar el frontend.
 
-### Discover
+| Ubicación | Responsabilidad |
+| --- | --- |
+| `src/app/` | Rutas, acciones del servidor, callbacks y endpoints |
+| `src/components/` | Autenticación, perfiles, publicaciones y galería |
+| `src/hooks/` | Estado e interacciones reutilizables |
+| `src/lib/` | Clientes y utilidades de datos y carga de archivos |
+| `src/types/` | Tipos de datos y transformaciones |
+| `e2e/` | Escenarios públicos y autenticados de Playwright |
+| Archivos SQL de la raíz | Referencias de esquema; no sustituyen una migración completa verificada |
 
-Browse community work through a visual feed designed to make exploration quick, expressive and enjoyable.
+## Cómo ejecutarlo
 
-### Understand
+1. Instalá Node.js 22 y npm.
+2. Cloná e instalá las dependencias del lockfile:
 
-See more than the finished image. Prompts and code provide useful context for learning from each design.
+   ```bash
+   git clone https://github.com/luchonicolini/StitchHub.git
+   cd StitchHub
+   npm ci
+   ```
 
-### Share
+3. Creá `.env.local` en la raíz con los valores de un entorno Supabase de desarrollo:
 
-Publish complete ideas, organize personal work and build a public creator identity.
+   ```dotenv
+   NEXT_PUBLIC_SUPABASE_URL=[COMPLETAR: URL del proyecto Supabase de desarrollo]
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=[COMPLETAR: clave pública anon del entorno de desarrollo]
+   ```
 
-### Connect
+4. Configurá en ese entorno el esquema, las políticas de acceso, Storage y los redirects de autenticación que necesita la app.
+   Revisá `setup_database.sql`, `create_followers.sql`, `create_notifications.sql` y los tipos del repositorio como referencia.
+   **[COMPLETAR: procedimiento reproducible y verificado de preparación de Supabase, incluidos buckets, políticas y redirects]**
+5. Iniciá el frontend:
 
-Follow other creators, react to their work and receive updates through a lightweight social experience.
+   ```bash
+   npm run dev
+   ```
 
-## Visual identity
+6. Abrí [localhost:3000](http://localhost:3000).
 
-StitchHub uses a neo-brutalist design language built around strong borders, offset shadows, high contrast, geometric shapes and playful motion. The interface is intentionally bold while remaining clear and usable.
+La ruta de eliminación de cuenta utiliza `SUPABASE_SERVICE_ROLE_KEY` exclusivamente en el servidor.
+Para probar esa operación, configurala en el entorno privado del servidor; no uses el prefijo `NEXT_PUBLIC_`.
+Las variables de Sentry son opcionales para la observabilidad; consultá los archivos `sentry.*.config.ts` y `src/instrumentation-client.ts`.
+No se incluyen credenciales reales.
 
-## Technology
+## Pruebas y CI
 
-The experience is built with:
+```bash
+npm run lint
+npx tsc --noEmit
+npm run build
+npx playwright install chromium
+npm run test:e2e
+```
 
-- Next.js and React
-- TypeScript
-- Tailwind CSS
-- Supabase
-- Framer Motion
-- Vercel
+Playwright inicia la compilación de producción en `http://127.0.0.1:3100`.
+Para ejecutar los escenarios autenticados, definí `E2E_USER_EMAIL` y `E2E_USER_PASSWORD` en el entorno del proceso de pruebas,
+con una cuenta dedicada de desarrollo. Esos tests pueden crear, editar y borrar publicaciones de esa cuenta.
 
-## Live project
+El [workflow existente](.github/workflows/quality.yml) ejecuta lint, tipos, build y Playwright.
+Requiere los secretos `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+`E2E_USER_EMAIL` y `E2E_USER_PASSWORD`.
+Los escenarios autenticados se omiten si faltan sus credenciales; un caso público también puede omitirse si no hay un perfil disponible.
+Un resultado verde con casos omitidos no equivale a cobertura de esos flujos.
 
-StitchHub is currently available at:
+## Próximos pasos
 
-### [stitch-hub-one.vercel.app](https://stitch-hub-one.vercel.app)
+- Documentar y verificar la preparación completa de un entorno de desarrollo.
+- Ampliar las pruebas de permisos y errores de publicación.
+- Revisar accesibilidad de navegación y formularios.
+- Mantener separadas las cuentas y los datos usados por tests.
 
-## Author
+## Pendientes de configuración
 
-A personal product created and maintained by [Luciano Nicolini](https://github.com/luchonicolini).
+- [COMPLETAR: URL del proyecto Supabase de desarrollo]
+- [COMPLETAR: clave pública anon del entorno de desarrollo]
+- [COMPLETAR: procedimiento reproducible y verificado de preparación de Supabase, incluidos buckets, políticas y redirects]
 
----
+## Autor
 
-<div align="center">
-  <strong>Designed with bold strokes, thick borders and a little controlled chaos.</strong>
-</div>
+[Luciano Nicolini](https://github.com/luchonicolini) · iOS Developer (Swift, SwiftUI), con experiencia full stack en proyectos con Next.js y Supabase.
